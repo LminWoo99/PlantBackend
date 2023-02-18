@@ -6,7 +6,11 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-
+/*
+ 작성자 : 이민우
+ 작성 일자: 02.18
+ 특이 사항: 프로필 이미지 빼고 작성, OnetoMany 미작성
+*/
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,7 +22,7 @@ public class Member {
     private String name; //회원 이름
     private String userId; ///유저 아이디 V
     private String password; //비번 V
-    private String email; //email]
+    private String email; //email
     private String nickname; // 닉네임 V
 
     private String phoneNumber;

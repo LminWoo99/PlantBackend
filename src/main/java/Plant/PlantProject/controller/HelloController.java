@@ -9,4 +9,8 @@ public class HelloController {
     public String test() {
         return "연결 성공!";
     }
+    @GetMapping("/api/minu")
+    public String test1() {
+        return "minu 연결 성공!";
+    }
 }

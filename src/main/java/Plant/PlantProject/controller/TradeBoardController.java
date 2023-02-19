@@ -15,7 +15,7 @@ import java.util.List;
  작성자 : 이민우
  작성 일자: 02.19
  내용 : 거래 게시글 컨트롤러 글 작성 구현
- 특이 사항: 없음
+ 특이 사항: 프론트 협업시 글작성 api url은 "/post"
 */
 @Controller
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class TradeBoardController {
 //    글작성 폼 호출
     @GetMapping("/post")
     public String write() {
-        return "/board/boardForm";
+        return "/post";
     }
     @PostMapping("/post")
     public String write(TradeBoardDto tradeBoardDto) {

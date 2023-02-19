@@ -1,6 +1,7 @@
 package Plant.PlantProject.controller;
 
 import Plant.PlantProject.Entity.Member;
+import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,12 +14,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-    @GetMapping("/members")
-    public String createForm(Model model){
-        List<Member> members = memberService.findAll();
-        model.addAttribute("members", members);
-        return "members/memberList";
-    }
+//    @GetMapping("/memberList")
+//    public List<MemberDto> findAllMember(Model model){
+//        List<Member> members = memberService.findAll();
+//        model.addAttribute("members", members);
+//        return "members/memberList";
+//    }
 
 
 

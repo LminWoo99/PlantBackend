@@ -5,6 +5,8 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  작성자 : 이민우
@@ -17,7 +19,7 @@ import java.time.LocalDateTime;
 public class Member {
     @Id
     @GeneratedValue   //jpa 어노테이션인데 그냥 기본키 어노테이션으로 알고있으면됨
-    @Column(name = "MEMBER_ID")
+    @Column(name = "member_id")
     private Long id;  //고유번호
     private String name; //회원 이름
     private String userId; ///유저 아이디 V
@@ -32,6 +34,14 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private SocialLogin socialLogin;
+    @OneToMany(mappedBy = "member")
+    List<TradeBoard> tradeBoardList = new ArrayList<TradeBoard>();
+    @OneToMany(mappedBy = "member")
+    List<InfoBoard> infoBoardList = new ArrayList<InfoBoard>();
+    @OneToMany(mappedBy = "member")
+    List<Goods> goodsList = new ArrayList<Goods>();
+    @OneToMany(mappedBy = "member")
+    List<KeyWord> keyWordList = new ArrayList<KeyWord>();
 
     @Builder
     public Member(String name, String userId, String nickname, String password, String email) {
@@ -41,5 +51,8 @@ public class Member {
         this.password = password;
         this.email = email;
     }
+   public Member(String userId) {
+       this.userId = userId;
+   }
 
 }

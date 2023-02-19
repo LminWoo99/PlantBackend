@@ -9,6 +9,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -38,4 +40,8 @@ public class InfoBoard {
     private LocalDateTime updatedAt;
     @Enumerated(EnumType.STRING)
     private Category category;
+    @OneToMany(mappedBy = "infoBoard")
+    List<Comment> commentList = new ArrayList<Comment>();
+
+
 }

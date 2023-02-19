@@ -20,14 +20,16 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Like {
+public class Goods {
     @Id
     @GeneratedValue
-    @Column(name = "likeId")
+    @Column(name = "goodsId")
     private Long id;
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "tPost_id")
     private TradeBoard tradeBoard;
     @CreatedDate
     private LocalDateTime likeDate;

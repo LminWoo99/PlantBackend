@@ -33,6 +33,10 @@ public class TradeBoardDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+    public TradeBoardDto(String tTitle, String tContent){
+        this.tTitle = tTitle;
+        this.tContent = tContent;
+    }
 
     public TradeBoard toEntity() {
         return TradeBoard.builder()

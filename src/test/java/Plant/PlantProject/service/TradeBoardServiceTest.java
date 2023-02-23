@@ -36,6 +36,8 @@ class TradeBoardServiceTest {
     EntityManager em;
     @Autowired
     TradeBoardRepository tradeBoardRepository;
+    @Autowired
+    TradeBoardService tradeBoardService;
     @Test
     public void savePost() throws Exception{
         //given
@@ -49,6 +51,7 @@ class TradeBoardServiceTest {
         //then
         System.out.println("tradeBoard의 제목은 = " + tradeBoard.getTTitle());
         System.out.println("tradeBoard의 내용은 = " + tradeBoard.getTContent());
+        System.out.println("tradeBoard의 id = " + tradeBoardService.findById(5L));
         assertThat(tradeBoard.getTTitle()).isEqualTo("test 타이틀");
         assertThat(tradeBoard.getTContent()).isEqualTo("테스트 내용");
         tradeBoardRepository.delete(tradeBoard);

@@ -1,5 +1,6 @@
 package Plant.PlantProject.dto;
 
+import Plant.PlantProject.Entity.Member;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,5 +19,20 @@ public class MemberDto {
         this.password = password;
         this.email = email;
         this.nickname = nickname;
+    }
+
+    public MemberDto(String userId, String name) {
+        this.userId = userId;
+        this.name = name;
+    }
+
+    public Member toEntity(){
+        return Member.builder()
+                .name(name)
+                .userId(userId)
+                .nickname(nickname)
+                .password(password)
+                .email(email)
+                .build();
     }
 }

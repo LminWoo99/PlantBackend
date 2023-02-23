@@ -1,6 +1,8 @@
 package Plant.PlantProject.repository;
 
 import Plant.PlantProject.Entity.TradeBoard;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 /*
  작성자 : 이민우
@@ -9,5 +11,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  특이 사항: 없음
 */
 public interface TradeBoardRepository extends JpaRepository<TradeBoard, Long> {
+
 
 }

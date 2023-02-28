@@ -10,6 +10,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.PostConstruct;
 /*
  작성자 : 이민우
  작성 일자: 02.19
@@ -27,7 +29,9 @@ import org.springframework.web.bind.annotation.*;
  * -----------------------------------------------------------
  * 2022-02-23        이민우       최초 생성
  * 2022-02-24        이민우       게시글 페이징
- * 2022-02-24        이민우       특이사항 : boardContent를 엔티티 대신 dto 사용하고픔(추후 변경)
+ * 2022-02-24        이민우       특이사항 : boardContent를 엔티티 대신 dto 사용하고픔(추후 변경
+ * 2022-02-28        이민우       특이사항 : boardContent를 엔티티 대신 dto 사용(테스트필수)
+ * 2022-02-28        이민우       글 수정, 삭제기능 구현 (테스트 요망)
  */
 @Controller
 @RequiredArgsConstructor
@@ -50,13 +54,29 @@ public class TradeBoardController {
         model.addAttribute("tradeBoardDto", tradeBoardService.pageList(pageable));
         return "/post/list";
     }
-//
-@GetMapping("/post/list/{id}")
-public String boardContent(@PathVariable("id") Long id, Model model) {
-    TradeBoard tradeBoard = tradeBoardService.findById(id);
-    model.addAttribute(tradeBoard);
-
+    //
+    @GetMapping("/post/list/{id}")
+    public String boardContent(@PathVariable("id") Long id, Model model) {
+        TradeBoardDto tradeBoardDto = tradeBoardService.findById(id);
+        model.addAttribute(tradeBoardDto);
     return "/post/boardContent";
 }
+    @GetMapping("/post/list/edit/{id}")
+    public String edit(@PathVariable("id") Long id, Model model){
+        TradeBoardDto tradeBoardDto = tradeBoardService.findById(id);
+        model.addAttribute(tradeBoardDto);
+        return "/post/update";
+    }
+    @PutMapping("/post/list/edit/{id}")
+    public String update(TradeBoardDto tradeBoardDto){
+        tradeBoardService.saveTradePost(tradeBoardDto);
+        return "redirect:/";
+    }
+    @DeleteMapping("/post/list/{id}")
+    public String delete(@PathVariable("id") Long id){
+        TradeBoardDto tradeBoardDto= tradeBoardService.findById(id);
+        tradeBoardService.deldetePost(tradeBoardDto);
+        return "redirect:/";
+    }
 
 }

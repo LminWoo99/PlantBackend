@@ -1,6 +1,5 @@
 package Plant.PlantProject.service;
 
-import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.TradeBoardDto;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.AllArgsConstructor;
@@ -28,9 +27,13 @@ public class TradeBoardService {
         return tradeBoardRepository.findAll(pageable).map(tradeBoard -> new TradeBoardDto(tradeBoard.getId(), tradeBoard.getTTitle(),
                 tradeBoard.getTContent(),tradeBoard.getStatus(), tradeBoard.getCreatedAt(),tradeBoard.getUpdatedAt()));
     }
-    public TradeBoard findById(Long id){
-        return tradeBoardRepository.findById(id).get();
+    public TradeBoardDto findById(Long id){
+        return tradeBoardRepository.findById(id).map(tradeBoard -> new TradeBoardDto(tradeBoard.getId(), tradeBoard.getTTitle(),
+                tradeBoard.getTContent(),tradeBoard.getStatus(), tradeBoard.getCreatedAt(),tradeBoard.getUpdatedAt())).get();
     }
 
 
+    public void deldetePost(TradeBoardDto tradeBoardDto) {
+        tradeBoardRepository.delete(tradeBoardDto.toEntity());
+    }
 }

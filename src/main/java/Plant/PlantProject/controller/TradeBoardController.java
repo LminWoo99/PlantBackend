@@ -2,6 +2,7 @@ package Plant.PlantProject.controller;
 
 import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.TradeBoardDto;
+import Plant.PlantProject.repository.TradeBoardRepository;
 import Plant.PlantProject.service.TradeBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -37,15 +38,16 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 public class TradeBoardController {
     private final TradeBoardService tradeBoardService;
+    private final TradeBoardRepository tradeBoardRepository;
 //    글작성 폼 호출
     @GetMapping("/post")
     public String write() {
-        return "/post";
+        return "index.html";
     }
     @PostMapping("/post")
     public String write(TradeBoardDto tradeBoardDto) {
         tradeBoardService.saveTradePost(tradeBoardDto);
-        return "redirect:/";
+        return "redirect:/post";
     }
 // 글리스트 페이징
     @GetMapping("/post/list")

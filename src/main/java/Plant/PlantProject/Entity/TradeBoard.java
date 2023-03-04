@@ -24,7 +24,7 @@ import java.util.List;
 public class TradeBoard {
     @Id
     @GeneratedValue
-    @Column(name= "tPostId")
+    @Column(name= "t_Post_Id")
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

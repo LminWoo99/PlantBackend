@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.time.LocalDateTime;
 /*
  작성자 : 이민우
@@ -17,7 +18,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class TradeBoardDto {
     private Long id;
+
     private String tTitle;
+
     private String tContent;
     private Status status;
     private LocalDateTime createdAt;

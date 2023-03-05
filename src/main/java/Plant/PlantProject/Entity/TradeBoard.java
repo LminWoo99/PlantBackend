@@ -1,5 +1,6 @@
 package Plant.PlantProject.Entity;
 
+import com.sun.istack.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +30,9 @@ public class TradeBoard {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+    @Column(name = "t_title")
     private String tTitle;
+    @Column(name = "t_content")
     private String tContent;
     @CreatedDate
     private LocalDateTime createdAt;

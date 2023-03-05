@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 /*
  작성자 : 이민우
  작성 일자: 02.19
@@ -33,12 +34,25 @@ import javax.annotation.PostConstruct;
  * 2022-02-24        이민우       특이사항 : boardContent를 엔티티 대신 dto 사용하고픔(추후 변경
  * 2022-02-28        이민우       특이사항 : boardContent를 엔티티 대신 dto 사용(테스트필수)
  * 2022-02-28        이민우       글 수정, 삭제기능 구현 (테스트 요망)
+ * 2022-03-05        이민우       프론트 연동 실패(db에 값이 안들어감), @RestController로 바꿔서 json 데이터로 보내도 안돰
  */
+//@RestController
+//@RequestMapping("/post")
 @Controller
 @RequiredArgsConstructor
 public class TradeBoardController {
     private final TradeBoardService tradeBoardService;
     private final TradeBoardRepository tradeBoardRepository;
+//    @GetMapping("")
+//    public List<TradeBoard> getAllPosts() {
+//        return tradeBoardService.getAllPosts();
+//    }
+//
+//    @PostMapping("")
+//    public TradeBoard createPost(@RequestBody TradeBoardDto tradeBoardDto) {
+//        return tradeBoardService.saveTradePost(tradeBoardDto);
+//    }
+
 //    글작성 폼 호출
     @GetMapping("/post")
     public String write() {

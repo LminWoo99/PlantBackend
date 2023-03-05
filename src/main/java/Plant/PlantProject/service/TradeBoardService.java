@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class TradeBoardService {
     private final TradeBoardRepository tradeBoardRepository;
     @Transactional
-    public Long saveTradePost(TradeBoardDto tradeBoardDto){
-        return tradeBoardRepository.save(tradeBoardDto.toEntity()).getId();
+    public void saveTradePost(TradeBoardDto tradeBoardDto){
+        tradeBoardRepository.save(tradeBoardDto.toEntity());
     }
     @Transactional(readOnly = true)
     public Page<TradeBoardDto> pageList(Pageable pageable) {

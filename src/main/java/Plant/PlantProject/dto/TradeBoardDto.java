@@ -39,6 +39,17 @@ public class TradeBoardDto {
         this.tContent = tContent;
     }
 
+    public TradeBoardDto(TradeBoard tradeBoard) {
+        this.id = tradeBoard.getId();
+        this.tTitle = tradeBoard.getTTitle();
+        this.tContent = tradeBoard.getTContent();
+        this.status = tradeBoard.getStatus();
+        this.createdAt = tradeBoard.getCreatedAt();
+        this.updatedAt = tradeBoard.getUpdatedAt();
+
+    }
+
+
     public TradeBoard toEntity() {
         return TradeBoard.builder()
                 .id(id)

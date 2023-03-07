@@ -38,7 +38,7 @@ const App = () => {
       content: tContent
     };
     axios.post("/post", newItem)
-      .then(response => setItems([...items, response.data]))
+      .then(response => setItems([...items, response.data.tradeBoardDto]))
       .catch(error => console.log(error));
     setTTitle("");
     setTContent("");

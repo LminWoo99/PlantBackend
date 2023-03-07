@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +37,6 @@ import java.util.List;
  * 2022-02-28        이민우       글 수정, 삭제기능 구현 (테스트 요망)
  * 2022-03-05        이민우       프론트 연동 실패(db에 값이 안들어감), @RestController로 바꿔서 json 데이터로 보내도 안돰
  */
-//@RestController
-//@RequestMapping("/post")
 @Controller
 @RequiredArgsConstructor
 public class TradeBoardController {
@@ -61,6 +60,7 @@ public class TradeBoardController {
     @PostMapping("/post")
     public String write(TradeBoardDto tradeBoardDto) {
         tradeBoardService.saveTradePost(tradeBoardDto);
+        System.out.println("tradeBoardDto = " + tradeBoardDto.getTTitle());
         return "redirect:/post";
     }
 // 글리스트 페이징
@@ -91,7 +91,7 @@ public class TradeBoardController {
     @DeleteMapping("/post/list/{id}")
     public String delete(@PathVariable("id") Long id){
         TradeBoardDto tradeBoardDto= tradeBoardService.findById(id);
-        tradeBoardService.deldetePost(tradeBoardDto);
+        tradeBoardService.deletePost(tradeBoardDto);
         return "redirect:/";
     }
 

@@ -1,6 +1,5 @@
 package Plant.PlantProject.controller;
 
-import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.TradeBoardDto;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import Plant.PlantProject.service.TradeBoardService;
@@ -8,13 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
 /*
  작성자 : 이민우
  작성 일자: 02.19
@@ -58,9 +53,9 @@ public class TradeBoardController {
         return "index.html";
     }
     @PostMapping("/post")
-    public String write(TradeBoardDto tradeBoardDto) {
+    public String write(@RequestBody TradeBoardDto tradeBoardDto) {
         tradeBoardService.saveTradePost(tradeBoardDto);
-        System.out.println("tradeBoardDto = " + tradeBoardDto.getTTitle());
+        System.out.println("tradeBoardDto = " + tradeBoardDto.getTitle());
         return "redirect:/post";
     }
 // 글리스트 페이징

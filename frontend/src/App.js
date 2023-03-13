@@ -34,8 +34,8 @@ const App = () => {
     }
 
     const newItem = {
-      title: tTitle,
-      content: tContent
+      tradeTitle: tTitle,
+      tradeContent: tContent
     };
     axios.post("/post", newItem)
       .then(response => setItems([...items, response.data.tradeBoardDto]))
@@ -45,7 +45,7 @@ const App = () => {
   };
 
   const handleDelete = (id) => {
-    axios.delete(`/post/${id}`)
+    axios.delete(`/post/list/${id}`)
       .then(response => setItems(items.filter(item => item.id !== id)))
       .catch(error => console.log(error));
   };

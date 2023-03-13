@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 /*
  작성자 : 이민우
@@ -19,30 +18,31 @@ import java.time.LocalDateTime;
 public class TradeBoardDto {
     private Long id;
 
-    private String tTitle;
+    private String tradeTitle;
 
-    private String tContent;
+    private String tradeContent;
     private Status status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     @Builder
-    public TradeBoardDto(Long id, String tTitle, String tContent, Status status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public TradeBoardDto(Long id, String tradeTitle, String tradeContent, Status status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.tTitle = tTitle;
-        this.tContent = tContent;
+        this.tradeTitle = tradeTitle;
+        this.tradeContent = tradeContent;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-    public TradeBoardDto(String tTitle, String tContent){
-        this.tTitle = tTitle;
-        this.tContent = tContent;
+    @Builder
+    public TradeBoardDto(String tradeTitle, String tradeContent){
+        this.tradeTitle = tradeTitle;
+        this.tradeContent = tradeContent;
     }
 
     public TradeBoardDto(TradeBoard tradeBoard) {
         this.id = tradeBoard.getId();
-        this.tTitle = tradeBoard.getTTitle();
-        this.tContent = tradeBoard.getTContent();
+        this.tradeTitle = tradeBoard.getTradeTitle();
+        this.tradeContent = tradeBoard.getTradeContent();
         this.status = tradeBoard.getStatus();
         this.createdAt = tradeBoard.getCreatedAt();
         this.updatedAt = tradeBoard.getUpdatedAt();
@@ -53,8 +53,8 @@ public class TradeBoardDto {
     public TradeBoard toEntity() {
         return TradeBoard.builder()
                 .id(id)
-                .tTitle(tTitle)
-                .tContent(tContent)
+                .tradeTitle(tradeTitle)
+                .tradeContent(tradeContent)
                 .status(status)
                 .build();
     }

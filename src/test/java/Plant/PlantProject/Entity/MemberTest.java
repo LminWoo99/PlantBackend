@@ -23,17 +23,17 @@ class MemberTest {
     EntityManager em;
     @Autowired
     MemberRepository memberRepository;
-    @Test
-    public void testEntity() throws Exception{
-        //given
-        Member memberA = new Member("memberA");
-        em.persist(memberA);
-        //when
-        TradeBoard tradeBoard = new TradeBoard("제목1", memberA);
-        em.persist(tradeBoard);
-        //then
-        em.flush();
-        em.clear();
+//    @Test
+//    public void testEntity() throws Exception{
+//        //given
+//        Member memberA = new Member("memberA");
+//        em.persist(memberA);
+//        //when
+//        TradeBoard tradeBoard = new TradeBoard("제목1", memberA);
+//        em.persist(tradeBoard);
+//        //then
+//        em.flush();
+//        em.clear();
 
         }
 

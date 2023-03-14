@@ -1,4 +1,4 @@
-package Plant.PlantProject.Entity;
+package Plant.PlantProject.service;
 
 import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.repository.MemberRepository;
@@ -21,9 +21,8 @@ import javax.persistence.PersistenceContext;
 @SpringBootTest
 @Transactional
 @Rollback(false)
-class MemberTest {
-    @PersistenceContext
-    EntityManager em;
+class MemberServiceTest {
+
     @Autowired
     MemberRepository memberRepository;
     @Autowired
@@ -32,9 +31,12 @@ class MemberTest {
     public void testEntity() throws Exception{
         //given
         MemberDto memberDto = new MemberDto("mw310", "이민우");
+        memberService.save(memberDto);
+        System.out.println("memberDto = " + memberService.findByUsername("이민우"));
+        System.out.println("memberDto = " + memberService.findByUserId("mw310"));
         Assertions.assertThat((memberService.findByUsername(memberDto.getName())).equals(memberDto));
         Assertions.assertThat((memberService.findByUserId(memberDto.getUserId())).equals(memberDto));
 
-        }
+    }
 
 }

@@ -51,8 +51,6 @@ public class Member {
         this.password = password;
         this.email = email;
     }
-   public Member(String userId) {
-       this.userId = userId;
-   }
+
 
 }

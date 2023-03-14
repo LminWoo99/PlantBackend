@@ -79,7 +79,6 @@ public class TradeBoardController {
     public ResponseEntity<TradeBoardDto> update(@PathVariable("id") Long id, @RequestBody TradeBoardDto tradeBoardDto){
         TradeBoardDto updatedTradeBoardDto=tradeBoardService.saveTradePost(tradeBoardDto);
         return ResponseEntity.ok(updatedTradeBoardDto);
-
     }
     //글 삭제
     @DeleteMapping("/list/{id}")

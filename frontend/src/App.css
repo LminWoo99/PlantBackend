@@ -1,38 +1,72 @@
-.App {
-  text-align: center;
+@charset "utf-8";
+
+@font-face {
+  font-family: "happy";
+  src: url("/Users/kirby/IdeaProjects/PlantProject/frontend/src/fonts/DNFBitBitTTF.ttf");
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app-container {
+  background-color: #EFFBF5;
+  height: 100vh;
+  background-size: cover;
+  margin: 0 auto;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
+
+.app-title {
+  font-size: 40px;
+  font-family: 'happy';
+  color: #04B486;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.app-form {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.app-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.app-textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: none;
+  height: 200px;
+}
+
+.app-button {
+  font-family: 'happy';
+  font-size: 30px;
+  padding: 10px 20px;
+  background-color: #fff;
+  color: #01DFA5;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.app-button:hover {
+  background-color: #E0F8F1;
+  color: #01DFA5;
 }

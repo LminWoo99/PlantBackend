@@ -20,7 +20,7 @@ public class MemberController {
 //        return "members/memberList";
 //    }
     //회원가입 창
-    @GetMapping("join")
+    @GetMapping("/join")
     public String addForm(){
         return "memberJoin";
     }

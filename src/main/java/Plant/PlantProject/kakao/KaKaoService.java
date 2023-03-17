@@ -3,6 +3,7 @@ package Plant.PlantProject.kakao;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.parser.JSONParser;
 import com.nimbusds.jose.shaded.json.parser.ParseException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -12,9 +13,23 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * packageName    : Plant/PlantProject/kakao
+ * fileName       : KaKaoService.java
+ * author         : 이민우
+ * date           : 2023-03-17
+ * description    : 카카오 로그인 api 서비스
+ * ===========================================================
+ * DATE              AUTHOR             NOTE
+ * -----------------------------------------------------------
+ * 2022-03-16        이민우       최초 생성
+ * 2022-03-17        이민우       카카오 api에서 이메일과 닉네임만 가져와서 엔티티에 저장
+ *
+ */
 @Service
+@RequiredArgsConstructor
 public class KaKaoService {
+    private final KaKaoRepository kaKaoRepository;
     public String getToken(String code) throws IOException {
         // 인가코드로 토큰받기
         String host = "https://kauth.kakao.com/oauth/token";
@@ -28,7 +43,7 @@ public class KaKaoService {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=2aad40910868e3c5fa9594f8de34a07b");
+            sb.append("&client_id=9f8bf0134e25a65f80e7b9849efc41ae");
             sb.append("&redirect_uri=http://localhost:8080/login/kakao");
             sb.append("&code=" + code);
 
@@ -45,7 +60,6 @@ public class KaKaoService {
                 result += line;
             }
             System.out.println("result = " + result);
-
             // json parsing
             JSONParser parser = new JSONParser();
             JSONObject elem = (JSONObject) parser.parse(result);
@@ -75,11 +89,9 @@ public class KaKaoService {
         Map<String, Object> result = new HashMap<>();
         try {
             URL url = new URL(host);
-
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Authorization", "Bearer " + access_token);
             urlConnection.setRequestMethod("GET");
-
             int responseCode = urlConnection.getResponseCode();
             System.out.println("responseCode = " + responseCode);
 
@@ -101,14 +113,14 @@ public class KaKaoService {
             JSONObject properties = (JSONObject) obj.get("properties");
 
 
-            String id = obj.get("id").toString();
             String nickname = properties.get("nickname").toString();
-            String age_range = kakao_account.get("age_range").toString();
+            String email = kakao_account.get("email").toString();
 
-            result.put("id", id);
             result.put("nickname", nickname);
-            result.put("age_range", age_range);
-
+            result.put("email", email);
+            System.out.println("nickname = " + nickname);
+            KaKaoMember kaKaoMember = new KaKaoMember(email, nickname);
+            kaKaoRepository.save(kaKaoMember);
             br.close();
 
 

@@ -1,21 +1,35 @@
 package Plant.PlantProject.kakao;
 
+import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.patterns.IToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * packageName    : Plant/PlantProject/kakao
+ * fileName       : KaKaoController.java
+ * author         : 이민우
+ * date           : 2023-03-17
+ * description    : 카카오 로그인 api controller
+ * ===========================================================
+ * DATE              AUTHOR             NOTE
+ * -----------------------------------------------------------
+ * 2022-03-16        이민우       최초 생성
+ * 2022-03-17        이민우       endpoint=/member/do(로그인 페이지),endpoint=/login/kakao(로그인 후페이지)
+ *
+ */
 @Controller
+@RequiredArgsConstructor
 public class KaKaoController {
 
-    @Autowired
-    KaKaoService kaKaoService;
+    private final KaKaoService kaKaoService;
+
     @GetMapping("/member/do")
     public String loginPage()
     {
@@ -30,7 +44,6 @@ public class KaKaoController {
         model.addAttribute("access_token", access_token);
         model.addAttribute("userInfo", userInfo);
 
-        //ci는 비즈니스 전환후 검수신청 -> 허락받아야 수집 가능
         return "index";
     }
 }

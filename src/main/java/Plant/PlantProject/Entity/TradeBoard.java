@@ -1,6 +1,5 @@
 package Plant.PlantProject.Entity;
 
-import com.sun.istack.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,15 +24,15 @@ import java.util.List;
 public class TradeBoard {
     @Id
     @GeneratedValue
-    @Column(name= "t_Post_Id")
+    @Column(name= "tradePost_Id")
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-    @Column(name = "t_title")
-    private String tTitle;
-    @Column(name = "t_content")
-    private String tContent;
+
+    private String tradeTitle;
+
+    private String tradeContent;
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
@@ -44,16 +43,16 @@ public class TradeBoard {
     List<KeyWord> keyWordList = new ArrayList<KeyWord>();
     @OneToMany(mappedBy = "tradeBoard")
     List<Goods> goodsList = new ArrayList<Goods>();
-    public TradeBoard(String tTitle, Member member) {
-        this.tTitle=tTitle;
-        this.member = member;
+    public TradeBoard(String tradeTitle, String tradeContent) {
+        this.tradeTitle = tradeTitle;
+        this.tradeContent = tradeContent;
     }
     @Builder
-    public TradeBoard(Long id, Member member, String tTitle, String tContent, Status status) {
+    public TradeBoard(Long id, Member member, String tradeTitle, String tradeContent, Status status) {
         this.id = id;
         this.member = member;
-        this.tTitle = tTitle;
-        this.tContent = tContent;
+        this.tradeTitle = tradeTitle;
+        this.tradeContent = tradeContent;
         this.status = status;
     }
     @PrePersist

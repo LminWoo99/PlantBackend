@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function PostForm() {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [tTitle, setTTitle] = useState('');
+  const [tContent, setTContent] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = { title, content };
+    const data = { tTitle, tContent };
     axios.post('/post', data)
       .then(response => {
         console.log(response);
@@ -24,12 +24,12 @@ function PostForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="title">Title:</label>
-        <input type="text" id="title" value={title} onChange={(event) => setTitle(event.target.value)} />
+        <label htmlFor="tTitle">tTitle:</label>
+        <input type="text" id="tTitle" value={tTitle} onChange={(event) => setTTitle(event.target.value)} />
       </div>
       <div>
-        <label htmlFor="content">Content:</label>
-        <textarea id="content" value={content} onChange={(event) => setContent(event.target.value)} />
+        <label htmlFor="tContent">tContent:</label>
+        <textarea id="tContent" value={tContent} onChange={(event) => setTContent(event.target.value)} />
       </div>
       <button type="submit">Submit</button>
     </form>

@@ -3,8 +3,10 @@ package Plant.PlantProject.dto;
 import Plant.PlantProject.Entity.Member;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class MemberDto {
     private Long Id;
     private String name; //회원 이름
@@ -19,6 +21,10 @@ public class MemberDto {
         this.password = password;
         this.email = email;
         this.nickname = nickname;
+    }
+
+    public MemberDto(String name) {
+        this.name = name;
     }
 
     public MemberDto(String userId, String name) {

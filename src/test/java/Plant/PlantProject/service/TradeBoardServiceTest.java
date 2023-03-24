@@ -1,6 +1,5 @@
 package Plant.PlantProject.service;
 
-import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.TradeBoardDto;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import org.junit.jupiter.api.Test;
@@ -51,11 +50,11 @@ class TradeBoardServiceTest {
         tradeBoardService.saveTradePost(tradeBoardDto);
 
         //then
-        System.out.println("tradeBoard의 제목은 = " + tradeBoardDto.getTTitle());
-        System.out.println("tradeBoard의 내용은 = " + tradeBoardDto.getTContent());
+        System.out.println("tradeBoard의 제목은 = " + tradeBoardDto.getTradeTitle());
+        System.out.println("tradeBoard의 내용은 = " + tradeBoardDto.getTradeContent());
         System.out.println("tradeBoard의 id = " + tradeBoardService.findById(1L));
-        assertThat(tradeBoardDto.toEntity().getTTitle()).isEqualTo("test 타이틀");
-        assertThat(tradeBoardDto.getTContent()).isEqualTo("테스트 내용");
+        assertThat(tradeBoardDto.toEntity().getTradeTitle()).isEqualTo("test 타이틀");
+        assertThat(tradeBoardDto.getTradeContent()).isEqualTo("테스트 내용");
 //        tradeBoardRepository.delete(tradeBoardDto);
 //
 //        System.out.println("tradeBoard의 저장 유무 = " + tradeBoardRepository.findById(tradeBoard.getId()));
@@ -83,8 +82,8 @@ public void 게시글페이징 () throws Exception{
         TradeBoardDto tradeBoardDto1=tradeBoardService.findById(1L);
 
         //then
-        assertThat(tradeBoardDto1.getTTitle()).isEqualTo("title0");
-        System.out.println("tradeBoardDto1 = " + tradeBoardDto1.getTTitle());
+        assertThat(tradeBoardDto1.getTradeTitle()).isEqualTo("title0");
+        System.out.println("tradeBoardDto1 = " + tradeBoardDto1.getTradeTitle());
 
         }
 }

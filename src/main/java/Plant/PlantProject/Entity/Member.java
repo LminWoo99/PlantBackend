@@ -2,6 +2,7 @@ package Plant.PlantProject.Entity;
 
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -23,11 +24,16 @@ public class Member {
     private Long id;  //고유번호
     private String name; //회원 이름
     private String userId; ///유저 아이디 V
+    @Setter
     private String password; //비번 V
     private String email; //email
     private String nickname; // 닉네임 V
 
     private String phoneNumber;
+    @Enumerated(EnumType.STRING)
+    @Setter
+    private Role role;
+
 
     @CreatedDate
     private LocalDateTime joinDate; //가입일자
@@ -52,5 +58,14 @@ public class Member {
         this.email = email;
     }
 
+    public Member(String email, String nickname, SocialLogin socialLogin) {
+        this.email = email;
+        this.nickname = nickname;
+        this.socialLogin = socialLogin;
+    }
+    @PrePersist
+    protected void onCreate() {
+        this.joinDate = LocalDateTime.now();
 
+    }
 }

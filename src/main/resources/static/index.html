@@ -1,1 +1,26 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="/favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="Web site created using create-react-app"/><link rel="apple-touch-icon" href="/logo192.png"/><link rel="manifest" href="/manifest.json"/><title>React App</title><script defer="defer" src="/static/js/main.033465d4.js"></script><link href="/static/css/main.073c9b0a.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>HELLO OAuth</title>
+
+</head>
+
+<body>
+<fieldset>
+    <label>로그인</label> <br>
+    <div id="googleLoginBtn" style="cursor: pointer">
+        <img id="googleLoginImg" src="./images/btn_google_signin_light_pressed_web.png">
+    </div>
+</fieldset>
+</body>
+
+<script>
+ 	const onClickGoogleLogin = (e) => {
+ 		window.location.replace("https://accounts.google.com/o/oauth2/v2/auth?client_id=972537603447-tvb2fki3ncpdoneeajl2b033ncnl3hpf.apps.googleusercontent.com&redirect_uri=http://localhost:8080/login/auth/google/&response_type=code&scope=email%20profile%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.file&access_type=offline")
+ 	}
+
+	const googleLoginBtn = document.getElementById("googleLoginBtn");
+	googleLoginBtn.addEventListener("click", onClickGoogleLogin)
+</script>
+</html>

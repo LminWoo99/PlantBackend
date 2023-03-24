@@ -1,5 +1,8 @@
 package Plant.PlantProject.kakao;
 
+import Plant.PlantProject.Entity.Member;
+import Plant.PlantProject.dto.MemberDto;
+import Plant.PlantProject.repository.MemberRepository;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.parser.JSONParser;
 import com.nimbusds.jose.shaded.json.parser.ParseException;
@@ -13,6 +16,9 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import static Plant.PlantProject.Entity.SocialLogin.KAKAO;
+
 /**
  * packageName    : Plant/PlantProject/kakao
  * fileName       : KaKaoService.java
@@ -29,7 +35,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class KaKaoService {
-    private final KaKaoRepository kaKaoRepository;
+    private final MemberRepository memberRepository;
     public String getToken(String code) throws IOException {
         // 인가코드로 토큰받기
         String host = "https://kauth.kakao.com/oauth/token";
@@ -119,8 +125,8 @@ public class KaKaoService {
             result.put("nickname", nickname);
             result.put("email", email);
             System.out.println("nickname = " + nickname);
-            KaKaoMember kaKaoMember = new KaKaoMember(email, nickname);
-            kaKaoRepository.save(kaKaoMember);
+            Member member = new Member(email, nickname,KAKAO);
+            memberRepository.save(member);
             br.close();
 
 

@@ -56,7 +56,7 @@ public class TradeBoardController {
     }
 //    @GetMapping("/post")
 //    public String write() {
-//        return "index.html";
+//        return "indexKakao.html";
 //    }
 //    @PostMapping("/post")
 //    public String write(@RequestBody TradeBoardDto tradeBoardDto) {

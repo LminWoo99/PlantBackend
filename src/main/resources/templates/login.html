@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 페이지</title>
+</head>
+<body>
+<h1>로그인 페이지</h1>
+<hr/>
+
+<h2>로그인 유저 : </h2>
+<p sec:authentication="principal" style="width:100px; font-size:0.8em;"></p>
+
+<div sec:authorize="isAnonymous()" style="background-color:pink; padding:1em;">
+    <form action="/login" method="post" >
+        <input type="text" name="name" />
+        <input type="password" name="password" />
+        <button>로그인</button>
+    </form>
+
+    <a href="/oauth2/authorization/google">구글 로그인</a>
+    <!-- /oauth2/authorization/{registrationId}에 요청이 들어오면, 스프링 시큐리티가 provider의 authorization-uri로 요청을 전달한다-->
+    <br><br>
+
+    <a href="/joinForm">회원가입하기</a><br>
+</div>
+
+<div sec:authorize="isAuthenticated()" style="background-color:pink; padding:1em;">
+    <a href="/logout">로그아웃</a>
+</div>
+
+<br><br>
+<a href="/user">유저</a><br>
+<a href="/manager" sec:authorize="hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')">매니저</a><br>
+<a href="/admin" sec:authorize="hasRole('ROLE_ADMIN')">어드민</a><br>
+
+<br><br>
+<a href="/loginInfo">로그인 정보</a>
+
+
+</body>
+</html>

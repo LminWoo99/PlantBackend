@@ -44,6 +44,6 @@ public class KaKaoController {
         model.addAttribute("access_token", access_token);
         model.addAttribute("userInfo", userInfo);
 
-        return "index";
+        return "indexKakao";
     }
 }

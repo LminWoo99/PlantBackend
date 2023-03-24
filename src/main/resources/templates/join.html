@@ -1,0 +1,81 @@
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>회원가입 페이지</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>회원가입 페이지</h1>-->
+<!--<hr/>-->
+<!--<form action="/join" method="post">-->
+<!--    <input type="text" name="name" placeholder="Username"/> <br/>-->
+<!--    <input type="password" name="password" placeholder="Password"/> <br/>-->
+<!--    <input type="email" name="email" placeholder="Email"/> <br/>-->
+<!--    <button>회원가입</button>-->
+<!--</form>-->
+<!--</body>-->
+<!--</html>-->
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>회원가입</title>
+
+    <!-- Custom styles for this template -->
+</head>
+<body class="text-center">
+
+<main class="form-signin">
+    <form action="join.html" th:action th:object="${member}"method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div style="padding:60px;"></div>
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+        <div style="padding:50px;"></div>
+
+        <div class="d-grid gap-2 col-5 mx-auto form-floating">
+            <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디">
+            <label for="userId">아이디</label>
+        </div>
+
+        <div style="padding:10px;"></div>
+
+        <div class="d-grid gap-2 col-5 mx-auto form-floating">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+            <label for="password">비밀번호</label>
+        </div>
+
+        <div style="padding:10px;"></div>
+
+        <div class="d-grid gap-2 col-5 mx-auto form-floating">
+            <input type="text" class="form-control" id="email" name="email" placeholder="name@example.com">
+            <label for="email">Email</label>
+        </div>
+        <div class="checkbox mb-3">
+
+        </div>
+        <div class ="d-grid gap-2 col-4 mx-auto">
+            <button class="btn btn-lg text-white"
+                    style="background-color: #01AB69"
+                    type="submit">회원가입</button>
+
+            <button class="btn btn-lg btn-secondary "
+                    onclick="location.href='index.html'"
+                    th:onclick="|location.href='@{/loginForm}'|"
+                    type="button">취소</button>
+        </div>
+
+    </form>
+</main>
+
+
+
+</body>
+<footer class="py-5 text-center">
+    <p>&copy; VGM</p>
+</footer>
+</html>

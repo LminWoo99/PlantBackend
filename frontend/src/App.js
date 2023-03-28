@@ -1,30 +1,48 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
+const NoticeWriteComponent = ({ onEditorChange, onSubmit }) => {
+  const [desc, setDesc] = useState("");
+
+  const handleChange = (value) => {
+    setDesc(value);
+    onEditorChange(value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onSubmit();
+  };
+
+  return (
+    <div className="notice-write-component">
+      <div className="editor-wrapper">
+        <ReactQuill value={desc} onChange={handleChange} />
+      </div>
+      <div className="button-wrapper">
+        <button className="app-button" onClick={handleSubmit}>
+          등록
+        </button>
+      </div>
+    </div>
+  );
+};
+
+
 
 const App = () => {
-  const [items, setItems] = useState([]);
   const [tTitle, setTTitle] = useState("");
   const [tContent, setTContent] = useState("");
-
-  useEffect(() => {
-    axios
-      .get("/post")
-      .then((response) => setItems(response.data))
-      .catch((error) => console.log(error));
-  }, []);
-
-  const [textareaHeight, setTextareaHeight] = useState({
-    row: 1,
-    lineBreak: {},
-  });
 
   const handleTTitleChange = (event) => {
     setTTitle(event.target.value);
   };
 
-  const handleTContentChange = (event) => {
-    setTContent(event.target.value);
+  const handleTContentChange = (value) => {
+    setTContent(value);
   };
 
   const handleSubmit = (event) => {
@@ -40,20 +58,11 @@ const App = () => {
     };
     axios
       .post("/post", newItem)
-      .then((response) =>
-        setItems([...items, response.data.tradeBoardDto])
-      )
-      .catch((error) => console.log(error));
-    setTTitle("");
-    setTContent("");
-  };
-
-  const handleDelete = (id) => {
-    axios
-      .delete(`/post/${id}`)
-      .then((response) =>
-        setItems(items.filter((item) => item.id !== id))
-      )
+      .then((response) => {
+        // 처리 완료 후 작성한 글 초기화
+        setTTitle("");
+        setTContent("");
+      })
       .catch((error) => console.log(error));
   };
 
@@ -62,10 +71,10 @@ const App = () => {
       <h1 className="app-title">식구2</h1>
       <form onSubmit={handleSubmit} className="app-form">
         <select className="app-select">
-        <option>게시판 종류</option>
-        <option value="notice">정보게시판</option>
-        <option value="free">자유게시판</option>
-        <option value="free">플러스 알파</option>
+          <option>게시판 종류</option>
+          <option value="notice">정보게시판</option>
+          <option value="free">자유게시판</option>
+          <option value="alpha">플러스 알파</option>
         </select>
         <input
           type="text"
@@ -74,18 +83,14 @@ const App = () => {
           placeholder="제목"
           className="app-input"
         />
-        <textarea
-          value={tContent}
-          onChange={handleTContentChange}
-          placeholder="내용"
-          className="app-textarea"
-        ></textarea>
-        <button type="submit" className="app-button">
-          등록
-        </button>
+        <NoticeWriteComponent
+          onEditorChange={handleTContentChange}
+          onSubmit={handleSubmit}
+        />
       </form>
     </div>
   );
 };
+
 
 export default App;

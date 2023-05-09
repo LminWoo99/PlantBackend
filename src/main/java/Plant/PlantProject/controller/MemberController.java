@@ -30,6 +30,7 @@ import java.util.Map;
  * 2022-03-05        이민우       MemberController 생성
  * 2022-03-24        이민우       로그인 뷰 엔드포인트 "/loginForm", 회원가입 뷰 엔드포인트 "/joinForm"
  * 2022-03-24        이민우       로그인을 할때는 프론트단에서 데이터 요청 후 일치하면 로그인 완료, 회원가입시 백단에 데이터 받고 프론트에 넘겨줌
+ * 2022-05-03        이민우       자체로그인, 구글로그인은 "loginForm",
  */
 @Controller
 @RequiredArgsConstructor

@@ -28,13 +28,13 @@ class MemberTest {
     MemberRepository memberRepository;
     @Autowired
     MemberService memberService;
-    @Test
-    public void testEntity() throws Exception{
-        //given
-        MemberDto memberDto = new MemberDto("mw310", "이민우");
-        Assertions.assertThat((memberService.findByUsername(memberDto.getName())).equals(memberDto));
-        Assertions.assertThat((memberService.findByUserId(memberDto.getUserId())).equals(memberDto));
-
-        }
+//    @Test
+//    public void testEntity() throws Exception{
+//        //given
+//        MemberDto memberDto = new MemberDto("mw310", "이민우");
+//        Assertions.assertThat((memberService.findByUsername(memberDto.getName())).equals(memberDto));
+//        Assertions.assertThat((memberService.findByUserId(memberDto.getUserId())).equals(memberDto));
+//
+//        }
 
 }

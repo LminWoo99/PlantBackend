@@ -30,9 +30,9 @@ public class TradeBoard {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private String tradeTitle;
+    private String tTitle;
 
-    private String tradeContent;
+    private String tContent;
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
@@ -43,16 +43,16 @@ public class TradeBoard {
     List<KeyWord> keyWordList = new ArrayList<KeyWord>();
     @OneToMany(mappedBy = "tradeBoard")
     List<Goods> goodsList = new ArrayList<Goods>();
-    public TradeBoard(String tradeTitle, String tradeContent) {
-        this.tradeTitle = tradeTitle;
-        this.tradeContent = tradeContent;
+    public TradeBoard(String tTitle, String tContent) {
+        this.tTitle = tTitle;
+        this.tContent = tContent;
     }
     @Builder
-    public TradeBoard(Long id, Member member, String tradeTitle, String tradeContent, Status status) {
+    public TradeBoard(Long id, Member member, String tTitle, String tContent, Status status) {
         this.id = id;
         this.member = member;
-        this.tradeTitle = tradeTitle;
-        this.tradeContent = tradeContent;
+        this.tTitle = tTitle;
+        this.tContent = tContent;
         this.status = status;
     }
     @PrePersist

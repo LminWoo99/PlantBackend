@@ -28,6 +28,7 @@ public class TradeBoardService {
     @Transactional
     public TradeBoardDto saveTradePost(TradeBoardDto tradeBoardDto){
         tradeBoardRepository.save(tradeBoardDto.toEntity());
+        System.out.println("service 통과");
         return tradeBoardDto;
     }
     @Transactional
@@ -36,8 +37,8 @@ public class TradeBoardService {
         List<TradeBoardDto> tradeBoardDtoList = new ArrayList<>();
         for (TradeBoard tradeBoard : tradeBoardList) {
             TradeBoardDto tradeBoardDto = new TradeBoardDto();
-            tradeBoardDto.setTradeTitle(tradeBoard.getTradeTitle());
-            tradeBoardDto.setTradeContent(tradeBoard.getTradeContent());
+            tradeBoardDto.setTitle(tradeBoard.getTTitle());
+            tradeBoardDto.setContent(tradeBoard.getTContent());
             // Set other fields as well
             tradeBoardDtoList.add(tradeBoardDto);
         }
@@ -45,12 +46,12 @@ public class TradeBoardService {
     }
     @Transactional(readOnly = true)
     public Page<TradeBoardDto> pageList(Pageable pageable) {
-        return tradeBoardRepository.findAll(pageable).map(tradeBoard -> new TradeBoardDto(tradeBoard.getId(), tradeBoard.getTradeTitle(),
-                tradeBoard.getTradeContent(),tradeBoard.getStatus(), tradeBoard.getCreatedAt(),tradeBoard.getUpdatedAt()));
+        return tradeBoardRepository.findAll(pageable).map(tradeBoard -> new TradeBoardDto(tradeBoard.getId(), tradeBoard.getTTitle(),
+                tradeBoard.getTContent(),tradeBoard.getStatus(), tradeBoard.getCreatedAt(),tradeBoard.getUpdatedAt()));
     }
     public TradeBoardDto findById(Long id){
-        return tradeBoardRepository.findById(id).map(tradeBoard -> new TradeBoardDto(tradeBoard.getId(), tradeBoard.getTradeTitle(),
-                tradeBoard.getTradeContent(),tradeBoard.getStatus(), tradeBoard.getCreatedAt(),tradeBoard.getUpdatedAt())).get();
+        return tradeBoardRepository.findById(id).map(tradeBoard -> new TradeBoardDto(tradeBoard.getId(), tradeBoard.getTTitle(),
+                tradeBoard.getTContent(),tradeBoard.getStatus(), tradeBoard.getCreatedAt(),tradeBoard.getUpdatedAt())).get();
     }
 
 

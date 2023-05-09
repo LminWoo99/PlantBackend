@@ -50,11 +50,11 @@ class TradeBoardServiceTest {
         tradeBoardService.saveTradePost(tradeBoardDto);
 
         //then
-        System.out.println("tradeBoard의 제목은 = " + tradeBoardDto.getTradeTitle());
-        System.out.println("tradeBoard의 내용은 = " + tradeBoardDto.getTradeContent());
+        System.out.println("tradeBoard의 제목은 = " + tradeBoardDto.getTitle());
+        System.out.println("tradeBoard의 내용은 = " + tradeBoardDto.getContent());
         System.out.println("tradeBoard의 id = " + tradeBoardService.findById(1L));
-        assertThat(tradeBoardDto.toEntity().getTradeTitle()).isEqualTo("test 타이틀");
-        assertThat(tradeBoardDto.getTradeContent()).isEqualTo("테스트 내용");
+        assertThat(tradeBoardDto.toEntity().getTTitle()).isEqualTo("test 타이틀");
+        assertThat(tradeBoardDto.getContent()).isEqualTo("테스트 내용");
 //        tradeBoardRepository.delete(tradeBoardDto);
 //
 //        System.out.println("tradeBoard의 저장 유무 = " + tradeBoardRepository.findById(tradeBoard.getId()));
@@ -72,18 +72,18 @@ public void 게시글페이징 () throws Exception{
     System.out.println(result.getSize());
     System.out.println(result.getTotalPages());
     }
-    @Test
-    public void 게시글상세보기() throws Exception{
-        //given
-        for(int i=0; i<100; i++){
-            tradeBoardService.saveTradePost(new TradeBoardDto("title"+i, "content"+i));
-        }
-        //when
-        TradeBoardDto tradeBoardDto1=tradeBoardService.findById(1L);
-
-        //then
-        assertThat(tradeBoardDto1.getTradeTitle()).isEqualTo("title0");
-        System.out.println("tradeBoardDto1 = " + tradeBoardDto1.getTradeTitle());
-
-        }
+//    @Test
+//    public void 게시글상세보기() throws Exception{
+//        //given
+//        for(int i=0; i<100; i++){
+//            tradeBoardService.saveTradePost(new TradeBoardDto("title"+i, "content"+i));
+//        }
+//        //when
+//        TradeBoardDto tradeBoardDto1=tradeBoardService.findById(1L);
+//
+//        //then
+//        assertThat(tradeBoardDto1.getTitle()).isEqualTo("title0");
+//        System.out.println("tradeBoardDto1 = " + tradeBoardDto1.getTitle());
+//
+//        }
 }

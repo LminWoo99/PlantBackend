@@ -18,31 +18,30 @@ import java.time.LocalDateTime;
 public class TradeBoardDto {
     private Long id;
 
-    private String tradeTitle;
+    private String title;
 
-    private String tradeContent;
+    private String content;
     private Status status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     @Builder
-    public TradeBoardDto(Long id, String tradeTitle, String tradeContent, Status status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public TradeBoardDto(Long id, String title, String content, Status status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.tradeTitle = tradeTitle;
-        this.tradeContent = tradeContent;
+        this.title = title;
+        this.content = content;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-    @Builder
-    public TradeBoardDto(String tradeTitle, String tradeContent){
-        this.tradeTitle = tradeTitle;
-        this.tradeContent = tradeContent;
+    public TradeBoardDto(String title, String content){
+        this.title = title;
+        this.content = content;
     }
 
     public TradeBoardDto(TradeBoard tradeBoard) {
         this.id = tradeBoard.getId();
-        this.tradeTitle = tradeBoard.getTradeTitle();
-        this.tradeContent = tradeBoard.getTradeContent();
+        this.title = tradeBoard.getTTitle();
+        this.content = tradeBoard.getTContent();
         this.status = tradeBoard.getStatus();
         this.createdAt = tradeBoard.getCreatedAt();
         this.updatedAt = tradeBoard.getUpdatedAt();
@@ -53,8 +52,8 @@ public class TradeBoardDto {
     public TradeBoard toEntity() {
         return TradeBoard.builder()
                 .id(id)
-                .tradeTitle(tradeTitle)
-                .tradeContent(tradeContent)
+                .tTitle(title)
+                .tContent(content)
                 .status(status)
                 .build();
     }

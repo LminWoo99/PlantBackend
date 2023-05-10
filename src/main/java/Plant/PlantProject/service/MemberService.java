@@ -2,6 +2,7 @@ package Plant.PlantProject.service;
 
 import Plant.PlantProject.Entity.Member;
 import Plant.PlantProject.Entity.Role;
+import Plant.PlantProject.Entity.SocialLogin;
 import Plant.PlantProject.auth.PrincipalDetails;
 import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.repository.MemberRepository;
@@ -24,9 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static Plant.PlantProject.Entity.SocialLogin.NON;
+
 @Service
 @RequiredArgsConstructor
-public class MemberService extends DefaultOAuth2UserService{
+public class MemberService extends DefaultOAuth2UserService implements UserDetailsService{
     private final MemberRepository memberRepository;
     BCryptPasswordEncoder passwordEncoder;
 //    @Override
@@ -60,8 +63,7 @@ public class MemberService extends DefaultOAuth2UserService{
 
 
     public void save(MemberDto memberDto) {
-        memberRepository.save(memberDto.toEntity()
-        );
+        memberRepository.save(memberDto.toEntity());
     }
     public List<Member> findAll(){
 
@@ -83,9 +85,13 @@ public class MemberService extends DefaultOAuth2UserService{
         // 비밀번호 암호화
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
-
+        memberDto.setSocialLogin(NON);
         return memberRepository.save(memberDto.toEntity()).getId();
     }
 
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
+}

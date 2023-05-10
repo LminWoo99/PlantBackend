@@ -50,12 +50,13 @@ public class Member {
     List<KeyWord> keyWordList = new ArrayList<KeyWord>();
 
     @Builder
-    public Member(String name, String userId, String nickname, String password, String email) {
+    public Member(String name, String userId, String nickname, String password, String email, SocialLogin socialLogin) {
         this.name = name;
         this.userId = userId;
         this.nickname = nickname;
         this.password = password;
         this.email = email;
+        this.socialLogin = socialLogin;
     }
 
     public Member(String email, String nickname, SocialLogin socialLogin) {

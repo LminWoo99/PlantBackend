@@ -10,6 +10,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 /*
  작성자 : 이민우
  작성 일자: 02.19
@@ -32,32 +34,33 @@ import org.springframework.web.bind.annotation.*;
  * 2022-02-28        이민우       글 수정, 삭제기능 구현 (테스트 요망)
  * 2022-03-05        이민우       프론트 연동 실패(db에 값이 안들어감), @RestController로 바꿔서 json 데이터로 보내도 안돰
  */
-@Controller
+@RestController
+@RequestMapping("/post")
 @RequiredArgsConstructor
 public class TradeBoardController {
     private final TradeBoardService tradeBoardService;
-    @GetMapping("/post")
-    public String write() {
-        System.out.println("tradeBoardService = " + tradeBoardService);
-        return "index.html";
-    }
-    @PostMapping("/post")
-        public String write(@RequestBody TradeBoardDto tradeBoardDto) {
-            System.out.println("tradeBoardDto = " + tradeBoardDto.getTitle());
-            tradeBoardService.saveTradePost(tradeBoardDto);
-            return "redirect:/post";
-        }
-
-    //    글작성 폼 호출
-//    @GetMapping("")
-//    public List<TradeBoardDto> write() {
-//        return tradeBoardService.findAll();
+//    @GetMapping("/post")
+//    public String write() {
+//        System.out.println("tradeBoardService = " + tradeBoardService);
+//        return "index.html";
 //    }
-//    @PostMapping("")
-//    public ResponseEntity<TradeBoardDto> write(@RequestBody TradeBoardDto tradeBoardDto) {
+//    @PostMapping("/post")
+//        public String write(@RequestBody TradeBoardDto tradeBoardDto) {
+//        System.out.println("호출");
 //        tradeBoardService.saveTradePost(tradeBoardDto);
-//        return ResponseEntity.ok().body(tradeBoardDto);
-//    }
+//
+//            return "redirect:/post";
+//        }
+
+    @GetMapping("")
+    public List<TradeBoardDto> write() {
+        return tradeBoardService.findAll();
+    }
+    @PostMapping("")
+    public ResponseEntity<TradeBoardDto> write(@RequestBody TradeBoardDto tradeBoardDto) {
+        tradeBoardService.saveTradePost(tradeBoardDto);
+        return ResponseEntity.ok().body(tradeBoardDto);
+    }
     //    @GetMapping("/post")
 //    public String write() {
 //        return "indexKakao.html";

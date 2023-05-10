@@ -50,11 +50,11 @@ class TradeBoardServiceTest {
         tradeBoardService.saveTradePost(tradeBoardDto);
 
         //then
-        System.out.println("tradeBoard의 제목은 = " + tradeBoardDto.getTitle());
-        System.out.println("tradeBoard의 내용은 = " + tradeBoardDto.getContent());
+        System.out.println("tradeBoard의 제목은 = " + tradeBoardDto.gettTitle());
+        System.out.println("tradeBoard의 내용은 = " + tradeBoardDto.gettContent());
         System.out.println("tradeBoard의 id = " + tradeBoardService.findById(1L));
         assertThat(tradeBoardDto.toEntity().getTTitle()).isEqualTo("test 타이틀");
-        assertThat(tradeBoardDto.getContent()).isEqualTo("테스트 내용");
+        assertThat(tradeBoardDto.gettContent()).isEqualTo("테스트 내용");
 //        tradeBoardRepository.delete(tradeBoardDto);
 //
 //        System.out.println("tradeBoard의 저장 유무 = " + tradeBoardRepository.findById(tradeBoard.getId()));

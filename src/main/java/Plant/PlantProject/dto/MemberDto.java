@@ -1,6 +1,7 @@
 package Plant.PlantProject.dto;
 
 import Plant.PlantProject.Entity.Member;
+import Plant.PlantProject.Entity.SocialLogin;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ public class MemberDto {
     private String password; //비번 V
     private String email; //email
     private String nickname; // 닉네임 V
-    @Builder
+    private SocialLogin socialLogin;
     public MemberDto(String name, String userId, String password, String email, String nickname) {
         this.name = name;
         this.userId = userId;
@@ -39,6 +40,7 @@ public class MemberDto {
                 .nickname(nickname)
                 .password(password)
                 .email(email)
+                .socialLogin(socialLogin)
                 .build();
     }
 }

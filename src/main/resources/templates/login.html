@@ -12,7 +12,7 @@
 <p sec:authentication="principal" style="width:100px; font-size:0.8em;"></p>
 
 <div sec:authorize="isAnonymous()" style="background-color:pink; padding:1em;">
-    <form action="/login" method="post" >
+    <form action="/login/result" method="post" >
         <input type="text" name="name" />
         <input type="password" name="password" />
         <button>로그인</button>

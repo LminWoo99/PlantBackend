@@ -29,17 +29,21 @@ public class TradeBoardService {
     public TradeBoardDto saveTradePost(TradeBoardDto tradeBoardDto){
         tradeBoardRepository.save(tradeBoardDto.toEntity());
         System.out.println("service 통과");
-        return tradeBoardDto ;
+        return tradeBoardDto;
     }
     @Transactional
     public List<TradeBoardDto> findAll(){
         List<TradeBoard> tradeBoardList =tradeBoardRepository.findAll();
         List<TradeBoardDto> tradeBoardDtoList = new ArrayList<>();
         for (TradeBoard tradeBoard : tradeBoardList) {
-            TradeBoardDto tradeBoardDto = new TradeBoardDto();
-//            tradeBoardDto.settTitle(tradeBoard.getTTitle());
-//            tradeBoardDto.settContent(tradeBoard.getTContent());
-            // Set other fields as well
+            TradeBoardDto tradeBoardDto = TradeBoardDto.builder().
+            id(tradeBoard.getId())
+                    .title(tradeBoard.getTTitle())
+                    .content(tradeBoard.getTContent())
+                    .status(tradeBoard.getStatus())
+                    .build();
+
+
             tradeBoardDtoList.add(tradeBoardDto);
         }
         return tradeBoardDtoList;

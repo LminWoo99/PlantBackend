@@ -35,43 +35,18 @@ import java.util.List;
  * 2022-03-05        이민우       프론트 연동 실패(db에 값이 안들어감), @RestController로 바꿔서 json 데이터로 보내도 안돰
  */
 @RestController
-@RequestMapping("/post")
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class TradeBoardController {
     private final TradeBoardService tradeBoardService;
-//    @GetMapping("/post")
-//    public String write() {
-//        System.out.println("tradeBoardService = " + tradeBoardService);
-//        return "index.html";
-//    }
-//    @PostMapping("/post")
-//        public String write(@RequestBody TradeBoardDto tradeBoardDto) {
-//        System.out.println("호출");
-//        tradeBoardService.saveTradePost(tradeBoardDto);
-//
-//            return "redirect:/post";
-//        }
 
-    @GetMapping("")
-    public List<TradeBoardDto> write() {
-        return tradeBoardService.findAll();
-    }
-    @PostMapping("")
+    @PostMapping("/write")
     public ResponseEntity<TradeBoardDto> write(@RequestBody TradeBoardDto tradeBoardDto) {
         tradeBoardService.saveTradePost(tradeBoardDto);
         return ResponseEntity.ok().body(tradeBoardDto);
     }
-    //    @GetMapping("/post")
-//    public String write() {
-//        return "indexKakao.html";
-//    }
-//    @PostMapping("/post")
-//    public String write(@RequestBody TradeBoardDto tradeBoardDto) {
-//        tradeBoardService.saveTradePost(tradeBoardDto);
-//        return "redirect:/post";
-//    }
 // 글리스트 페이징
-    @GetMapping("/list")
+    @GetMapping("/write")
     public ResponseEntity<Page<TradeBoardDto>> boardList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC)
                                                          Pageable pageable) {
         return ResponseEntity.ok(tradeBoardService.pageList(pageable));
@@ -91,6 +66,7 @@ public class TradeBoardController {
     @DeleteMapping("/list/{id}")
     public ResponseEntity<TradeBoardDto> delete(@PathVariable("id") Long id){
         TradeBoardDto tradeBoardDto= tradeBoardService.findById(id);
+        System.out.println(tradeBoardDto.getId());
         tradeBoardService.deletePost(tradeBoardDto);
         return ResponseEntity.noContent().build();
     }

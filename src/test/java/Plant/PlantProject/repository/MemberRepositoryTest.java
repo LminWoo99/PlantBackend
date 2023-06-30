@@ -41,7 +41,7 @@ class MemberRepositoryTest {
         //when
 
         //then
-        assertThat(memberRepository.findByName("민우")).isEqualTo(member1);
+        assertThat(memberRepository.findByUsername("민우")).isEqualTo(member1);
         }
 
 }

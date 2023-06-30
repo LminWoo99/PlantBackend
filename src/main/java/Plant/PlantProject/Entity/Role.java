@@ -1,12 +1,26 @@
 package Plant.PlantProject.Entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public enum Role {
-    ROLE_ADMIN,
-    ROLE_MANAGER,
-    ROLE_USER;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    private String name;
+
+    public Role(String roleName) {
+        this.name = roleName;
+    }
 }

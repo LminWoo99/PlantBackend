@@ -1,7 +1,8 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '2.5.6'
+	id 'org.springframework.boot' version '2.7.6'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group = 'Plant'
@@ -9,11 +10,12 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+	asciidoctorExt
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
-}
 
+}
 repositories {
 	mavenCentral()
 }
@@ -28,52 +30,37 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'com.auth0:java-jwt:4.0.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-
-}
-def frontendDir = "$projectDir/frontend"
-
-sourceSets {
-	main {
-		resources { srcDirs = ["$projectDir/src/main/resources"]
-		}
-	}
-}
-
-processResources { dependsOn "copyReactBuildFiles" }
-
-task installReact(type: Exec) {
-	workingDir "$frontendDir"
-	inputs.dir "$frontendDir"
-	group = BasePlugin.BUILD_GROUP
-	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-		commandLine "npm.cmd", "audit", "fix"
-		commandLine 'npm.cmd', 'install' }
-	else {
-		commandLine "npm", "audit", "fix" commandLine 'npm', 'install'
-	}
-}
-
-task buildReact(type: Exec) {
-	dependsOn "installReact"
-	workingDir "$frontendDir"
-	inputs.dir "$frontendDir"
-	group = BasePlugin.BUILD_GROUP
-	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-		commandLine "npm.cmd", "run-script", "build"
-	} else {
-		commandLine "npm", "run-script", "build"
-	}
-}
-
-task copyReactBuildFiles(type: Copy) {
-	dependsOn "buildReact"
-	from "$frontendDir/build"
-	into "$projectDir/src/main/resources/static"
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.mockito:mockito-core:3.12.4'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	// (3)
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	// (4)
 }
 tasks.named('test') {
 	useJUnitPlatform()
+	outputs.dir snippetsDir
+}
+ext { // (5)
+	snippetsDir = file('build/generated-snippets')
 }
 
 
+asciidoctor { // (7)
+	inputs.dir snippetsDir // (8)
+	configurations 'asciidoctorExt' // (9)
+	dependsOn test // (10)
+}
+
+bootJar {
+	dependsOn asciidoctor // (1)
+	from("${asciidoctor.outputDir}") { // (2)
+		into '/docs'
+	}
+}

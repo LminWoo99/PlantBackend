@@ -62,7 +62,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
      */
     @Override
     public String getUsername() {
-        return member.getName();
+        return member.getUsername();
     }
 
     /**

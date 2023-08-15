@@ -4,6 +4,9 @@ import Plant.PlantProject.Entity.TradeBoard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
 /*
  작성자 : 이민우
  작성 일자: 02.19
@@ -11,6 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  특이 사항: 없음
 */
 public interface TradeBoardRepository extends JpaRepository<TradeBoard, Long> {
+    Page<TradeBoard> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
 
 
 }

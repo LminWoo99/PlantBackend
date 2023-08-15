@@ -1,6 +1,9 @@
 package Plant.PlantProject.controller;
 
+import Plant.PlantProject.Entity.Member;
+import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.dto.TradeBoardDto;
+import Plant.PlantProject.service.MemberService;
 import Plant.PlantProject.service.TradeBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -8,9 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 /*
  작성자 : 이민우
@@ -39,17 +45,24 @@ import java.util.List;
 @RequestMapping("/api")
 public class TradeBoardController {
     private final TradeBoardService tradeBoardService;
-
+    private final MemberService memberService;
     @PostMapping("/write")
-    public ResponseEntity<TradeBoardDto> write(@RequestBody TradeBoardDto tradeBoardDto) {
+    public ResponseEntity<TradeBoardDto> write(Principal principal, @RequestBody TradeBoardDto tradeBoardDto) {
+        UserDetails userDetails = (UserDetails) memberService.loadUserByUsername(principal.getName());
+        System.out.println("userDetails = " + userDetails);
+        Member member = memberService.getUser(userDetails.getUsername());
+        tradeBoardDto.setCreateBy(userDetails.getUsername());
+        tradeBoardDto.setMember(member);
         tradeBoardService.saveTradePost(tradeBoardDto);
         return ResponseEntity.ok().body(tradeBoardDto);
     }
 // 글리스트 페이징
     @GetMapping("/write")
-    public ResponseEntity<Page<TradeBoardDto>> boardList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC)
+    public ResponseEntity<Page<TradeBoardDto>> boardList(@RequestParam(required = false, defaultValue = "") String search, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
                                                          Pageable pageable) {
-        return ResponseEntity.ok(tradeBoardService.pageList(pageable));
+
+        Page<TradeBoardDto> tradeBoardDtos = tradeBoardService.pageList(search, pageable);
+        return ResponseEntity.ok(tradeBoardDtos);
     }
     //글 자세히보기
     @GetMapping("/list/{id}")
@@ -58,7 +71,12 @@ public class TradeBoardController {
     }
     //글 수정
     @PutMapping("/list/{id}")
-    public ResponseEntity<TradeBoardDto> update(@PathVariable("id") Long id, @RequestBody TradeBoardDto tradeBoardDto){
+    public ResponseEntity<TradeBoardDto> update(Principal principal, @PathVariable("id") Long id, @RequestBody TradeBoardDto tradeBoardDto){
+        UserDetails userDetails = (UserDetails) memberService.loadUserByUsername(principal.getName());
+        System.out.println("userDetails = " + userDetails);
+        Member member = memberService.getUser(userDetails.getUsername());
+        tradeBoardDto.setCreateBy(userDetails.getUsername());
+        tradeBoardDto.setMember(member);
         TradeBoardDto updatedTradeBoardDto=tradeBoardService.saveTradePost(tradeBoardDto);
         return ResponseEntity.ok(updatedTradeBoardDto);
     }

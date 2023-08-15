@@ -93,14 +93,14 @@ class TradeBoardServiceTest {
     public void boardListTest() throws Exception {
         //given
         for(int i=0; i<100; i++){
-            tradeBoardService.saveTradePost(new TradeBoardDto("title"+i, "content"+i));
+            tradeBoardService.saveTradePost(new TradeBoardDto(1L,"title"+i, "content"+i));
         }
         //when
         Pageable paging = PageRequest.of(0,10,Sort.Direction.ASC,"tTitle");
-        Page<TradeBoardDto> result= tradeBoardService.pageList(paging);
+        String search = "";
+        Page<TradeBoardDto> result= tradeBoardService.pageList(search,paging);
         //then
-        System.out.println(result.getSize());
-        System.out.println(result.getTotalPages());
+       Assertions.assertThat(result.getSize()).isEqualTo(10);
     }
 
     @Test

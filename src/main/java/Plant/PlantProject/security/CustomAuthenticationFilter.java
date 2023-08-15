@@ -1,9 +1,13 @@
 package Plant.PlantProject.security;
 
+import Plant.PlantProject.Entity.Member;
+import Plant.PlantProject.repository.MemberRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,9 +30,11 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 
 @Slf4j
+@AllArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private HashMap<String, String> jsonRequest;
+    private  MemberRepository memberRepository;
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -81,6 +87,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
+        String username = user.getUsername();
+
 
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
@@ -97,7 +105,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(algorithm);
 
         Map<String, String> tokens = new HashMap<>();
+
         tokens.put("access_token", accessToken);
+        tokens.put("username", username);
         tokens.put("refresh_token", refreshToken);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

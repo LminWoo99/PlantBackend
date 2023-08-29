@@ -26,10 +26,12 @@ public class TradeBoardDto {
 
     private String content;
     private Status status;
+    private int price;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private int view;
     @Builder
-    public TradeBoardDto(Long id, String createBy, Member member, String title, String content, Status status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public TradeBoardDto(Long id, String createBy, Member member, String title, String content, Status status, LocalDateTime createdAt, LocalDateTime updatedAt, int view) {
         this.id = id;
         this.createBy = createBy;
         this.member = member;
@@ -38,25 +40,13 @@ public class TradeBoardDto {
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.view=view;
     }
     public TradeBoardDto(Long id, String title, String content){
         this.id = id;
         this.title = title;
         this.content = content;
     }
-
-    public TradeBoardDto(TradeBoard tradeBoard) {
-        this.id = tradeBoard.getId();
-        this.member = tradeBoard.getMember();
-        this.createBy = tradeBoard.getCreateBy();
-        this.title = tradeBoard.getTitle();
-        this.content = tradeBoard.getContent();
-        this.status = tradeBoard.getStatus();
-        this.createdAt = tradeBoard.getCreatedAt();
-        this.updatedAt = tradeBoard.getUpdatedAt();
-
-    }
-
 
     public TradeBoard toEntity() {
         return TradeBoard.builder()
@@ -66,6 +56,7 @@ public class TradeBoardDto {
                 .title(title)
                 .content(content)
                 .status(status)
+                .view(view)
                 .build();
     }
 }

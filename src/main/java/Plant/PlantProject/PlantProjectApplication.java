@@ -1,6 +1,7 @@
 package Plant.PlantProject;
 
 import Plant.PlantProject.Entity.Role;
+import Plant.PlantProject.kakao.KaKaoService;
 import Plant.PlantProject.service.MemberService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,12 +24,13 @@ public class PlantProjectApplication {
 		return new HiddenHttpMethodFilter();
 	}
 	@Bean
-	CommandLineRunner run(MemberService memberService) {
+	CommandLineRunner run(MemberService memberService, KaKaoService kaKaoService) {
 		return args -> {
 			memberService.saveRole(new Role(null, "ROLE_USER"));
 			memberService.saveRole(new Role(null, "ROLE_MANAGER"));
 			memberService.saveRole(new Role(null, "ROLE_ADMIN"));
 			memberService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
+
 		};
 	}
 }

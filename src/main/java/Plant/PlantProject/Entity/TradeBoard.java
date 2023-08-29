@@ -30,6 +30,8 @@ public class TradeBoard {
     private Member member;
     private String createBy;
 
+    private int price;
+
     private String title;
 
     private String content;
@@ -40,24 +42,58 @@ public class TradeBoard {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
     @OneToMany(mappedBy = "tradeBoard")
     List<KeyWord> keyWordList = new ArrayList<KeyWord>();
-    @OneToMany(mappedBy = "tradeBoard")
-    List<Goods> goodsList = new ArrayList<Goods>();
+    @OneToMany(mappedBy = "tradeBoardId", orphanRemoval = true)
+    List<Comment> commentList = new ArrayList<Comment>();
+
+    @OneToMany(mappedBy = "tradeBoard", orphanRemoval = true)
+    List<Image> imageList = new ArrayList<Image>();
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int view;
 
     public TradeBoard(String title, String content) {
         this.title = title;
         this.content = content;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public static TradeBoard createTradeBoard(Member member, String title, String content, String createBy, int view, int price){
+        TradeBoard tradeBoard = new TradeBoard();
+        tradeBoard.member=member;
+        tradeBoard.title=title;
+        tradeBoard.content = content;
+        tradeBoard.createBy = createBy;
+        tradeBoard.view=view;
+        tradeBoard.price = price;
+        tradeBoard.status=Status.판매중;
+        return tradeBoard;
+    }
     @Builder
-    public TradeBoard(Long id, String createBy, Member member, String title, String content, Status status) {
+    public TradeBoard(Long id, String createBy, Member member, String title, String content, Status status, int view) {
         this.id = id;
         this.createBy = createBy;
         this.member = member;
         this.title = title;
         this.content = content;
         this.status = status;
+        this.view= view;
     }
 
     @PrePersist

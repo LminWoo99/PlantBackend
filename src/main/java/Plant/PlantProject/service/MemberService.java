@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 public class MemberService extends DefaultOAuth2UserService implements UserDetailsService{
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
-    BCryptPasswordEncoder passwordEncoder;
 
     public List<MemberDto> findAll(){
         List<Member> memberList = memberRepository.findAll();

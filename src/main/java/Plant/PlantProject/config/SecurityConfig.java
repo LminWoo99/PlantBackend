@@ -1,16 +1,18 @@
 package Plant.PlantProject.config;
 
+
 import Plant.PlantProject.security.CustomAuthenticationFilter;
 import Plant.PlantProject.security.CustomAuthorizationFilter;
+
 import Plant.PlantProject.service.MemberService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,16 +24,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MemberService memberService;
 
 
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     // 비밀번호 암호화
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -50,30 +53,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
 
-        http.csrf().disable();
-        http.cors();
         http
+                .csrf().disable()
+                .cors()
+                .and()
                 .authorizeRequests()
-                .mvcMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/api/**","/api/login/**", "/api/user/save", "/api/token/refresh/**","/api/write/**",
-                "/member/do/**", "/login/kakao/**", "/login/auth/google/**", "/login/google/revoke/token/**", "/login/auth/google/**").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/users/**").hasAnyAuthority("ROLE_USER");
-        http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
+                .mvcMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .antMatchers("/oauth2/login/kakao").permitAll()
+                .antMatchers("/api/**", "/api/login/**", "/api/user/save", "/api/token/refresh/**", "/api/write/**", "/oauth2/**"
+                ).permitAll()
+                .antMatchers(GET, "/api/users/**").hasAnyAuthority("ROLE_USER")
+                .antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN")
+                .anyRequest().authenticated()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                http
+                .addFilter(customAuthenticationFilter)
+                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.authorizeRequests().anyRequest().authenticated();
-        http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-//                http
-//                .oauth2Login()				// OAuth2기반의 로그인인 경우
-//                .loginPage("/google")		// 인증이 필요한 URL에 접근하면 /google으로 이동
-//                .defaultSuccessUrl("/")			// 로그인 성공하면 "/" 으로 이동
-//                .failureUrl("/loginForm")		// 로그인 실패 시 /loginForm으로 이동
-//                .userInfoEndpoint()			// 로그인 성공 후 사용자정보를 가져온다
-//                .userService(memberService);
     }
 
-    // 모든 인증을 처리하기 위한 AuthenticationManager
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

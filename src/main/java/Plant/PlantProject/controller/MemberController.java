@@ -72,7 +72,9 @@ public class MemberController {
                         .path("/api/user/save").toUriString());
 
         Member member = memberDto.toEntity();
+
         member.getRole().add(roleRepository.findByName("ROLE_USER"));
+        System.out.println("member 롤롤롤 = " + member.getRole());
         System.out.println("member = " + member.getUsername());
         return ResponseEntity.created(uri).body(memberService.joinUser(member));
     }
@@ -83,7 +85,6 @@ public class MemberController {
                 ServletUriComponentsBuilder
                         .fromCurrentContextPath()
                         .path("/api/role/save").toUriString());
-
         return ResponseEntity.created(uri).body(memberService.saveRole(role));
     }
 

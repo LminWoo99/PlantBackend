@@ -1,8 +1,13 @@
 package Plant.PlantProject.controller;
 
 import Plant.PlantProject.Entity.Member;
+import Plant.PlantProject.Entity.Status;
+import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.dto.TradeBoardDto;
+import Plant.PlantProject.dto.TradeBoardRequestDto;
+import Plant.PlantProject.dto.TradeDto;
+import Plant.PlantProject.kakao.KaKaoService;
 import Plant.PlantProject.service.MemberService;
 import Plant.PlantProject.service.TradeBoardService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+
+import static Plant.PlantProject.Entity.Status.판매중;
 /*
  작성자 : 이민우
  작성 일자: 02.19
@@ -46,28 +53,31 @@ import java.util.List;
 public class TradeBoardController {
     private final TradeBoardService tradeBoardService;
     private final MemberService memberService;
+    private final KaKaoService kaKaoService;
     @PostMapping("/write")
-    public ResponseEntity<TradeBoardDto> write(Principal principal, @RequestBody TradeBoardDto tradeBoardDto) {
+    public ResponseEntity<TradeDto> write(Principal principal, @RequestBody TradeBoardRequestDto tradeBoardDto) {
+
         UserDetails userDetails = (UserDetails) memberService.loadUserByUsername(principal.getName());
         System.out.println("userDetails = " + userDetails);
         Member member = memberService.getUser(userDetails.getUsername());
         tradeBoardDto.setCreateBy(userDetails.getUsername());
-        tradeBoardDto.setMember(member);
-        tradeBoardService.saveTradePost(tradeBoardDto);
-        return ResponseEntity.ok().body(tradeBoardDto);
+        tradeBoardDto.setMemberId(member.getId());
+        TradeDto tradeDto = tradeBoardService.saveTradePost(tradeBoardDto);
+        System.out.println("tradeBoardDto = " + tradeBoardDto.getId());
+        return ResponseEntity.ok().body(tradeDto);
     }
 // 글리스트 페이징
     @GetMapping("/write")
-    public ResponseEntity<Page<TradeBoardDto>> boardList(@RequestParam(required = false, defaultValue = "") String search, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
+    public ResponseEntity<Page<TradeDto>> boardList(@RequestParam(required = false, defaultValue = "") String search, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
                                                          Pageable pageable) {
 
-        Page<TradeBoardDto> tradeBoardDtos = tradeBoardService.pageList(search, pageable);
+        Page<TradeDto> tradeBoardDtos = tradeBoardService.pageList(search, pageable);
         return ResponseEntity.ok(tradeBoardDtos);
     }
     //글 자세히보기
     @GetMapping("/list/{id}")
-    public ResponseEntity<TradeBoardDto> boardContent(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(tradeBoardService.findById(id));
+    public ResponseEntity<TradeDto> boardContent(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(tradeBoardService.findByIdx(id));
     }
     //글 수정
     @PutMapping("/list/{id}")
@@ -77,7 +87,7 @@ public class TradeBoardController {
         Member member = memberService.getUser(userDetails.getUsername());
         tradeBoardDto.setCreateBy(userDetails.getUsername());
         tradeBoardDto.setMember(member);
-        TradeBoardDto updatedTradeBoardDto=tradeBoardService.saveTradePost(tradeBoardDto);
+        TradeBoardDto updatedTradeBoardDto=tradeBoardService.updateTradePost(tradeBoardDto);
         return ResponseEntity.ok(updatedTradeBoardDto);
     }
     //글 삭제
@@ -87,6 +97,19 @@ public class TradeBoardController {
         System.out.println(tradeBoardDto.getId());
         tradeBoardService.deletePost(tradeBoardDto);
         return ResponseEntity.noContent().build();
+    }
+    //조회수 증가
+    @GetMapping("/read/{id}")
+    public ResponseEntity<Integer> read(@PathVariable Long id) {
+        TradeBoardDto tradeBoardDto = tradeBoardService.findById(id);
+        int view=tradeBoardService.updateView(id); // views ++
+
+        return ResponseEntity.ok(view);
+}
+    @PutMapping("/updateStatus/{id}")
+    public ResponseEntity<TradeBoardDto> updateStatus(@PathVariable Long id, @RequestBody TradeBoardDto tradeBoardDto) {
+        TradeBoardDto updateStatus = tradeBoardService.updateStatus(tradeBoardDto);
+        return ResponseEntity.ok().body(updateStatus);
     }
 
 }

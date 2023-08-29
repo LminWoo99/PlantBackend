@@ -2,6 +2,7 @@ package Plant.PlantProject.service;
 
 import Plant.PlantProject.controller.TradeBoardController;
 import Plant.PlantProject.dto.TradeBoardDto;
+import Plant.PlantProject.dto.TradeDto;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aspectj.lang.annotation.Before;
@@ -98,7 +99,7 @@ class TradeBoardServiceTest {
         //when
         Pageable paging = PageRequest.of(0,10,Sort.Direction.ASC,"tTitle");
         String search = "";
-        Page<TradeBoardDto> result= tradeBoardService.pageList(search,paging);
+        Page<TradeDto> result= tradeBoardService.pageList(search,paging);
         //then
        Assertions.assertThat(result.getSize()).isEqualTo(10);
     }

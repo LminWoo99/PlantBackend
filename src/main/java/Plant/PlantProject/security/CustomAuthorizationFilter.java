@@ -30,9 +30,12 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if(request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh")) {
+
+        if(request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh")||request.getServletPath().equals("/oauth2/login/kakao")) {
             filterChain.doFilter(request, response);
-        } else {
+            return;
+        }
+        else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
             if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try{
@@ -54,9 +57,9 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                     filterChain.doFilter(request, response);
+                    log.info("메세지 호출");
                 }catch (Exception e) {
-
-                    log.error("Error logging in: {}", e.getMessage());
+                    log.info("Error logging in: {}", e.getMessage());
                     response.setHeader("error", e.getMessage());
                     response.setStatus(FORBIDDEN.value());
 

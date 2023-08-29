@@ -13,6 +13,7 @@ import java.util.Collection;
 @Builder
 public class Member{
 
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String userId;
@@ -26,10 +27,16 @@ public class Member{
     @ManyToMany(fetch = FetchType.LAZY)
     private Collection<Role> role = new ArrayList<>();
 
-    public Member(String nickname, String email, SocialLogin socialLogin) {
+    private String refreshToken;
+
+
+
+    public Member(String email,String password, String nickname, SocialLogin socialLogin,String username) {
+        this.password= password;
         this.nickname = nickname;
         this.email = email;
         this.socialLogin = socialLogin;
+        this.username = username;
     }
 
     public void setSocialLogin(SocialLogin socialLogin) {
@@ -44,4 +51,6 @@ public class Member{
         this.username = username;
         this.password = password;
     }
+
+
 }

@@ -1,3 +1,8 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.6'
@@ -25,16 +30,18 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'mysql:mysql-connector-java'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.11.976'
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-	implementation 'com.auth0:java-jwt:4.0.0'
+	implementation 'com.auth0:java-jwt:3.19.2'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.6.3'
 	testImplementation 'org.mockito:mockito-core:3.12.4'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
@@ -42,6 +49,24 @@ dependencies {
 	// (3)
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	// (4)
+	// QueryDSL
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	annotationProcessor(
+			"org.springframework.boot:spring-boot-configuration-processor",
+			"javax.persistence:javax.persistence-api",
+			"javax.annotation:javax.annotation-api",
+			"com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+}
+// QueryDSL
+sourceSets {
+	main {
+		java {
+			srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+		}
+	}
+}
+compileJava {
+	options.compilerArgs += ["-parameters"]
 }
 tasks.named('test') {
 	useJUnitPlatform()

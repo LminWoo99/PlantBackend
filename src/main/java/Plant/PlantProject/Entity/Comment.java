@@ -1,37 +1,55 @@
 package Plant.PlantProject.Entity;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-/*
- 작성자 : 이민우
- 작성 일자: 02.18
- 내용 : 댓글 엔티티
- 특이 사항: 없음
-*/
+@Getter @Setter
 @Entity
-@Getter
+@Table(name = "comment") // 테이블 이름 지정 (DB 테이블 이름과 일치해야 함)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment{
+public class Comment {
+
     @Id
-    @GeneratedValue   //jpa 어노테이션인데 그냥 기본키 어노테이션으로 알고있으면됨
-    @Column(name = "CommentId")
-    private Long id;  //고유번호
-    private String commentContent;
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
+    private Long id; // 댓글 고유 번호
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postId")
-    private InfoBoard infoBoard;
+    @JoinColumn(name = "member_id")
+    private Member member; // 댓글 작성자
+    @Column(nullable = false)
+    @Lob
+    private String content; // 댓글 내용
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
-    private Member member;
+    @JoinColumn(name = "tradeBoard_id")
+    private TradeBoard tradeBoardId;
+    // 게시글 번호
+
+
+    @Enumerated(value = EnumType.STRING)
+    private DeleteStatus isDeleted;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    private List<Comment> children = new ArrayList<>();
+
+    public static Comment createComment(Member member, String content, TradeBoard tradeBoardId, Comment parent) {
+        Comment comment = new Comment();
+        comment.member = member;
+        comment.content = content;
+        comment.tradeBoardId = tradeBoardId;
+        comment.parent = parent;
+        comment.isDeleted = DeleteStatus.N;
+        return comment;
+    }
+    public void changeDeletedStatus(DeleteStatus deleteStatus) {
+        this.isDeleted = deleteStatus;
+    }
 }

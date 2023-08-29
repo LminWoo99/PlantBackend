@@ -1,14 +1,20 @@
 package Plant.PlantProject.kakao;
 
+import Plant.PlantProject.config.JwtTokenUtil;
+import Plant.PlantProject.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.patterns.IToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -24,26 +30,27 @@ import java.util.Map;
  * 2022-03-17        이민우       endpoint=/member/do(로그인 페이지),endpoint=/login/kakao(로그인 후페이지)
  *
  */
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class KaKaoController {
 
     private final KaKaoService kaKaoService;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final MemberService memberService;
 
     @GetMapping("/member/do")
     public String loginPage()
     {
         return "kakaoCI/login";
     }
-    @GetMapping("/login/kakao")
-    public String getCI(@RequestParam String code, Model model) throws IOException {
-        System.out.println("code = " + code);
+    @GetMapping("/oauth2/login/kakao")
+    public ResponseEntity<Map> getCI(@RequestParam String code) throws IOException {
         String access_token = kaKaoService.getToken(code);
         Map<String, Object> userInfo = kaKaoService.getUserInfo(access_token);
-        model.addAttribute("code", code);
-        model.addAttribute("access_token", access_token);
-        model.addAttribute("userInfo", userInfo);
-
-        return "indexKakao";
+        UserDetails userDetails = (UserDetails) kaKaoService.loadUserByUsername((String) userInfo.get("username"));
+        String jwt=jwtTokenUtil.generateAccessToken(userDetails);
+        System.out.println("userInfo = " + userInfo);
+        userInfo.put("access_token", jwt);
+        return ResponseEntity.ok(userInfo);
     }
 }

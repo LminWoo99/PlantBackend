@@ -1,6 +1,7 @@
 package Plant.PlantProject.dto;
 
 import Plant.PlantProject.Entity.Member;
+import Plant.PlantProject.repository.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,12 +12,15 @@ import java.util.ArrayList;
 @Data
 @NoArgsConstructor
 public class MemberDto {
+
     private Long id;
     private String nickname;
     private String userId;
     private String username;
     private String password;
     private String email;
+
+
     @Builder
     public MemberDto(Long id, String nickname, String userId, String username, String password, String email) {
         this.id = id;
@@ -49,6 +53,7 @@ public class MemberDto {
                 .role(new ArrayList<>())
                 .build();
     }
+
 
 
 }

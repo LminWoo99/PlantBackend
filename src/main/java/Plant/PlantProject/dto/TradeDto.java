@@ -24,7 +24,6 @@ public class TradeDto {
     private LocalDateTime updatedAt;
     private int price;
     public static TradeDto convertTradeBoardToDto(TradeBoard tradeBoard) {
-        System.out.println("tradeBoard dto = " + tradeBoard.getId());
         return new TradeDto(tradeBoard.getId(), tradeBoard.getTitle(),tradeBoard.getContent(),tradeBoard.getCreateBy(),
                 tradeBoard.getMember().getId(),  tradeBoard.getView(),tradeBoard.getStatus().name(),
                 tradeBoard.getCreatedAt(), tradeBoard.getUpdatedAt(), tradeBoard.getPrice());

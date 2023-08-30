@@ -19,7 +19,7 @@ import java.util.List;
 public interface TradeBoardRepository extends JpaRepository<TradeBoard, Long> {
     Page<TradeBoard> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
 
-
+    List<TradeBoard> findTradeBoardByMemberId(Long memberId);
     @Modifying
     @Query("update TradeBoard t set t.view = t.view + 1 where t.id = :id")
     int updateView(@Param("id") Long id);

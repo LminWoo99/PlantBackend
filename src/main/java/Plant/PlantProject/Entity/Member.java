@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,6 +27,8 @@ public class Member{
     private SocialLogin socialLogin;
     @ManyToMany(fetch = FetchType.LAZY)
     private Collection<Role> role = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<TradeBoard> tradeBoard = new ArrayList<>();
 
     private String refreshToken;
 

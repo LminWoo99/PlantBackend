@@ -22,17 +22,33 @@ import static javax.persistence.FetchType.LAZY;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Goods {
     @Id
-    @GeneratedValue
-    @Column(name = "goodsId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "tPost_id")
+    @JoinColumn(name = "tradeBoard_id")
     private TradeBoard tradeBoard;
-    @CreatedDate
-    private LocalDateTime likeDate;
+
+
+    @Enumerated(EnumType.STRING)
+    private GoodsStatus goodsStatus;
+
+
+    public void setGoodsStatus(GoodsStatus goodsStatus) {
+        this.goodsStatus = goodsStatus;
+    }
+
+    public static Goods createGoods(Member member, TradeBoard tradeBoard){
+        Goods goods = new Goods();
+        goods.member = member;
+        goods.tradeBoard = tradeBoard;
+        goods.goodsStatus=GoodsStatus.찜취소하기;
+        return goods;
+    }
 
 
 

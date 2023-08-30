@@ -83,6 +83,7 @@ public class TradeBoard {
         tradeBoard.view=view;
         tradeBoard.price = price;
         tradeBoard.status=Status.판매중;
+
         return tradeBoard;
     }
     @Builder

@@ -2,11 +2,8 @@ package Plant.PlantProject.repository;
 
 import Plant.PlantProject.Entity.Comment;
 
-import Plant.PlantProject.Entity.QTradeBoard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

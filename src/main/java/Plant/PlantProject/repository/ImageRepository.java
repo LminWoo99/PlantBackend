@@ -14,7 +14,7 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     @Transactional
     @Modifying
     @Query("UPDATE Image i SET i.removed = true WHERE i.tradeBoard.id = :tradeBoardId")
-    public void saveAll(Long postId);
+    public void saveAll(Long tradeBoardId);
 
     public List<Image> findImageByTradeBoardId(Long tradeBoardId);
 }

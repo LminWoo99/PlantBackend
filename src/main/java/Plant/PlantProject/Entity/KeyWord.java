@@ -9,12 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-/*
- 작성자 : 이민우
- 작성 일자: 02.18
- 내용 : 댓글 엔티티
- 특이 사항: 상태(보류)
-*/
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

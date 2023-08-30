@@ -4,6 +4,7 @@ import Plant.PlantProject.Entity.Member;
 import Plant.PlantProject.Entity.Role;
 import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.dto.RoleDto;
+import Plant.PlantProject.dto.TradeDto;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.RoleRepository;
 import Plant.PlantProject.service.MemberService;
@@ -58,7 +59,11 @@ public class MemberController {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
-
+    @GetMapping("/tradeInfo/{id}")
+    public ResponseEntity<List<TradeDto>> showTradeInfo(@PathVariable Long id){
+        List<TradeDto> tradeDtos = memberService.showTradeInfo(id);
+        return ResponseEntity.ok().body(tradeDtos);
+    }
     @GetMapping("/users")
     public ResponseEntity<List<MemberDto>> findAll() {
         return ResponseEntity.ok().body(memberService.findAll());
@@ -74,8 +79,6 @@ public class MemberController {
         Member member = memberDto.toEntity();
 
         member.getRole().add(roleRepository.findByName("ROLE_USER"));
-        System.out.println("member 롤롤롤 = " + member.getRole());
-        System.out.println("member = " + member.getUsername());
         return ResponseEntity.created(uri).body(memberService.joinUser(member));
     }
 

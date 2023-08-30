@@ -3,9 +3,12 @@ package Plant.PlantProject.service;
 import Plant.PlantProject.Entity.Member;
 import Plant.PlantProject.Entity.Role;
 import Plant.PlantProject.Entity.SocialLogin;
+import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.MemberDto;
+import Plant.PlantProject.dto.TradeDto;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.RoleRepository;
+import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +26,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static Plant.PlantProject.dto.TradeDto.convertTradeBoardToDto;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ import java.util.stream.Collectors;
 public class MemberService extends DefaultOAuth2UserService implements UserDetailsService{
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
+    private final TradeBoardRepository tradeBoardRepository;
 
     public List<MemberDto> findAll(){
         List<Member> memberList = memberRepository.findAll();
@@ -105,5 +111,13 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
         Role role = roleRepository.findByName(roleName);
 
         member.getRole().add(role);
+    }
+    public List<TradeDto> showTradeInfo(Long id){
+        log.info("showTradeInfo출력");
+        List<TradeBoard> tradeBoards = tradeBoardRepository.findTradeBoardByMemberId(id);
+        List<TradeDto> tradeDtos = tradeBoards.stream()
+                .map(tradeBoard -> convertTradeBoardToDto(tradeBoard)) // TradeDto로 변환
+                .collect(Collectors.toList());
+        return tradeDtos;
     }
 }

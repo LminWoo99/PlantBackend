@@ -137,7 +137,6 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             String password="1234";
 
             String username = nickname;
-                    log.info(String.valueOf(kakao_account));
             result.put("nickname", nickname);
             result.put("email", email);
             result.put("access_token", access_token);
@@ -154,6 +153,8 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
                 result.put("id", member.getId());
             } else {
                 // 이미 존재하는 회원이면 그냥 넘어가거나 다른 로직 수행 (예: 로그 작성 등)
+                Member byUsername = memberRepository.findByUsername(username);
+                result.put("id", byUsername.getId());
                 log.info("Existing member detected with email: {}", email);
             }
             br.close();

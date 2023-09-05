@@ -13,10 +13,10 @@ public class GoodsDto {
     private Long id;
     private Long memberId;
     private Long tradeBoardId;
-    private String goodsStatus;
+
     public static GoodsDto convertGoodsToDto(Goods goods) {
 
-        return new GoodsDto(goods.getId(), goods.getMember().getId(), goods.getTradeBoard().getId(), goods.getGoodsStatus().toString());
+        return new GoodsDto(goods.getId(), goods.getMember().getId(), goods.getTradeBoard().getId());
 
     }
 }

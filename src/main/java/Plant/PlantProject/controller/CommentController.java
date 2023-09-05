@@ -43,5 +43,10 @@ public class CommentController {
         commentService.deleteComment(id);
         return ResponseEntity.noContent().build();
     }
+    @PutMapping("/comment/{id}")
+    private ResponseEntity<CommentDto> updateComment(@PathVariable Long id, @RequestBody CommentDto commentCreateRequestDto){
+        CommentDto commentDto = commentService.updateComment(commentCreateRequestDto);
+        return ResponseEntity.ok().body(commentDto);
+    }
 
 }

@@ -7,6 +7,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.6'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 	id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
@@ -45,17 +46,15 @@ dependencies {
 	testImplementation 'org.mockito:mockito-core:3.12.4'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
+	implementation group: 'org.json', name: 'json', version: '20220320'
+	implementation group: 'commons-io', name: 'commons-io', version: '2.9.0'
+
 	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	// (3)
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-	// (4)
-	// QueryDSL
+	//querydsl 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-	annotationProcessor(
-			"org.springframework.boot:spring-boot-configuration-processor",
-			"javax.persistence:javax.persistence-api",
-			"javax.annotation:javax.annotation-api",
-			"com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 }
 // QueryDSL
 sourceSets {
@@ -65,6 +64,7 @@ sourceSets {
 		}
 	}
 }
+
 compileJava {
 	options.compilerArgs += ["-parameters"]
 }
@@ -89,3 +89,23 @@ bootJar {
 		into '/docs'
 	}
 }
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+//querydsl 추가 끝

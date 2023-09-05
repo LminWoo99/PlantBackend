@@ -1,5 +1,6 @@
 package Plant.PlantProject.Entity;
 
+import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,12 +18,17 @@ public class Member{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
     private String userId;
+    @NotNull
     private String nickname;
-
+    @NotNull
     private String username;
+    @NotNull
     private String password;
+    @NotNull
     private String email;
+
     @Enumerated(EnumType.STRING)
     private SocialLogin socialLogin;
     @ManyToMany(fetch = FetchType.LAZY)

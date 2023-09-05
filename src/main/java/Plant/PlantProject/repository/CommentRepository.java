@@ -17,4 +17,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, CustomC
     Comment findCommentByIdWithParent(@Param("id") Long id);
 
     Page<Comment> findCommentByTradeBoardId(TradeBoard tradeBoardId, Pageable pageable);
+
+
 }

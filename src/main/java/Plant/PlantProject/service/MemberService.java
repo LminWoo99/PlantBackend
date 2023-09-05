@@ -11,6 +11,7 @@ import Plant.PlantProject.repository.RoleRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,17 +54,6 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
         }
         return memberDtoList;
     }
-    public MemberDto findByUserName(String username){
-        Long id = memberRepository.findByUsername(username).getId();
-        return memberRepository.findById(id).map(member -> new MemberDto( member.getId(),member.getUsername(),
-                member.getUserId(),member.getPassword(), member.getEmail(),member.getNickname())).get();
-    }
-
-    public MemberDto findByUserId(String userId){
-        Long id = memberRepository.findByUserId(userId).getId();
-        return memberRepository.findById(id).map(member -> new MemberDto(member.getId(), member.getUsername(),
-                member.getUserId(),member.getPassword(), member.getEmail(),member.getNickname())).get();
-    }
 
     public Member joinUser(Member member) {
         // 비밀번호 암호화
@@ -96,7 +86,28 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
         return memberRepository.findByUsername(username);
     }
 
+    public HttpStatus duplicateMember(String username){
 
+        Member member = memberRepository.findByUsername(username);
+        if(member == null){
+            return HttpStatus.OK;
+        }
+        else{
+            return HttpStatus.BAD_REQUEST;
+        }
+
+    }
+    public HttpStatus duplicateMemberNickname(String nickname){
+
+        Member member = memberRepository.findByNickname(nickname);
+        if(member == null){
+            return HttpStatus.OK;
+        }
+        else{
+            return HttpStatus.BAD_REQUEST;
+        }
+
+    }
 
 
 

@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter
+@Getter
 @Entity
 @Table(name = "comment") // 테이블 이름 지정 (DB 테이블 이름과 일치해야 함)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,16 +40,23 @@ public class Comment {
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
     private List<Comment> children = new ArrayList<>();
 
-    public static Comment createComment(Member member, String content, TradeBoard tradeBoardId, Comment parent) {
+    private String secret;
+
+    public static Comment createComment(Member member, String content, TradeBoard tradeBoardId, Comment parent, String secret) {
         Comment comment = new Comment();
         comment.member = member;
         comment.content = content;
         comment.tradeBoardId = tradeBoardId;
         comment.parent = parent;
         comment.isDeleted = DeleteStatus.N;
+        comment.secret = secret;
         return comment;
     }
     public void changeDeletedStatus(DeleteStatus deleteStatus) {
         this.isDeleted = deleteStatus;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

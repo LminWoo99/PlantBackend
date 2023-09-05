@@ -26,4 +26,8 @@ public interface TradeBoardRepository extends JpaRepository<TradeBoard, Long> {
 
 
     TradeBoard findTradeBoardById(Long id);
+
+    @Modifying
+    @Query("UPDATE TradeBoard tb SET tb.goodCount = :goodCount WHERE tb.id = :id")
+    void saveGoodsCount(@Param("id") Long id, @Param("goodCount") int goodCount);
 }

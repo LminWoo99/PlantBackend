@@ -1,6 +1,7 @@
 package Plant.PlantProject.config;
 
 
+import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.security.CustomAuthenticationFilter;
 import Plant.PlantProject.security.CustomAuthorizationFilter;
 
@@ -31,7 +32,7 @@ import static org.springframework.http.HttpMethod.POST;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MemberService memberService;
-
+    private final MemberRepository memberRepository;
 
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -50,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //Request 가 들어오는 경우 권한 설정 & 로그인 & 로그아웃 처리
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), memberRepository);
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
 
         http

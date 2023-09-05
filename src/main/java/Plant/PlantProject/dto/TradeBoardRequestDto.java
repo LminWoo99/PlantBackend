@@ -15,5 +15,6 @@ public class TradeBoardRequestDto {
     private String createBy;
     private int view;
     private int price;
+    private int goodCount;
 
 }

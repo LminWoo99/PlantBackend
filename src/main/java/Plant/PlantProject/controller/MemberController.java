@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +32,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.http.HttpStatus;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -59,6 +61,7 @@ public class MemberController {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @GetMapping("/tradeInfo/{id}")
     public ResponseEntity<List<TradeDto>> showTradeInfo(@PathVariable Long id){
         List<TradeDto> tradeDtos = memberService.showTradeInfo(id);
@@ -139,6 +142,18 @@ public class MemberController {
         } else {
             throw new RuntimeException("Refresh token is missing");
         }
+    }
+    @GetMapping("/duplicate")
+    public ResponseEntity<?> duplicateMember(@RequestParam String username){
+        HttpStatus httpStatus = memberService.duplicateMember(username);
+
+        return new ResponseEntity<>(httpStatus);
+    }
+    @GetMapping("/duplicate/nickname")
+    public ResponseEntity<?> duplicateMemberNickname(@RequestParam String nickname){
+        HttpStatus httpStatus = memberService.duplicateMemberNickname(nickname);
+
+        return new ResponseEntity<>(httpStatus);
     }
 }
 

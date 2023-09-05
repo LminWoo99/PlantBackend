@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -36,8 +37,10 @@ public class TradeBoard {
 
     private String content;
     @CreatedDate
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDateTime createdAt;
     @LastModifiedDate
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
@@ -48,10 +51,13 @@ public class TradeBoard {
     @OneToMany(mappedBy = "tradeBoardId", orphanRemoval = true)
     List<Comment> commentList = new ArrayList<Comment>();
 
+
     @OneToMany(mappedBy = "tradeBoard", orphanRemoval = true)
     List<Image> imageList = new ArrayList<Image>();
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int view;
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int goodCount;
 
     public TradeBoard(String title, String content) {
         this.title = title;
@@ -74,7 +80,8 @@ public class TradeBoard {
         this.status = status;
     }
 
-    public static TradeBoard createTradeBoard(Member member, String title, String content, String createBy, int view, int price){
+    public static TradeBoard createTradeBoard(Member member, String title, String content,
+                                              String createBy, int view, int price, int goodCount){
         TradeBoard tradeBoard = new TradeBoard();
         tradeBoard.member=member;
         tradeBoard.title=title;
@@ -83,6 +90,7 @@ public class TradeBoard {
         tradeBoard.view=view;
         tradeBoard.price = price;
         tradeBoard.status=Status.판매중;
+        tradeBoard.goodCount = goodCount;
 
         return tradeBoard;
     }
@@ -96,7 +104,11 @@ public class TradeBoard {
         this.status = status;
         this.view= view;
     }
-
+    public void increaseGoodsCount() {
+        this.goodCount++;
+    }public void decreaseGoodsCount() {
+        this.goodCount--;
+    }
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -28,16 +30,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @AllArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private HashMap<String, String> jsonRequest;
+
     private  MemberRepository memberRepository;
 
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository) {
         this.authenticationManager = authenticationManager;
+        this.memberRepository=memberRepository;
     }
 
     @Override
@@ -96,18 +101,21 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
 
-
         String refreshToken = JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 300 * 60 * 1000))
                 .withIssuer(request.getRequestURI().toString())
                 .sign(algorithm);
 
-        Map<String, String> tokens = new HashMap<>();
-
+        Map<String, Object> tokens = new HashMap<>();
+        Member byUsername = memberRepository.findByUsername(username);
+        String id = String.valueOf(byUsername.getId());
+        String nickname = byUsername.getNickname();
         tokens.put("access_token", accessToken);
         tokens.put("username", username);
         tokens.put("refresh_token", refreshToken);
+        tokens.put("nickname", nickname);
+        tokens.put("id", id);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }

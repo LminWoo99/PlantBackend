@@ -33,12 +33,10 @@ public class Goods {
     @JoinColumn(name = "tradeBoard_id")
     private TradeBoard tradeBoard;
 
-
-    @Enumerated(EnumType.STRING)
-    private GoodsStatus goodsStatus;
+    private boolean goodsStatus;
 
 
-    public void setGoodsStatus(GoodsStatus goodsStatus) {
+    public void setGoodsStatus(boolean goodsStatus) {
         this.goodsStatus = goodsStatus;
     }
 
@@ -46,7 +44,7 @@ public class Goods {
         Goods goods = new Goods();
         goods.member = member;
         goods.tradeBoard = tradeBoard;
-        goods.goodsStatus=GoodsStatus.찜취소하기;
+        goods.goodsStatus=true;
         return goods;
     }
 

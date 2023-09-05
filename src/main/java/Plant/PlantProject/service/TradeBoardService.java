@@ -1,7 +1,7 @@
 package Plant.PlantProject.service;
 
-import Plant.PlantProject.Entity.Status;
 import Plant.PlantProject.Entity.TradeBoard;
+import Plant.PlantProject.exception.TradeBoardNotFoundException;
 import Plant.PlantProject.exception.UserNotFoundException;
 import Plant.PlantProject.dto.TradeBoardDto;
 import Plant.PlantProject.dto.TradeBoardRequestDto;
@@ -50,7 +50,8 @@ public class TradeBoardService {
                         tradeBoardDto.getContent(),
                         tradeBoardDto.getCreateBy(),
                         tradeBoardDto.getView(),
-                        tradeBoardDto.getPrice()
+                        tradeBoardDto.getPrice(),
+                        tradeBoardDto.getGoodCount()
                         )
         );
 
@@ -153,6 +154,22 @@ public class TradeBoardService {
         TradeBoard tradeBoard = tradeBoardRepository.findById(id).orElseThrow(UserNotFoundException::new);
         TradeDto tradeDto = TradeDto.convertTradeBoardToDto(tradeBoard);
         return tradeDto;
+    }
+    @Transactional
+    public void increaseGoodCount(Long tradeBoardId) {
+        TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId)
+                .orElseThrow(() -> new TradeBoardNotFoundException("TradeBoard not found"));
+
+        tradeBoard.increaseGoodsCount(); // TradeBoard 엔티티의 메서드를 호출하여 찜 개수 증가
+        tradeBoardRepository.saveGoodsCount(tradeBoardId, tradeBoard.getGoodCount()); // 찜 개수만 업데이트
+    }
+    @Transactional
+    public void decreaseGoodCount(Long tradeBoardId) {
+        TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId)
+                .orElseThrow(() -> new TradeBoardNotFoundException("TradeBoard not found"));
+
+        tradeBoard.decreaseGoodsCount(); // TradeBoard 엔티티의 메서드를 호출하여 찜 개수 증가
+        tradeBoardRepository.saveGoodsCount(tradeBoardId, tradeBoard.getGoodCount()); // 찜 개수만 업데이트
     }
 
 

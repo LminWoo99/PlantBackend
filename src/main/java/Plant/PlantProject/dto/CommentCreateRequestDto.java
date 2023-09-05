@@ -13,4 +13,5 @@ public class CommentCreateRequestDto {
     private Long memberId;
     private Long parentId;
     private String isDeleted;
+    private String secret;
 }

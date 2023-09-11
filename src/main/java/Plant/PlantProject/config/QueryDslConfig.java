@@ -9,7 +9,6 @@ import javax.persistence.PersistenceContext;
 
 @Configuration
 public class QueryDslConfig {
- 
     @PersistenceContext
     private EntityManager em;
  

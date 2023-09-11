@@ -27,10 +27,13 @@ public class TradeDto {
     private LocalDateTime updatedAt;
     private int price;
     private int goodCount;
+    private String buyer;
     public static TradeDto convertTradeBoardToDto(TradeBoard tradeBoard) {
         return new TradeDto(tradeBoard.getId(), tradeBoard.getTitle(),tradeBoard.getContent(),tradeBoard.getCreateBy(),
                 tradeBoard.getMember().getId(),  tradeBoard.getView(),tradeBoard.getStatus().name(),
-                tradeBoard.getCreatedAt(), tradeBoard.getUpdatedAt(), tradeBoard.getPrice(), tradeBoard.getGoodCount());
+                tradeBoard.getCreatedAt(), tradeBoard.getUpdatedAt(), tradeBoard.getPrice(),
+                tradeBoard.getGoodCount(), tradeBoard.getBuyer()
+        );
 
     }
 

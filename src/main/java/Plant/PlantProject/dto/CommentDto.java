@@ -46,4 +46,5 @@ public class CommentDto implements Serializable {
                 new CommentDto(comment.getId(), comment.getContent(), comment.getTradeBoardId().getId(), comment.getMember().getId(),comment.getMember().getNickname(), comment.getIsDeleted().name(),
                         comment.getSecret());
     }
+
 }

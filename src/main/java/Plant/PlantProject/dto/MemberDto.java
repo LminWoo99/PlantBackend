@@ -36,11 +36,6 @@ public class MemberDto {
         this.username = username;
     }
 
-    public MemberDto(String username, String password, String nickname) {
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
-    }
 
     public Member toEntity() {
         return Member

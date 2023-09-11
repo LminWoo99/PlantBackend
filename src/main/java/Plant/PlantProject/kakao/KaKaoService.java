@@ -31,20 +31,6 @@ import java.util.Map;
 
 import static Plant.PlantProject.Entity.SocialLogin.KAKAO;
 
-
-/**
- * packageName    : Plant/PlantProject/kakao
- * fileName       : KaKaoService.java
- * author         : 이민우
- * date           : 2023-03-17
- * description    : 카카오 로그인 api 서비스
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2022-03-16        이민우       최초 생성
- * 2022-03-17        이민우       카카오 api에서 이메일과 닉네임만 가져와서 엔티티에 저장
- *
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j

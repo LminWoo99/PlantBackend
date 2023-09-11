@@ -10,6 +10,7 @@ import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/*
- 작성자 : 이민우
- 작성 일자: 02.19
- 내용 : 거래 게시글 서비스 구현
- 특이 사항: 없음
-*/
 @Service
+@Transactional
+@Slf4j
 @AllArgsConstructor
 public class TradeBoardService {
     private final TradeBoardRepository tradeBoardRepository;
@@ -51,7 +48,8 @@ public class TradeBoardService {
                         tradeBoardDto.getCreateBy(),
                         tradeBoardDto.getView(),
                         tradeBoardDto.getPrice(),
-                        tradeBoardDto.getGoodCount()
+                        tradeBoardDto.getGoodCount(),
+                        tradeBoardDto.getBuyer()
                         )
         );
 
@@ -99,7 +97,6 @@ public class TradeBoardService {
             updatedTradeBoardDto.setContent(savedEntity.getContent());
             updatedTradeBoardDto.setStatus(savedEntity.getStatus());
             // 이 외에 필요한 필드들도 updatedTradeBoardDto에 추가
-
             return updatedTradeBoardDto;
         } else {
             // 해당 id에 해당하는 게시글이 없는 경우 처리
@@ -107,29 +104,18 @@ public class TradeBoardService {
         }
     }
     @Transactional
-    public List<TradeBoardDto> findAll(){
-        List<TradeBoard> tradeBoardList =tradeBoardRepository.findAll();
-        List<TradeBoardDto> tradeBoardDtoList = new ArrayList<>();
-        for (TradeBoard tradeBoard : tradeBoardList) {
-            TradeBoardDto tradeBoardDto = TradeBoardDto.builder().
-            id(tradeBoard.getId())
-                    .createBy(tradeBoard.getCreateBy())
-                    .member(tradeBoard.getMember())
-                    .title(tradeBoard.getTitle())
-                    .content(tradeBoard.getContent())
-                    .status(tradeBoard.getStatus())
-                    .build();
-
-
-            tradeBoardDtoList.add(tradeBoardDto);
-        }
-        return tradeBoardDtoList;
-    }
-    @Transactional
     public int updateView(Long id) {
         TradeBoardDto tradeBoardDto = new TradeBoardDto();
         int view = tradeBoardRepository.updateView(id);
         return view;
+
+    }
+
+    @Transactional
+    public TradeDto setBuyer(Long id, TradeBoardRequestDto tradeBoardRequestDto) {
+        TradeBoard tradeBoard = tradeBoardRepository.findTradeBoardById(id);
+        tradeBoardRepository.updateBuyer(tradeBoard.getId(), tradeBoardRequestDto.getBuyer());
+        return TradeDto.convertTradeBoardToDto(tradeBoard);
 
     }
     @Transactional

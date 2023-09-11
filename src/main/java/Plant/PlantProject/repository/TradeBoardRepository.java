@@ -20,10 +20,13 @@ public interface TradeBoardRepository extends JpaRepository<TradeBoard, Long> {
     Page<TradeBoard> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
 
     List<TradeBoard> findTradeBoardByMemberId(Long memberId);
+    List<TradeBoard> findTradeBoardByBuyer(String buyer);
     @Modifying
     @Query("update TradeBoard t set t.view = t.view + 1 where t.id = :id")
     int updateView(@Param("id") Long id);
-
+    @Modifying
+    @Query("update TradeBoard t set t.buyer = :buyer where t.id = :id")
+    void updateBuyer(@Param("id") Long id, @Param("buyer") String buyer);
 
     TradeBoard findTradeBoardById(Long id);
 

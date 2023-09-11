@@ -3,14 +3,13 @@ package Plant.PlantProject.controller;
 import Plant.PlantProject.Entity.Member;
 import Plant.PlantProject.Entity.Status;
 import Plant.PlantProject.Entity.TradeBoard;
-import Plant.PlantProject.dto.MemberDto;
-import Plant.PlantProject.dto.TradeBoardDto;
-import Plant.PlantProject.dto.TradeBoardRequestDto;
-import Plant.PlantProject.dto.TradeDto;
+import Plant.PlantProject.dto.*;
 import Plant.PlantProject.kakao.KaKaoService;
+import Plant.PlantProject.service.CommentService;
 import Plant.PlantProject.service.MemberService;
 import Plant.PlantProject.service.TradeBoardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,35 +24,17 @@ import java.security.Principal;
 import java.util.List;
 
 import static Plant.PlantProject.Entity.Status.판매중;
-/*
- 작성자 : 이민우
- 작성 일자: 02.19
- 내용 : 거래 게시글 컨트롤러 글 작성 구현
- 특이 사항: 프론트 협업시 글작성 api url은 "/post"
-*/
-/**
- * packageName    : Plant/PlantProject/controller
- * fileName       : TradeBoardController
- * author         : 이민우
- * date           : 2023-02-24
- * description    : 거래 게시글 컨트롤러 글 작성 구현
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2022-02-23        이민우       최초 생성
- * 2022-02-24        이민우       게시글 페이징
- * 2022-02-24        이민우       특이사항 : boardContent를 엔티티 대신 dto 사용하고픔(추후 변경
- * 2022-02-28        이민우       특이사항 : boardContent를 엔티티 대신 dto 사용(테스트필수)
- * 2022-02-28        이민우       글 수정, 삭제기능 구현 (테스트 요망)
- * 2022-03-05        이민우       프론트 연동 실패(db에 값이 안들어감), @RestController로 바꿔서 json 데이터로 보내도 안돰
- */
+
+
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api")
 public class TradeBoardController {
     private final TradeBoardService tradeBoardService;
     private final MemberService memberService;
     private final KaKaoService kaKaoService;
+    private final CommentService commentService;
     @PostMapping("/write")
     public ResponseEntity<TradeDto> write(Principal principal, @RequestBody TradeBoardRequestDto tradeBoardDto) {
 
@@ -111,5 +92,19 @@ public class TradeBoardController {
         TradeBoardDto updateStatus = tradeBoardService.updateStatus(tradeBoardDto);
         return ResponseEntity.ok().body(updateStatus);
     }
+    @GetMapping("/buyer/{id}")
+    public ResponseEntity<List<CommentDto>> getBuyer(@PathVariable Long id) {
+
+        List<CommentDto> comment = commentService.findCommentsByTradeBoardId(id);
+        return ResponseEntity.ok().body(comment);
+    }
+
+    @PostMapping("/buyer/{id}")
+    public ResponseEntity<TradeDto> setBuyer(@PathVariable Long id, @RequestBody TradeBoardRequestDto tradeBoardDto) {
+
+        TradeDto tradeDto = tradeBoardService.setBuyer(id, tradeBoardDto);
+        return ResponseEntity.ok().body(tradeDto);
+    }
+
 
 }

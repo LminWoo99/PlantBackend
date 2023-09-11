@@ -13,12 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- 작성자 : 이민우
- 작성 일자: 02.18
- 내용 : 거래 게시글 엔티티 코드
- 특이 사항: 사진, 카테고리 빼고 작성
-*/
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -46,11 +41,10 @@ public class TradeBoard {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "tradeBoard")
-    List<KeyWord> keyWordList = new ArrayList<KeyWord>();
     @OneToMany(mappedBy = "tradeBoardId", orphanRemoval = true)
     List<Comment> commentList = new ArrayList<Comment>();
-
+    @OneToMany(mappedBy = "tradeBoard", orphanRemoval = true)
+    List<Goods> goodsList = new ArrayList<>();
 
     @OneToMany(mappedBy = "tradeBoard", orphanRemoval = true)
     List<Image> imageList = new ArrayList<Image>();
@@ -59,6 +53,7 @@ public class TradeBoard {
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int goodCount;
 
+    private String buyer;
     public TradeBoard(String title, String content) {
         this.title = title;
         this.content = content;
@@ -80,8 +75,12 @@ public class TradeBoard {
         this.status = status;
     }
 
+    public void setBuyer(String buyer) {
+        this.buyer = buyer;
+    }
+
     public static TradeBoard createTradeBoard(Member member, String title, String content,
-                                              String createBy, int view, int price, int goodCount){
+                                              String createBy, int view, int price, int goodCount, String buyer){
         TradeBoard tradeBoard = new TradeBoard();
         tradeBoard.member=member;
         tradeBoard.title=title;
@@ -91,7 +90,7 @@ public class TradeBoard {
         tradeBoard.price = price;
         tradeBoard.status=Status.판매중;
         tradeBoard.goodCount = goodCount;
-
+        tradeBoard.buyer = buyer;
         return tradeBoard;
     }
     @Builder

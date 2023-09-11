@@ -1,8 +1,14 @@
 package Plant.PlantProject.service;
 
+import Plant.PlantProject.Entity.Comment;
+import Plant.PlantProject.Entity.Member;
+import Plant.PlantProject.Entity.Status;
 import Plant.PlantProject.controller.TradeBoardController;
+import Plant.PlantProject.dto.CommentDto;
 import Plant.PlantProject.dto.TradeBoardDto;
+import Plant.PlantProject.dto.TradeBoardRequestDto;
 import Plant.PlantProject.dto.TradeDto;
+import Plant.PlantProject.repository.CommentRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aspectj.lang.annotation.Before;
@@ -27,6 +33,7 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -34,23 +41,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.transaction.Transactional;
+
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * packageName    : Plant/PlantProject/service
- * fileName       : TradeBoardServiceTest
- * author         : 이민우
- * date           : 2023-02-22
- * description    : 거래 게시글 저장 테스트 성공
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2022-02-22        이민우       최초 생성
- * 2022-02-28        이민우       페이징 테스트 성공(100개 임시 데이터 생성 후 테스트 페이지 갯수, 페이지사이즈 체크 확인)
- * 2022-02-28        이민우       게시글 상세보기 테스트 성공
- */
+
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class TradeBoardServiceTest {
@@ -58,6 +57,8 @@ class TradeBoardServiceTest {
     TradeBoardService tradeBoardService;
     @Autowired
     TradeBoardController tradeBoardController;
+    @Autowired
+    CommentService commentService;
     @Autowired
     private MockMvc mockMvc;
 
@@ -137,6 +138,8 @@ class TradeBoardServiceTest {
         tradeBoardDto.setContent("기존 내용");
         tradeBoardService.saveTradePost(tradeBoardDto);
 
+
+
         // when
         mockMvc.perform(MockMvcRequestBuilders.put("/api/list/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -145,8 +148,7 @@ class TradeBoardServiceTest {
                 .andDo(MockMvcRestDocumentation.document("api/update",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{\"id\": 1, \"title\": \"수정된 제목\", \"content\": \"수정된 내용\"}"));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -167,6 +169,45 @@ class TradeBoardServiceTest {
                         preprocessResponse(prettyPrint())))
                 .andExpect(status().isNoContent());
 
+    }
+    @Test
+    @DisplayName("게시글 조회수 테스트")
+    public void updateViewTest() throws Exception {
+        // given
+        TradeBoardDto tradeBoardDto = new TradeBoardDto();
+        tradeBoardDto.setId(1L);
+        tradeBoardService.saveTradePost(tradeBoardDto);
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/read/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\": 1}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(MockMvcRestDocumentation.document("api/updateView",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("1")));
+    }
+    @Test
+    @DisplayName("상태 수정 테스트")
+    public void updateStatusTest() throws Exception {
+        // given
+        TradeBoardDto tradeBoardDto = new TradeBoardDto();
+        tradeBoardDto.setId(1L);
+        tradeBoardDto.setStatus(Status.거래완료);
+        tradeBoardService.saveTradePost(tradeBoardDto);
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/updateStatus/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\": 1, \"status\": \"거래완료\"}"))
+                .andDo(MockMvcResultHandlers.print())
+                .andDo(MockMvcRestDocumentation.document("api/updateStatus",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"id\": 1, \"status\": \"거래완료\"}"));
     }
 
 

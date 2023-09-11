@@ -20,7 +20,7 @@ public class JwtTokenUtil {
 
     // 토큰 유효 시간 5시간
     private final long TOKEN_VALID_TIME = 5 * 60 * 60 * 1000L;
-    Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes()); // You should ideally use SECRET_KEY here
+    Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
 
     public String generateAccessToken(UserDetails user) {
         return JWT.create()
@@ -33,7 +33,7 @@ public class JwtTokenUtil {
     public String generateRefreshToken(String email) {
         return JWT.create()
                 .withSubject(email)  // using email as the subject
-                .withExpiresAt(new Date(System.currentTimeMillis() + 300 * 60 * 1000)) // expiration time
+                .withExpiresAt(new Date(System.currentTimeMillis() + 300 * 60 * 1000))
                 .sign(algorithm);
     }
 

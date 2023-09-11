@@ -16,5 +16,6 @@ public class TradeBoardRequestDto {
     private int view;
     private int price;
     private int goodCount;
+    private String buyer;
 
 }

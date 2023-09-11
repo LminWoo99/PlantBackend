@@ -6,6 +6,7 @@ import Plant.PlantProject.Entity.SocialLogin;
 import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.dto.TradeDto;
+import Plant.PlantProject.exception.MemberNotFoundException;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.RoleRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
@@ -37,6 +38,7 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     private final TradeBoardRepository tradeBoardRepository;
+
 
     public List<MemberDto> findAll(){
         List<Member> memberList = memberRepository.findAll();
@@ -110,7 +112,6 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
     }
 
 
-
     public Role saveRole(Role role) {
         log.info("Saving new role {} to the db", role.getName());
         return roleRepository.save(role);
@@ -124,11 +125,38 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
         member.getRole().add(role);
     }
     public List<TradeDto> showTradeInfo(Long id){
-        log.info("showTradeInfo출력");
         List<TradeBoard> tradeBoards = tradeBoardRepository.findTradeBoardByMemberId(id);
         List<TradeDto> tradeDtos = tradeBoards.stream()
                 .map(tradeBoard -> convertTradeBoardToDto(tradeBoard)) // TradeDto로 변환
                 .collect(Collectors.toList());
         return tradeDtos;
+    }public List<TradeDto> showBuyInfo(Long id){
+        Member member=memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
+        List<TradeBoard> tradeBoards = tradeBoardRepository.findTradeBoardByBuyer(member.getNickname());
+        List<TradeDto> tradeDtos = tradeBoards.stream()
+                .map(tradeBoard -> convertTradeBoardToDto(tradeBoard))
+                .collect(Collectors.toList());
+        return tradeDtos;
     }
+    public MemberDto findIdByEmail(String email){
+        MemberDto memberDto = memberRepository.findByEmail(email).map(member -> new MemberDto(member.getId(), member.getNickname(),
+                member.getUserId(), member.getUsername(), member.getPassword(), member.getEmail()
+        )).orElseThrow(MemberNotFoundException::new);
+        return memberDto;
+
+    }
+    public Member findPasswordById(String username){
+        Member member = memberRepository.findByUsername(username);
+        return member;
+
+    }
+    public Member find(MemberDto memberDto){
+        Member member = memberRepository.findById(memberDto.getId()).orElseThrow(MemberNotFoundException::new);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        memberRepository.updatePassword(member.getId(), member.getPassword());
+        return member;
+
+    }
+
 }

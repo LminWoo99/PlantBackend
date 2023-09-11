@@ -17,19 +17,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
-/**
- * packageName    : Plant/PlantProject/kakao
- * fileName       : KaKaoController.java
- * author         : 이민우
- * date           : 2023-03-17
- * description    : 카카오 로그인 api controller
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2022-03-16        이민우       최초 생성
- * 2022-03-17        이민우       endpoint=/member/do(로그인 페이지),endpoint=/login/kakao(로그인 후페이지)
- *
- */
+
 @RestController
 @RequiredArgsConstructor
 public class KaKaoController {

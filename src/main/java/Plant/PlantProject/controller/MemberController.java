@@ -39,32 +39,23 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 
-/**
- * packageName    : Plant/PlantProject/controller
- * fileName       : MemberController
- * author         : 이민우
- * date           : 2023-02-24
- * description    : 일반 회원가입 , 로그인, 회원 정보 조회
- * ===========================================================
- * DATE              AUTHOR             NOTE
- * -----------------------------------------------------------
- * 2022-03-05        이민우       MemberController 생성
- * 2022-03-24        이민우       로그인 뷰 엔드포인트 "/loginForm", 회원가입 뷰 엔드포인트 "/joinForm"
- * 2022-03-24        이민우       로그인을 할때는 프론트단에서 데이터 요청 후 일치하면 로그인 완료, 회원가입시 백단에 데이터 받고 프론트에 넘겨줌
- * 2022-05-03        이민우       자체로그인, 구글로그인은 "loginForm",
- */
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
-    BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     @GetMapping("/tradeInfo/{id}")
     public ResponseEntity<List<TradeDto>> showTradeInfo(@PathVariable Long id){
         List<TradeDto> tradeDtos = memberService.showTradeInfo(id);
+        return ResponseEntity.ok().body(tradeDtos);
+    }
+    @GetMapping("/buyInfo/{id}")
+    public ResponseEntity<List<TradeDto>> showBuyInfo(@PathVariable Long id){
+        List<TradeDto> tradeDtos = memberService.showBuyInfo(id);
         return ResponseEntity.ok().body(tradeDtos);
     }
     @GetMapping("/users")
@@ -78,7 +69,6 @@ public class MemberController {
                 ServletUriComponentsBuilder
                         .fromCurrentContextPath()
                         .path("/api/user/save").toUriString());
-
         Member member = memberDto.toEntity();
 
         member.getRole().add(roleRepository.findByName("ROLE_USER"));
@@ -154,6 +144,21 @@ public class MemberController {
         HttpStatus httpStatus = memberService.duplicateMemberNickname(nickname);
 
         return new ResponseEntity<>(httpStatus);
+    }
+    @GetMapping("findId")
+    public ResponseEntity<MemberDto> findIdByEmail(@RequestParam String email){
+        MemberDto memberDto = memberService.findIdByEmail(email);
+        return ResponseEntity.ok().body(memberDto);
+    }
+    @GetMapping("findPassword")
+    public ResponseEntity<Member> findPasswordById(@RequestParam String userId){
+        Member member = memberService.findPasswordById(userId);
+        return ResponseEntity.ok().body(member);
+    }
+    @PostMapping("findPassword")
+    public ResponseEntity<Member> setPassword(@RequestBody MemberDto memberDto){
+        Member member=memberService.find(memberDto);
+        return ResponseEntity.ok().body(member);
     }
 }
 

@@ -9,12 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-/*
- 작성자 : 이민우
- 작성 일자: 02.19
- 내용 : 거래 게시글 DTO
- 특이 사항: setter사용을 지양하고, builder 패턴 지향
-*/
+
 @Data
 @NoArgsConstructor
 public class TradeBoardDto {

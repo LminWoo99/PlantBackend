@@ -13,8 +13,7 @@ plugins {
 
 group = 'Plant'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
-
+//sourceCompatibility = '11'
 configurations {
 	asciidoctorExt
 	compileOnly {
@@ -72,16 +71,23 @@ compileJava {
 tasks.named('test') {
 	useJUnitPlatform()
 	outputs.dir snippetsDir
+	enabled = false
 }
 ext { // (5)
 	snippetsDir = file('build/generated-snippets')
 }
-
+jar {
+	enabled=false
+	manifest {
+		attributes 'Main-Class': 'Plant.PlantProject.PlantProjectApplication'
+	}
+}
 
 asciidoctor { // (7)
 	inputs.dir snippetsDir // (8)
 	configurations 'asciidoctorExt' // (9)
 	dependsOn test // (10)
+	enabled=false
 }
 
 bootJar {

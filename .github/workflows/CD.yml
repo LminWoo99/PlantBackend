@@ -49,6 +49,16 @@ jobs:
       # script files 복사
       - name: Copy script
         run: cp ./scripts/*.sh ./deploy
+       # Deploy
+      - name: Deploy
+        run: |
+          aws deploy create-deployment \
+          --application-name cicdtest-project \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name cicd-test-prod \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=plantproject-bucket,bundleType=zip,key=PlantBackend/$GITHUB_SHA.zip \
+          --region ap-northeast-2 \
       
       # S3에 업로드
       - name: Upload to S3

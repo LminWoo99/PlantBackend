@@ -19,7 +19,6 @@ public class JwtTokenUtil {
     private String SECRET_KEY;
 
     // 토큰 유효 시간 5시간
-    private final long TOKEN_VALID_TIME = 5 * 60 * 60 * 1000L;
     Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
 
     public String generateAccessToken(UserDetails user) {

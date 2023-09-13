@@ -1,0 +1,55 @@
+
+name: CD
+
+
+on:
+  push:
+    branches: [ master ] 
+
+
+env:
+  S3_BUCKET_NAME: plantproject-bucket
+  PROJECT_NAME: PlantBackend
+  
+
+jobs:
+  build:
+    name: CD
+    # 해당 jobs에서 아래의 steps들이 어떠한 환경에서 실행될 것인지를 지정합니다.
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'zulu'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+      
+      - name: Build with Gradle
+        run: ./gradlew build
+        shell: bash
+        
+      - name: Make zip file
+        run: zip -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
+      # script files 복사
+      - name: Copy script
+        run: cp ./scripts/*.sh ./deploy
+      
+      # S3에 업로드
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zi

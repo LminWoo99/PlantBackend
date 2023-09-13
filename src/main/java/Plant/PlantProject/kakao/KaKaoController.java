@@ -25,7 +25,7 @@ public class KaKaoController {
 
     private final KaKaoService kaKaoService;
     private final JwtTokenUtil jwtTokenUtil;
-    private final MemberService memberService;
+
     @GetMapping("/oauth2/login/kakao")
     public ResponseEntity<Map> getCI(@RequestParam String code) throws IOException {
         String access_token = kaKaoService.getToken(code);

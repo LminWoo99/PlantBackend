@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: / 
-    destination: /home/ec2-user/etc/server/PlantBackend # source에서 지정된 파일을 받을 위치, 이후 jar를 실행하는 등은 destination에서 옮긴 파일들로 진행
+    destination: /etc/server/PlantBackend # source에서 지정된 파일을 받을 위치, 이후 jar를 실행하는 등은 destination에서 옮긴 파일들로 진행
     overwrite: yes
 
 permissions: 

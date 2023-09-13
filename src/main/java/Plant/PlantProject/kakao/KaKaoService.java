@@ -52,7 +52,7 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=9f8bf0134e25a65f80e7b9849efc41ae");
-            sb.append("&redirect_uri=http://54.180.44.32:3000/api/oauth2/login/kakao");
+            sb.append("&redirect_uri=http://54.180.44.32:3000/oauth2/login/kakao");
             sb.append("&code=" + code);
 
             bw.write(sb.toString());

@@ -19,18 +19,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class KaKaoController {
 
     private final KaKaoService kaKaoService;
     private final JwtTokenUtil jwtTokenUtil;
     private final MemberService memberService;
-
-    @GetMapping("/member/do")
-    public String loginPage()
-    {
-        return "kakaoCI/login";
-    }
     @GetMapping("/oauth2/login/kakao")
     public ResponseEntity<Map> getCI(@RequestParam String code) throws IOException {
         String access_token = kaKaoService.getToken(code);

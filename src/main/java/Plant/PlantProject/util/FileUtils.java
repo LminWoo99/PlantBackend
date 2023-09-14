@@ -22,7 +22,6 @@ public class FileUtils {
         if(!isValidFileType(extension)) {
             throw new UnSupportedFileTypeException(extension + "은 지원하는 파일 형식이 아닙니다.");
         }
-
         return  BASE_DIRECTORY + "/" + filename + "." + extension;
     }
 

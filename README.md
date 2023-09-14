@@ -18,9 +18,6 @@
 7️⃣ [팀원](#-팀원--member)
 
 
-## ⏰ 개발 기간 | Project Period
-2022.12.30(금) ~ 2023.02.10(금) (6주간)
-
 
 ## 🛠 아키텍처 | Architecture
 <img width="929" alt="스크린샷 2023-09-14 오후 6 03 35" src="https://github.com/LminWoo99/PlantBackend/assets/86508110/f9e3ff99-7c36-48fb-825b-36a763d76379">
@@ -93,7 +90,7 @@
   <tbody>
       <tr>
       <td>Jpa</td>
-      <td> 객체 중심으로 애플리케이션 개발하기 위해 Jpa를 사용하였습니다. </td>
+      <td> 객체 중심으로 애플리케이션 개발하기 위해 Jpa를 사용하였고 QueryDsl은 직접적인 연관관계를 맺지 않는 Entity의 Join이 어려워 적절히 jpql도 적재적소에 맞게 사용하였습니다. </td>
     </tr>
     <tr>
       <td>Querydsl</td>

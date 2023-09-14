@@ -24,16 +24,16 @@ public class PlantProjectApplication {
 		return new HiddenHttpMethodFilter();
 	}
 	//spring.jpa.hibernate.ddl-auto=update 바꾸면서 주석처리
-	@Bean
-	CommandLineRunner run(MemberService memberService, KaKaoService kaKaoService) {
-		return args -> {
-			memberService.saveRole(new Role(null, "ROLE_USER"));
-			memberService.saveRole(new Role(null, "ROLE_MANAGER"));
-			memberService.saveRole(new Role(null, "ROLE_ADMIN"));
-			memberService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
-
-		};
-	}
+//	@Bean
+//	CommandLineRunner run(MemberService memberService, KaKaoService kaKaoService) {
+//		return args -> {
+//			memberService.saveRole(new Role(null, "ROLE_USER"));
+//			memberService.saveRole(new Role(null, "ROLE_MANAGER"));
+//			memberService.saveRole(new Role(null, "ROLE_ADMIN"));
+//			memberService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
+//
+//		};
+//	}
 }
 
 

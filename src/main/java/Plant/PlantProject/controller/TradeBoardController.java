@@ -33,7 +33,6 @@ import static Plant.PlantProject.Entity.Status.판매중;
 public class TradeBoardController {
     private final TradeBoardService tradeBoardService;
     private final MemberService memberService;
-    private final KaKaoService kaKaoService;
     private final CommentService commentService;
     @PostMapping("/write")
     public ResponseEntity<TradeDto> write(Principal principal, @RequestBody TradeBoardRequestDto tradeBoardDto) {

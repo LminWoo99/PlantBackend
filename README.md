@@ -177,7 +177,12 @@
 |<img src="https://user-images.githubusercontent.com/83339863/217277950-99a7aac5-c7af-4992-b7c0-fdbcec26cd61.gif" width="400px" height="220px">|<img src="https://user-images.githubusercontent.com/83339863/217283955-327f9e7d-2ad6-4f22-a02d-8fb086c3165f.gif" width="400px" height="220px">|
 
 
-
+<!--
 ## 🙂 팀원 | Member
 총 3명
-
+<br>
+BE+DEVOPS : [이민우](https://github.com/LminWoo99/)
+<br>
+BE+FE : [장진호](https://github.com/jinho0114)
+<br>
+FE: [한세현](https://github.com/Hanttogang)

@@ -33,15 +33,16 @@
 
 ✔️ 중고거래 커뮤니티
   -  식물, 식물용품 거래 게시글 올리기
-      - 식물 작성 폼 : 거래 제목, 거래 정보, 거래 이미지
+      - 식물 작성 폼 : 거래 제목, 거래 정보, 거래 이미지(Amazon S3를 통해 이미지 저장)
   -  거래 게시글 페이징
   -  거래 게시글 조회수, 찜
   -  거래 의사는 댓글, 대댓글로 표현(개인정보를 위해 비밀댓글 선택가능!)
   -  댓글, 대댓글 구매자한해 구매자 결정
 
 ✔️ 유저 기능
-  - 로그인, 소셜로그인 기능(카카오), 로그아웃
+  - 로그인, 소셜로그인 기능(카카오), 로그아웃  
   - 회원가입
+      - 회원 가입시 네이버 smtp 이메일 본인 인증 
   - 아이디, 비밀번호 찾기
   - 내 찜 목록
   - 구매 내역, 판매 내역
@@ -104,6 +105,10 @@
       <td>nginx</td>
       <td>서버 확장에 용이하고 리버스 프록시를 통해 보안적으로 뛰어나며 무중단 배포를 통한 사용자의 편의성 또한 제공하고 이용자가 많아졌을 경우의 확장성을 생각하여 사용하였습니다.</td>
     </tr>
+      <tr>
+      <td>Amazon S3</td>
+      <td>중고 거래 상품 이미지 등록과 CI/CD를 위해 Amazon S3를 사용하였습니다.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -157,23 +162,22 @@
     </tr>
   </tbody>
 </table>
-<!--
+
+
+
 ## 🎥 시연 GIF | Testing
-<!--
+
 |홈|식집사 테스트|
 |:---:|:---:|
-<--
-|<img src="https://user-images.githubusercontent.com/83339863/217261956-9dbe1273-4484-46c1-9119-041e1ee5d66c.gif" width="400px" height="220px">|<img src="https://user-images.githubusercontent.com/83339863/217262294-dc07ab4f-fb48-4932-8baa-ef3037c8d697.gif" width="400px" height="220px">|
+
+||<img src="https://user-images.githubusercontent.com/83339863/217262294-dc07ab4f-fb48-4932-8baa-ef3037c8d697.gif" width="400px" height="220px">|
 |식물 검색하기|식물일지|
 |<img src="https://user-images.githubusercontent.com/83339863/217263499-966b9302-7201-45bc-8b64-edf26c58f282.gif" width="400px" height="220px">|<img src="https://user-images.githubusercontent.com/83339863/217281573-f26991e6-4f3d-4b19-a94b-64e119af690b.gif" width="400px" height="220px">|
 |커뮤니티|마이페이지|
 |<img src="https://user-images.githubusercontent.com/83339863/217277950-99a7aac5-c7af-4992-b7c0-fdbcec26cd61.gif" width="400px" height="220px">|<img src="https://user-images.githubusercontent.com/83339863/217283955-327f9e7d-2ad6-4f22-a02d-8fb086c3165f.gif" width="400px" height="220px">|
--->
-## 🙂 팀원 | Member
-<!--
 
-|  | <img src="https://avatars.githubusercontent.com/u/109057365?s=400&u=aec944568894f0b9c054ecce7d5d43e67e962288&v=4" width="100px;" alt=""/> | <img src="https://d3usc6dqsfeh3v.cloudfront.net/post/noimage.png" width="100px;" alt=""/> | 
-|:---:|:---:|:---:|
-| BE 팀장 김인광 | BE 팀원 이상현 | BE 팀원 박소연 |
-| <img src="https://user-images.githubusercontent.com/83339863/217834853-eb7cc798-94aa-4224-8247-125cc8e8736e.jpeg" width="100px;" alt=""/> | <img src="https://d3usc6dqsfeh3v.cloudfront.net/post/noimage.png" width="100px;" alt=""/> | <img src="https://d3usc6dqsfeh3v.cloudfront.net/post/noimage.png" width="100px;" alt=""/> |
-| FE 부팀장 강민승 | FE 팀원 정다솔 | Design 최미진 |
+
+
+## 🙂 팀원 | Member
+총 3명
+

@@ -1,23 +1,36 @@
 # PlantBackend
-식구하자(백엔드 커밋)
+식구하자(백엔드)
+
 ## 프로젝트 소개
 ✅ 당근 마켓을 벤치마킹하여 식집사들을 위한 식물, 식물 용품 중고 거래 및 식물 정보 공유 사이트✅
 - 지금 식구하자에서 거래되고 있는 다양한 식물, 식물 용품을 구경해보세요.
 - 식물에 대한 정확한 정보를 얻어가세요! 💬
 
  👉 식구하자 사이트 [바로가기]() <br/>
- 👉 식구하자 노션 [바로가기](https://www.notion.so/513e3f3e40cf4b1c989de585de632618)
-
+ 👉 식구하자 노션 [바로가기](https://www.notion.so/513e3f3e40cf4b1c989de585de632618)<br/>
+ 👉 식구하자 프론트 [바로가기](https://github.com/Hanttogang/Plant_Frontend)
 ## 🔭 목차 | Contents
-1️⃣ [개발 기간](#-개발-기간--project-period) <br/>
+1️⃣ [개발 기간 및 팀원](#-개발-기간--project-period) <br/>
 2️⃣ [아키텍처](#-아키텍처--architecture) <br/>
 3️⃣ [주요 기능](#-주요-기능--main-function) <br/>
 4️⃣ [기술 스택](#-기술-스택--technology-stack) <br/>
-5️⃣ [기술적 의사결정](#-기술적-의사결정--technical-decision-making) <br/>
-6️⃣ [트러블 슈팅](#-트러블-슈팅--trouble-shooting) <br/>
-7️⃣ [팀원](#-팀원--member)
+5️⃣ [ERD](#-ERD--erd) <br/>
+6️⃣ [기술적 의사결정](#-기술적-의사결정--technical-decision-making) <br/>
+7️⃣ [트러블 슈팅](#-트러블-슈팅--trouble-shooting) <br/>
+8️⃣ [팀원](#-팀원--member)
 
 
+## 👬 개발 기간 및 팀원 | Project Period
+
+개발 기간 : 23.06~23.08 (23년 2월에 시작했다가 팀원 이탈로 6월에 다시 진행)
+### 🙂 팀원 | Member
+총 3명
+<br>
+BE+DEVOPS : [이민우](https://github.com/LminWoo99/)
+<br>
+BE+FE : [장진호](https://github.com/jinho0114)
+<br>
+FE: [한세현](https://github.com/Hanttogang)
 
 ## 🛠 아키텍처 | Architecture
 <img width="929" alt="스크린샷 2023-09-14 오후 6 03 35" src="https://github.com/LminWoo99/PlantBackend/assets/86508110/f9e3ff99-7c36-48fb-825b-36a763d76379">
@@ -86,6 +99,8 @@
   <img src="https://img.shields.io/badge/KakaoTalk-FFCD00?style=for-the-badge&logo=KakaoTalk&logoColor=white">
 </div>
 
+## 💻 ERD | ERD
+<img width="590" alt="스크린샷 2023-09-14 오후 11 38 47" src="https://github.com/LminWoo99/PlantBackend/assets/86508110/88224c26-3997-48a1-9456-6938eb3f1918">
 
 ## 📑 기술적 의사결정 | Technical Decision-Making
 <table>
@@ -115,56 +130,20 @@
 
 
 ## 🛠 트러블 슈팅 | Trouble Shooting
-<table>
-  <tbody>
-    <tr>
-      <td>
-        Front-end
-      </td>
-      <td>
-        검색기능
-      </td>
-      <td>
-        <img src="https://user-images.githubusercontent.com/117730606/217253442-b0f1c07a-5940-403f-bfa0-890868f08d14.png"/>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Front-end
-      </td>
-      <td>
-        React Custom Hook
-      </td>
-      <td>
-        <img src="https://user-images.githubusercontent.com/117730606/217255358-b0962e13-3c01-4075-bc16-b27d72c83fad.png"/>
-      </td>
-    </tr>
-        <tr>
-      <td>
-        Back-end 
-      </td>
-      <td>
-        RefreshToken 탈취 위협
-      </td>
-      <td>
-        <img src="https://user-images.githubusercontent.com/117730606/217255758-c60853d0-27a9-4531-bc92-8d2e7aab40c6.png"/>
-      </td>
-    </tr>
-        <tr>
-      <td>
-        Back-end 
-      </td>
-      <td>
-        이미지 로딩 속도 개선
-      </td>
-      <td>
-        <img src="https://user-images.githubusercontent.com/117730606/217256001-c24b2f42-73d6-478e-b95e-baadcde4c8db.png"/>
-      </td>
-    </tr>
-  </tbody>
-</table>
 
+👉 트러블 슈팅 자세히 보기 [바로가기](https://www.notion.so/513e3f3e40cf4b1c989de585de632618)<br/>
 
+## 🛠 성능 튜닝 | Trouble Shooting
+
+### 해당 거래 게시글 댓글 대댓글 조회 n+1문제 해결을 통한 성능 튜닝
+https://github.com/LminWoo99/PlantBackend/blob/85f9d0576b595d587bd1017ca7d7f48094682e5a/src/main/java/Plant/PlantProject/repository/CommentRepositoryImpl.java#L13-L26
+
+FetchType.LAZY로 설정되어 있어서 부모 댓글을 실제로 사용할 때만 로딩하도록 한다면, 각 Comment 엔티티를 가져올 때마다 부모 댓글을 가져오기 위해 별도의 쿼리가 실행되어 N+1 문제가 발생. 그러나 Querydsl fetchJoin()을 사용하면 필요한 모든 데이터를 한 번에 가져오므로 이러한 문제를 해결. 따라서 leftJoin(comment.parent).fetchJoin()를 통해 N+1 문제를 효과적으로 해결함으로서 성능 향상 기대
+
+### 벌크 연산을 통한 성능 튜닝
+https://github.com/LminWoo99/PlantBackend/blob/81bd0baeb55021b36d4b0f80335dad556bd0c153/src/main/java/Plant/PlantProject/repository/TradeBoardRepository.java#L19-L36
+
+벌크 연산을 통해 여러 엔터티를 한 번에 수정하거나 삭제함으로써 데이터베이스 연산 횟수를 감소시켜 네트워크 지연 및 데이터베이스 부하가 감소함에 따라 성능 향상
 
 ## 🎥 시연 GIF | Testing
 
@@ -178,11 +157,4 @@
 |식물 판매 내역 및 구매 내역|
 |<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%91%E1%85%A1%E1%86%AB%E1%84%86%E1%85%A2%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8%2C%20%E1%84%80%E1%85%AE%E1%84%86%E1%85%A2%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8.gif" width="400px" height="220px">
 <!--
-## 🙂 팀원 | Member
-총 3명
-<br>
-BE+DEVOPS : [이민우](https://github.com/LminWoo99/)
-<br>
-BE+FE : [장진호](https://github.com/jinho0114)
-<br>
-FE: [한세현](https://github.com/Hanttogang)
+

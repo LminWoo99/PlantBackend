@@ -1,5 +1,6 @@
 package Plant.PlantProject.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import lombok.*;
 
@@ -25,6 +26,7 @@ public class Member{
     @NotNull
     private String username;
     @NotNull
+    @JsonIgnore
     private String password;
     @NotNull
     private String email;

@@ -6,19 +6,19 @@
 - 지금 식구하자에서 거래되고 있는 다양한 식물, 식물 용품을 구경해보세요.
 - 식물에 대한 정확한 정보를 얻어가세요! 💬
 
- 👉 식구하자 사이트 [바로가기]() <br/>
  👉 식구하자 노션 [바로가기](https://www.notion.so/513e3f3e40cf4b1c989de585de632618)<br/>
  👉 식구하자 프론트 [바로가기](https://github.com/Hanttogang/Plant_Frontend)
 ## 🔭 목차 | Contents
 1️⃣ [개발 기간 및 팀원](#-개발-기간--project-period) <br/>
 2️⃣ [아키텍처](#-아키텍처--architecture) <br/>
 3️⃣ [주요 기능](#-주요-기능--main-function) <br/>
-4️⃣ [기술 스택](#-기술-스택--technology-stack) <br/>
-5️⃣ [ERD](#-ERD--erd) <br/>
-6️⃣ [기술적 의사결정](#-기술적-의사결정--technical-decision-making) <br/>
-7️⃣ [트러블 슈팅](#-트러블-슈팅--trouble-shooting) <br/>
-8️⃣ [성능 튜닝](#-성능-튜닝--performance-tuning) <br/>
-9️⃣ [시연 GIF](#-시연-gif--testing) <br/>
+4️⃣ [내 역할](#-내-역할--position) <br/>
+5️⃣ [기술 스택](#-기술-스택--technology-stack) <br/>
+6️⃣ [ERD](#-ERD--erd) <br/>
+7️⃣ [기술적 의사결정](#-기술적-의사결정--technical-decision-making) <br/>
+8️⃣ [트러블 슈팅](#-트러블-슈팅--trouble-shooting) <br/>
+9️⃣ [성능 튜닝](#-성능-튜닝--performance-tuning) <br/>
+🔟 [시연 GIF](#-시연-gif--testing) <br/>
 
 
 ## 👬 개발 기간 및 팀원 | Project Period
@@ -62,6 +62,31 @@ FE: [한세현](https://github.com/Hanttogang)
   - 내 찜 목록
   - 구매 내역, 판매 내역
 
+## 👨‍🏫 내 역할 | Position
+
+### Backend
+
+✔️ 중고거래 커뮤니티
+  -  식물, 식물용품 거래 게시글 올리기
+      - 식물 작성 폼 : 거래 제목, 거래 정보, 거래 이미지(Amazon S3를 통해 이미지 저장)
+      - CRUD
+  -  거래 게시글 페이징
+  -  거래 게시글 조회수, 찜
+  -  거래 의사는 댓글, 대댓글로 표현(개인정보를 위해 비밀댓글 선택가능!)
+  -  댓글, 대댓글 구매자한해 구매자 결정
+
+✔️ 유저 기능
+  - 로그인, 소셜로그인 기능(카카오), 로그아웃  
+  - 회원가입
+      - 회원 가입시 네이버 smtp 이메일 본인 인증 
+  - 아이디, 비밀번호 찾기
+  - 내 찜 목록
+  - 구매 내역, 판매 내역
+    
+### Devops
+
+ ✔️ AWS EC2를 통한 배포 <br/>
+ ✔️ Github Actions을 통한 CI/CD 파이프 라인 구축
 
 ## ⚙ 기술 스택 | Technology Stack
 ### Front-End

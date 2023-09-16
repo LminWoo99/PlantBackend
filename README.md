@@ -170,13 +170,13 @@
 
 |자체 회원가입(네이버 smtp를 이용한 이메일 본인인증)|소셜 로그인 및 자체 로그인|
 |:---:|:---:|
-|<img src= "/Users/imin-u/Desktop/readme/화면-기록-2023-09-16-오후-12.56.39.gif" width="400px" hegith="220px">|![ezgif com-video-to-gif (1)](https://github.com/LminWoo99/PlantBackend/assets/86508110/aeb5ea65-a313-492f-b740-c28245ead07f)
-|
-|식물 검색하기|식물일지|
-|<img src="https://user-images.githubusercontent.com/83339863/217263499-966b9302-7201-45bc-8b64-edf26c58f282.gif" width="400px" height="220px">|<img src="https://user-images.githubusercontent.com/83339863/217281573-f26991e6-4f3d-4b19-a94b-64e119af690b.gif" width="400px" height="220px">|
-|커뮤니티|마이페이지|
-|<img src="https://user-images.githubusercontent.com/83339863/217277950-99a7aac5-c7af-4992-b7c0-fdbcec26cd61.gif" width="400px" height="220px">|<img src="https://user-images.githubusercontent.com/83339863/217283955-327f9e7d-2ad6-4f22-a02d-8fb086c3165f.gif" width="400px" height="220px">|
-
+|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%92%E1%85%AC%E1%84%8B%E1%85%AF%E1%86%AB%E1%84%80%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B8.gif" width="400px" height="220px">|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB-%E1%84%80%E1%85%B5%E1%84%85%E1%85%A9%E1%86%A8-2023-09-16-%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE-12.56.39.gif" width="400px" height="220px">|
+|식물 검색 하기 및 정보 보기|거래 글 상세 보기 및 댓글 대댓글작성(비밀댓글)|
+|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/ezgif.com-video-to-gif%20(1).gif" width="400px" height="220px">|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%89%E1%85%A1%E1%86%BC%E1%84%89%E1%85%A6%E1%84%87%E1%85%A9%E1%84%80%E1%85%B5.gif" width="400px" height="220px">|
+|거래 완료(댓글 단 유저중에서 거래자 정하고 거래완료가 되면 화면 상태 바뀜)|거래 글 찜 하기및 찜 내역|
+|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%80%E1%85%A5%E1%84%85%E1%85%A2%E1%84%8B%E1%85%AA%E1%86%AB%E1%84%85%E1%85%AD.gif" width="400px" height="220px">|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%8D%E1%85%B5%E1%86%B7%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8.gif" width="400px" height="220px">|
+|식물 판매 내역 및 구매 내역|
+|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%91%E1%85%A1%E1%86%AB%E1%84%86%E1%85%A2%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8%2C%20%E1%84%80%E1%85%AE%E1%84%86%E1%85%A2%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8.gif" width="400px" height="220px">
 <!--
 ## 🙂 팀원 | Member
 총 3명

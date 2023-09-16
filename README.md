@@ -17,7 +17,8 @@
 5️⃣ [ERD](#-ERD--erd) <br/>
 6️⃣ [기술적 의사결정](#-기술적-의사결정--technical-decision-making) <br/>
 7️⃣ [트러블 슈팅](#-트러블-슈팅--trouble-shooting) <br/>
-8️⃣ [팀원](#-팀원--member)
+8️⃣ [성능 튜닝](#-성능-튜닝--performance-tuning) <br/>
+9️⃣ [시연 GIF](#-시연-gif--testing) <br/>
 
 
 ## 👬 개발 기간 및 팀원 | Project Period
@@ -133,7 +134,7 @@ FE: [한세현](https://github.com/Hanttogang)
 
 👉 트러블 슈팅 자세히 보기 [바로가기](https://www.notion.so/513e3f3e40cf4b1c989de585de632618)<br/>
 
-## 🛠 성능 튜닝 | Trouble Shooting
+## 🛠 성능 튜닝 | Performance Tuning
 
 ### 해당 거래 게시글 댓글 대댓글 조회 n+1문제 해결을 통한 성능 튜닝
 https://github.com/LminWoo99/PlantBackend/blob/85f9d0576b595d587bd1017ca7d7f48094682e5a/src/main/java/Plant/PlantProject/repository/CommentRepositoryImpl.java#L13-L26

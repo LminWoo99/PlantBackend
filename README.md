@@ -170,7 +170,9 @@
 |홈|식집사 테스트|
 |:---:|:---:|
 
-||<img src="https://user-images.githubusercontent.com/83339863/217262294-dc07ab4f-fb48-4932-8baa-ef3037c8d697.gif" width="400px" height="220px">|
+||<img src="
+https://github.com/LminWoo99/PlantBackend/assets/86508110/79ca8928-9d3b-4d0b-8bbd-b5468e0a126d
+">|
 |식물 검색하기|식물일지|
 |<img src="https://user-images.githubusercontent.com/83339863/217263499-966b9302-7201-45bc-8b64-edf26c58f282.gif" width="400px" height="220px">|<img src="https://user-images.githubusercontent.com/83339863/217281573-f26991e6-4f3d-4b19-a94b-64e119af690b.gif" width="400px" height="220px">|
 |커뮤니티|마이페이지|

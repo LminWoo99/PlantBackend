@@ -34,6 +34,7 @@
 ✔️ 중고거래 커뮤니티
   -  식물, 식물용품 거래 게시글 올리기
       - 식물 작성 폼 : 거래 제목, 거래 정보, 거래 이미지(Amazon S3를 통해 이미지 저장)
+      - CRUD
   -  거래 게시글 페이징
   -  거래 게시글 조회수, 찜
   -  거래 의사는 댓글, 대댓글로 표현(개인정보를 위해 비밀댓글 선택가능!)
@@ -167,17 +168,14 @@
 
 ## 🎥 시연 GIF | Testing
 
-|홈|식집사 테스트|
+|자체 회원가입(네이버 smtp를 이용한 이메일 본인인증)|소셜 로그인 및 자체 로그인|
 |:---:|:---:|
-
-||<img src="
-https://github.com/LminWoo99/PlantBackend/assets/86508110/79ca8928-9d3b-4d0b-8bbd-b5468e0a126d
-">|
+|<img src= "/Users/imin-u/Desktop/readme/화면-기록-2023-09-16-오후-12.56.39.gif" width="400px" hegith="220px">|![ezgif com-video-to-gif (1)](https://github.com/LminWoo99/PlantBackend/assets/86508110/aeb5ea65-a313-492f-b740-c28245ead07f)
+|
 |식물 검색하기|식물일지|
 |<img src="https://user-images.githubusercontent.com/83339863/217263499-966b9302-7201-45bc-8b64-edf26c58f282.gif" width="400px" height="220px">|<img src="https://user-images.githubusercontent.com/83339863/217281573-f26991e6-4f3d-4b19-a94b-64e119af690b.gif" width="400px" height="220px">|
 |커뮤니티|마이페이지|
 |<img src="https://user-images.githubusercontent.com/83339863/217277950-99a7aac5-c7af-4992-b7c0-fdbcec26cd61.gif" width="400px" height="220px">|<img src="https://user-images.githubusercontent.com/83339863/217283955-327f9e7d-2ad6-4f22-a02d-8fb086c3165f.gif" width="400px" height="220px">|
-
 
 <!--
 ## 🙂 팀원 | Member

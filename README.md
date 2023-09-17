@@ -157,7 +157,7 @@ FE: [한세현](https://github.com/Hanttogang)
 
 ## 🛠 트러블 슈팅 | Trouble Shooting
 
-👉 트러블 슈팅 자세히 보기 [바로가기](https://www.notion.so/513e3f3e40cf4b1c989de585de632618)<br/>
+👉 트러블 슈팅 자세히 보기 [바로가기](https://www.notion.so/8c1e232ab7484eaeaf87614eeda15eab)<br/>
 
 ## 🛠 성능 튜닝 | Performance Tuning
 

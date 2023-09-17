@@ -53,7 +53,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), memberRepository);
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
-
         http
                 .csrf().disable()
                 .cors()
@@ -71,7 +70,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 http
                 .addFilter(customAuthenticationFilter)
                 .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-
     }
 
 

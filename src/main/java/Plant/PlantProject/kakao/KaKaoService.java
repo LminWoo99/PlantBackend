@@ -37,7 +37,6 @@ import static Plant.PlantProject.Entity.SocialLogin.KAKAO;
 public class KaKaoService extends DefaultOAuth2UserService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
-    private final JwtTokenUtil jwtTokenUtil;
     public String getToken(String code) throws IOException {
         // 인가코드로 토큰받기
         String host = "https://kauth.kakao.com/oauth/token";
@@ -152,52 +151,6 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
 
         return result;
     }
-
-    public String getAgreementInfo(String access_token)
-    {
-        String result = "";
-        String host = "https://kapi.kakao.com/v2/user/scopes";
-        try{
-            URL url = new URL(host);
-            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty("Authorization", "Bearer "+access_token);
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            String line = "";
-            while((line=br.readLine())!=null)
-            {
-                result+=line;
-            }
-
-            int responseCode = urlConnection.getResponseCode();
-            System.out.println("responseCode = " + responseCode);
-
-            // result is json format
-            br.close();
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-    public Role saveRole(Role role) {
-        log.info("Saving new role {} to the db", role.getName());
-        return roleRepository.save(role);
-    }
-
-    public void grantRoleToUser(String username, String roleName) {
-        log.info("Grant new role {} to {}", roleName, username);
-        Member member = memberRepository.findByUsername(username);
-        Role role = roleRepository.findByName(roleName);
-
-        member.getRole().add(role);
-    }
-
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         Member user = memberRepository.findByUsername(userName);

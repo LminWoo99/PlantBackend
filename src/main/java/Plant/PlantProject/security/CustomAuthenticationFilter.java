@@ -117,6 +117,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         tokens.put("nickname", nickname);
         tokens.put("id", id);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 }

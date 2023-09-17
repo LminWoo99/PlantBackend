@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import static Plant.PlantProject.Entity.QComment.*;
 import static Plant.PlantProject.Entity.QComment.comment;
 
 @RequiredArgsConstructor

@@ -175,12 +175,12 @@ https://github.com/LminWoo99/PlantBackend/blob/81bd0baeb55021b36d4b0f80335dad556
 
 |자체 회원가입(네이버 smtp를 이용한 이메일 본인인증)|소셜 로그인 및 자체 로그인|
 |:---:|:---:|
-|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%92%E1%85%AC%E1%84%8B%E1%85%AF%E1%86%AB%E1%84%80%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B8.gif" width="400px" height="220px">|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB-%E1%84%80%E1%85%B5%E1%84%85%E1%85%A9%E1%86%A8-2023-09-16-%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE-12.56.39.gif" width="400px" height="220px">|
+|<img src="https://github.com/LminWoo99/PlantBackend/blob/af0490a177b15c456b69a164e1a306dd3f9af6be/img/%E1%84%92%E1%85%AC%E1%84%8B%E1%85%AF%E1%86%AB%E1%84%80%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B8.gif" width="400px" height="220px">|<img src="https://github.com/LminWoo99/PlantBackend/blob/decbf41b154a561f00070e8802c96358a7437e88/img/%E1%84%92%E1%85%AA%E1%84%86%E1%85%A7%E1%86%AB-%E1%84%80%E1%85%B5%E1%84%85%E1%85%A9%E1%86%A8-2023-09-16-%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE-12.56.39.gif" width="400px" height="220px">|
 |식물 검색 하기 및 정보 보기|거래 글 상세 보기 및 댓글 대댓글작성(비밀댓글)|
-|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/ezgif.com-video-to-gif%20(1).gif" width="400px" height="220px">|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%89%E1%85%A1%E1%86%BC%E1%84%89%E1%85%A6%E1%84%87%E1%85%A9%E1%84%80%E1%85%B5.gif" width="400px" height="220px">|
+|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/ezgif.com-video-to-gif%20(1).gif" width="400px" height="220px">|<img src="https://github.com/LminWoo99/PlantBackend/blob/af0490a177b15c456b69a164e1a306dd3f9af6be/img/%E1%84%89%E1%85%A1%E1%86%BC%E1%84%89%E1%85%A6%E1%84%87%E1%85%A9%E1%84%80%E1%85%B5.gif" width="400px" height="220px">|
 |거래 완료(댓글 단 유저중에서 거래자 정하고 거래완료가 되면 화면 상태 바뀜)|거래 글 찜 하기및 찜 내역|
-|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%80%E1%85%A5%E1%84%85%E1%85%A2%E1%84%8B%E1%85%AA%E1%86%AB%E1%84%85%E1%85%AD.gif" width="400px" height="220px">|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%8D%E1%85%B5%E1%86%B7%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8.gif" width="400px" height="220px">|
+|<img src="https://github.com/LminWoo99/PlantBackend/blob/af0490a177b15c456b69a164e1a306dd3f9af6be/img/%E1%84%80%E1%85%A5%E1%84%85%E1%85%A2%E1%84%8B%E1%85%AA%E1%86%AB%E1%84%85%E1%85%AD.gif" width="400px" height="220px">|<img src="https://github.com/LminWoo99/PlantBackend/blob/af0490a177b15c456b69a164e1a306dd3f9af6be/img/%E1%84%8D%E1%85%B5%E1%86%B7%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8.gif" width="400px" height="220px">|
 |식물 판매 내역 및 구매 내역|
-|<img src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%91%E1%85%A1%E1%86%AB%E1%84%86%E1%85%A2%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8%2C%20%E1%84%80%E1%85%AE%E1%84%86%E1%85%A2%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8.gif" width="400px" height="220px">
+|<img src="https://github.com/LminWoo99/PlantBackend/blob/af0490a177b15c456b69a164e1a306dd3f9af6be/img/%E1%84%91%E1%85%A1%E1%86%AB%E1%84%86%E1%85%A2%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8%2C%20%E1%84%80%E1%85%AE%E1%84%86%E1%85%A2%E1%84%82%E1%85%A2%E1%84%8B%E1%85%A7%E1%86%A8.gif" width="400px" height="220px">
 <!--
 

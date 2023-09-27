@@ -40,9 +40,11 @@ public class Member{
 
     private String refreshToken;
 
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 
-
-    public Member(String email,String password, String nickname, SocialLogin socialLogin,String username) {
+    public Member(String email, String password, String nickname, SocialLogin socialLogin, String username) {
         this.password= password;
         this.nickname = nickname;
         this.email = email;

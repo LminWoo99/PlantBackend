@@ -93,22 +93,27 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User user = (User) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
         String username = user.getUsername();
+
         log.info("success:" + username);
+
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000))
                 .withIssuer(request.getRequestURI().toString())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
 
         String refreshToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 300 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() +  14 * 24 * 60 * 60 * 1000))
                 .withIssuer(request.getRequestURI().toString())
                 .sign(algorithm);
 
         Map<String, Object> tokens = new HashMap<>();
         Member byUsername = memberRepository.findByUsername(username);
+        byUsername.setRefreshToken(refreshToken);
+        memberRepository.save(byUsername);
+
         String id = String.valueOf(byUsername.getId());
         String nickname = byUsername.getNickname();
         tokens.put("access_token", accessToken);

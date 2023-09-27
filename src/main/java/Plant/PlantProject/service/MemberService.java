@@ -159,4 +159,8 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
 
     }
 
+    public Member findByRefreshToken(String username) {
+        Member member = memberRepository.findByUsername(username);
+        return member;
+    }
 }

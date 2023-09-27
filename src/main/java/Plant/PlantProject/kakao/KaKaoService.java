@@ -37,12 +37,12 @@ import static Plant.PlantProject.Entity.SocialLogin.KAKAO;
 public class KaKaoService extends DefaultOAuth2UserService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
-    public String getToken(String code) throws IOException {
+    public Map<String, Object> getToken(String code) throws IOException {
         // 인가코드로 토큰받기
         String host = "https://kauth.kakao.com/oauth/token";
         URL url = new URL(host);
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        String token = "";
+        Map<String, Object> key = new HashMap<>();
         try {
             urlConnection.setRequestMethod("POST");
             urlConnection.setDoOutput(true); // 데이터 기록 알려주기
@@ -51,7 +51,7 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=9f8bf0134e25a65f80e7b9849efc41ae");
-            sb.append("&redirect_uri=http://54.180.44.32:3000/oauth2/login/kakao");
+            sb.append("&redirect_uri=http://localhost:3000/oauth2/login/kakao");
             sb.append("&code=" + code);
 
             bw.write(sb.toString());
@@ -76,8 +76,9 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             System.out.println("refresh_token = " + refresh_token);
             System.out.println("access_token = " + access_token);
 
-            token = access_token;
 
+            key.put("access_token", access_token);
+            key.put("refresh_token", refresh_token);
             br.close();
             bw.close();
         } catch (IOException e) {
@@ -87,15 +88,18 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
         }
 
 
-        return token;
+        return key;
     }
-    public Map<String, Object> getUserInfo(String access_token) throws IOException {
+    public Map<String, Object> getUserInfo(Map<String, Object> token) throws IOException {
         String host = "https://kapi.kakao.com/v2/user/me";
         Map<String, Object> result = new HashMap<>();
+        Object access_token = token.get("access_token");
+        Object refresh_token = token.get("refresh_token");
+
         try {
             URL url = new URL(host);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestProperty("Authorization", "Bearer " + access_token);
+            urlConnection.setRequestProperty("Authorization", "Bearer " +access_token);
             urlConnection.setRequestMethod("GET");
             int responseCode = urlConnection.getResponseCode();
             System.out.println("responseCode = " + responseCode);
@@ -121,18 +125,18 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             String email = kakao_account.get("email").toString();
             String password="1234";
 
-            String username = nickname;
+            String username = email;
             result.put("nickname", nickname);
             result.put("email", email);
             result.put("access_token", access_token);
+            result.put("refresh_token", refresh_token);
             result.put("username", username);
-
-
 
             if (!memberRepository.existsByEmail(email)) {
                 // 존재하지 않는 회원인 경우 새로 생성
                 Member member = new Member(email,password, nickname,  KAKAO, username);
                 member.setPassword(passwordEncoder.encode(member.getPassword()));
+                member.setRefreshToken(refresh_token.toString());
                 member.getRole().add(roleRepository.findByName("ROLE_USER"));
                 memberRepository.save(member);
                 result.put("id", member.getId());

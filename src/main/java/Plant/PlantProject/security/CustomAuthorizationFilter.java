@@ -41,13 +41,15 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 try{
                     String token = authorizationHeader.substring("Bearer ".length());
                     Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
-
+                    log.info(token);
                     JWTVerifier verifier = JWT.require(algorithm).build();
 
                     DecodedJWT decodedJWT = verifier.verify(token);
 
                     String username = decodedJWT.getSubject();
+                    log.info(username);
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+                    log.info(roles.toString());
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
                     stream(roles).forEach(role -> {
                         authorities.add(new SimpleGrantedAuthority(role));
@@ -59,7 +61,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                     log.info("메세지 호출");
                 }catch (Exception e) {
-                    log.info("Error logging in: {}", e.getMessage());
+                    log.info("Error logging in: {}", e.getCause());
+                    log.info("Error logging in: {}", e.fillInStackTrace());
                     response.setHeader("error", e.getMessage());
                     response.setStatus(FORBIDDEN.value());
 

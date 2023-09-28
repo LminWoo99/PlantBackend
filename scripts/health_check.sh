@@ -17,12 +17,12 @@ else
 fi
 
 
-echo "> Start health check of WAS at 'http://127.0.0.1:${TARGET_PORT}' ..."
+echo "> Start health check of WAS at 'http://127.0.0.1:${TARGET_PORT}/api/version' ..."
 
 for RETRY_COUNT in 1 2 3 4 5 6 7 8 9 10
 do
     echo "> #${RETRY_COUNT} trying..."
-    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}"  http://127.0.0.1:${TARGET_PORT}/health)
+    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}"  http://127.0.0.1:${TARGET_PORT}/api/health)
 
     if [ ${RESPONSE_CODE} -eq 200 ]; then
         echo "> New WAS successfully running"

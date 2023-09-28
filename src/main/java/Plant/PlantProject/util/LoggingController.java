@@ -11,12 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class LoggingController {
     @Value("${logging-module.version}")
     private String version;
 
-    @GetMapping("/version")
+    @GetMapping("")
     public String version() {
         return String.format("Project Version : %s", version);
     }

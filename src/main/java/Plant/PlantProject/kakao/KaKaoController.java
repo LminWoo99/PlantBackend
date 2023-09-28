@@ -28,12 +28,14 @@ public class KaKaoController {
 
     @GetMapping("/oauth2/login/kakao")
     public ResponseEntity<Map> getCI(@RequestParam String code) throws IOException {
-        String access_token = kaKaoService.getToken(code);
-        Map<String, Object> userInfo = kaKaoService.getUserInfo(access_token);
+        Map<String, Object> token = kaKaoService.getToken(code);
+        Map<String, Object> userInfo = kaKaoService.getUserInfo(token);
         UserDetails userDetails = (UserDetails) kaKaoService.loadUserByUsername((String) userInfo.get("username"));
-        String jwt=jwtTokenUtil.generateAccessToken(userDetails);
+        String accessToken=jwtTokenUtil.generateAccessToken(userDetails);
+        String refreshToken=jwtTokenUtil.generateRefreshToken(userDetails);
         System.out.println("userInfo = " + userInfo);
-        userInfo.put("access_token", jwt);
+        userInfo.put("access_token", accessToken);
+        userInfo.put("refresh_token", refreshToken);
         return ResponseEntity.ok(userInfo);
     }
 }

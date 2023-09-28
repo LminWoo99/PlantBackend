@@ -29,10 +29,11 @@ public class JwtTokenUtil {
                 .sign(algorithm);
     }
 
-    public String generateRefreshToken(String email) {
+    public String generateRefreshToken(UserDetails user) {
         return JWT.create()
-                .withSubject(email)  // using email as the subject
-                .withExpiresAt(new Date(System.currentTimeMillis() + 300 * 60 * 1000))
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() +  14 * 24 * 60 * 60 * 1000))
+                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
     }
 

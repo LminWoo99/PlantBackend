@@ -91,39 +91,40 @@ public class MemberController {
     }
 
     @GetMapping("/token/refresh")
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response, @RequestParam String username) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
 
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            try{
+            try {
                 String refreshToken = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
 
-                JWTVerifier verifier = JWT.require(algorithm).build();
+                // 데이터베이스에서 리프레시 토큰으로 멤버 조회
+                Member member = memberService.findByRefreshToken(username);
 
-                DecodedJWT decodedJWT = verifier.verify(refreshToken);
+                // 멤버가 존재하고, 리프레시 토큰이 일치하면 새로운 액세스 토큰 발급
+                if (member != null && member.getRefreshToken().equals(refreshToken)) {
+                    Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
 
-                String username = decodedJWT.getSubject();
-                Member member = memberService.getUser(username);
+                    String accessToken = JWT.create()
+                            .withSubject(member.getUsername())
+                            .withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000))
+                            .withIssuer(request.getRequestURI().toString())
+                            .withClaim("roles", member.getRole().stream().map(Role::getName).collect(Collectors.toList()))
+                            .sign(algorithm);
 
-                String accessToken = JWT.create()
-                        .withSubject(member.getUsername())
-                        .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
-                        .withIssuer(request.getRequestURI().toString())
-                        .withClaim("roles", member.getRole().stream().map(Role::getName).collect(Collectors.toList()))
-                        .sign(algorithm);
+                    // 새로운 액세스 토큰 반환
+                    Map<String, String> tokens = new HashMap<>();
+                    tokens.put("access_token", accessToken);
+                    tokens.put("refresh_token", refreshToken);
 
-
-                Map<String, String> tokens = new HashMap<>();
-                tokens.put("access_token", accessToken);
-                tokens.put("refresh_token", refreshToken);
-
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
-            }catch (Exception e) {
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+                } else {
+                    throw new RuntimeException("Invalid refresh token");
+                }
+            } catch (Exception e) {
                 response.setHeader("error", e.getMessage());
                 response.setStatus(FORBIDDEN.value());
-
                 Map<String, String> error = new HashMap<>();
                 error.put("error_message", e.getMessage());
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -133,6 +134,7 @@ public class MemberController {
             throw new RuntimeException("Refresh token is missing");
         }
     }
+
     @GetMapping("/duplicate")
     public ResponseEntity<?> duplicateMember(@RequestParam String username){
         HttpStatus httpStatus = memberService.duplicateMember(username);

@@ -45,9 +45,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
           
-      # script files 복사
-      - name: Copy script
-        run: cp ./scripts/*.sh ./deploy
+#      # script files 복사
+#      - name: Copy script
+#        run: cp ./scripts/*.sh ./deploy
        # Deploy
       # S3에 업로드
       - name: Upload to S3

@@ -16,7 +16,7 @@ import java.util.List;
  내용 : 거래 게시글 저장소  구현(스프링 데이터 상속 받음)
  특이 사항: 없음
 */
-public interface TradeBoardRepository extends JpaRepository<TradeBoard, Long> {
+public interface TradeBoardRepository extends JpaRepository<TradeBoard, Long>{
     Page<TradeBoard> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
 
     List<TradeBoard> findTradeBoardByMemberId(Long memberId);

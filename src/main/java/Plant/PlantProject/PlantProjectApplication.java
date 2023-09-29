@@ -11,9 +11,14 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 @SpringBootApplication
 @EnableJpaAuditing
 public class PlantProjectApplication {
-
+	public static final String APPLICATION_LOCATIONS = "spring.config.location="
+			+ "classpath:application.properties,"
+			+ "classpath:real-application.yml";
 	public static void main(String[] args) {
-		SpringApplication.run(PlantProjectApplication.class, args);
+
+		new SpringApplicationBuilder(PlantProjectApplication.class)
+				.properties(APPLICATION_LOCATIONS)
+				.run(args);;
 	}
 
 	@Bean

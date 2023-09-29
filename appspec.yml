@@ -12,16 +12,20 @@ permissions:
     owner: ec2-user
     group: ec2-user
 hooks:
-  ApplicationStart:
-    - location: scripts/run_new_was.sh
+  AfterInstall:
+    - location: scripts/execute-deploy.sh
       timeout: 180
-      runas: ec2-user
-    - location: scripts/health_check.sh
-      timeout: 180
-      runas: ec2-user
-    - location: scripts/switch.sh
-      timeout: 180
-      runas: ec2-user
+#hooks:
+#  ApplicationStart:
+#    - location: scripts/run_new_was.sh
+#      timeout: 180
+#      runas: ec2-user
+#    - location: scripts/health_check.sh
+#      timeout: 180
+#      runas: ec2-user
+#    - location: scripts/switch.sh
+#      timeout: 180
+#      runas: ec2-user
 # ApplicationStart 단계에서 deploy.sh를 실행시키도록 합
 #hooks: # CodeDeploy배포 단계에서 실행할 명령어를 지정합니다.
 #  ApplicationStart: # deploy.sh를 ec2-user권한으로 실행합니다.

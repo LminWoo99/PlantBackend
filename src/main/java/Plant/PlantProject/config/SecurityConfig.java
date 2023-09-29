@@ -60,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/api/oauth2/login/kakao").permitAll()
-                .antMatchers("/api/**", "/api/login/**", "/api/user/save", "/api/token/refresh/**", "/api/write/**", "/profile"
+                .antMatchers("/api/**", "/api/login/**", "/api/user/save", "/api/token/refresh/**", "/api/write/**", "/health"
                 ).permitAll()
                 .antMatchers(GET, "/api/users/**").hasAnyAuthority("ROLE_USER")
                 .antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN")

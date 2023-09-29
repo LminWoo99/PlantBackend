@@ -7,7 +7,7 @@ files:
     overwrite: yes
 
 permissions: 
-  - object: /home/ec2-user
+  - object: /
     pattern: "**"
     owner: ec2-user
     group: ec2-user

@@ -28,7 +28,7 @@ do
         echo "> New WAS successfully running"
         exit 0
     elif [ ${RETRY_COUNT} -eq 10 ]; then
-        echo "> Health check failed."
+        echo "> ${RESPONSE_CODE}"
         exit 1
     fi
     sleep 10

@@ -75,7 +75,7 @@ FE: [한세현](https://github.com/Hanttogang)
   -  거래 의사는 댓글, 대댓글로 표현(개인정보를 위해 비밀댓글 선택가능!)
   -  댓글, 대댓글 구매자한해 구매자 결정
 
-✔️ 유저 기능
+✔️ 유저 기능(스프링 시큐리티 & JWT)
   - 로그인, 소셜로그인 기능(카카오), 로그아웃  
   - 회원가입
       - 회원 가입시 네이버 smtp 이메일 본인 인증 
@@ -85,8 +85,13 @@ FE: [한세현](https://github.com/Hanttogang)
     
 ### Devops
 
- ✔️ AWS EC2를 통한 배포 <br/>
+ ✔️ AWS EC2를 통한 배포 
+ <br/>
+ ✔️ nginx를 이용한 무중단 배포
+   - 8081,8082 두개로 배포시에도 서비스가 이용가능하게 구현<br/>
+   
  ✔️ Github Actions을 통한 CI/CD 파이프 라인 구축
+  
 
 ## ⚙ 기술 스택 | Technology Stack
 ### Front-End

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class LoggingController {
-    @Value("${logging-module.version}")
-    private String version;
+
+    private String version="0.0.3";
 
     @GetMapping("")
     public String version() {

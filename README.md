@@ -34,7 +34,7 @@ BE+FE : [장진호](https://github.com/jinho0114)
 FE: [한세현](https://github.com/Hanttogang)
 
 ## 🛠 아키텍처 | Architecture
-<img width="929" alt="스크린샷 2023-09-14 오후 6 03 35" src="https://github.com/LminWoo99/PlantBackend/assets/86508110/f9e3ff99-7c36-48fb-825b-36a763d76379">
+<img width="929" alt="스크린샷 2023-09-14 오후 6 03 35" src="https://github.com/LminWoo99/PlantBackend/blob/master/img/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202023-10-01%20%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB%2012.19.32.png">
 
 
 ## 🌱 주요 기능 | Main Function

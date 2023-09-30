@@ -104,4 +104,4 @@ done
 
 echo "> 스위칭"
 sleep 10
-~/etc/server/PlantBackend/scripts/switch.sh
+/etc/server/PlantBackend/scripts/switch.sh

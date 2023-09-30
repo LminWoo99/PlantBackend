@@ -159,7 +159,9 @@ FE: [한세현](https://github.com/Hanttogang)
 
 👉 트러블 슈팅 자세히 보기 [바로가기](https://www.notion.so/8c1e232ab7484eaeaf87614eeda15eab)<br/>
 
-## 🛠 성능 튜닝 | Performance Tuning
+-------
+
+## 🛠 성능 튜닝 및 개선 | Performance Tuning
 
 ### 해당 거래 게시글 댓글 대댓글 조회 n+1문제 해결을 통한 성능 튜닝
 https://github.com/LminWoo99/PlantBackend/blob/85f9d0576b595d587bd1017ca7d7f48094682e5a/src/main/java/Plant/PlantProject/repository/CommentRepositoryImpl.java#L13-L26
@@ -170,6 +172,27 @@ FetchType.LAZY로 설정되어 있어서 부모 댓글을 실제로 사용할 �
 https://github.com/LminWoo99/PlantBackend/blob/81bd0baeb55021b36d4b0f80335dad556bd0c153/src/main/java/Plant/PlantProject/repository/TradeBoardRepository.java#L19-L36
 
 벌크 연산을 통해 여러 엔터티를 한 번에 수정하거나 삭제함으로써 데이터베이스 연산 횟수를 감소시켜 네트워크 지연 및 데이터베이스 부하가 감소함에 따라 성능 향상
+
+### JWT Access Token의 짧은 수명으로 인한 유저의 불편한 경험개선
+
+프로젝트 마무리후 회고 단계에서 , Access Token의 짧은 시간이 불편하다는 피드백을 받아 성능 개선을 시켰습니다.
+일단 기본적으로 Access Token의 경우 localStorage등 클라이언트(브라우저)의 저장공간에서 보관합니다.  
+이에 따라서 수명이 길면 탈취당했을때 문제가 발생할 수 있습니다.  
+JWT Refresh Token을 활용하여 유저의 사용경험이 불편하지 않도록 개선했습니다.
+
+- 토큰의 유효시간의 경우 Access Token은 20분, Refresh Token은 14일로 지정
+- Refresh Token도 localStorage에 보관하게 되면 탈취에 문제가 있으므로,  쿠키와 DB에 저장
+- 서버에서 401 Unauthorized 에러 반환시 Refresh Token을 활용한 재요청 및 Access Token 재발급
+
+```React
+cookies.set('bbs_refresh_token', resp.data.refresh_token, { path: '/' });
+```
+- 로그인시 Refresh Token 쿠키에 저장
+  
+https://github.com/LminWoo99/PlantBackend/blob/b39fd9210307fa151da6aaaa8d7410046c55a37a/src/main/java/Plant/PlantProject/controller/MemberController.java#L93-L137
+- AccessToken 만료가 되면 클라이언트에서 RefreshToken을 이용하여 AccessToken 재발급 요청
+- 서버에서 DB에 저장된 RefreshToken과 요청온 RefreshToken을 비교하여 일치하면 새로운 AccessToken 발급
+  
 
 ## 🎥 시연 GIF | Testing
 

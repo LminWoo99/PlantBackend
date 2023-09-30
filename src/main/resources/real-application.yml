@@ -7,6 +7,5 @@ server:
 ---
 spring:
   profiles: set2
-
 server:
   port: 8082

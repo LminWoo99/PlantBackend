@@ -87,10 +87,10 @@ FE: [한세현](https://github.com/Hanttogang)
 
  ✔️ AWS EC2를 통한 배포 
  <br/>
- ✔️ nginx를 이용한 무중단 배포
+ ✔️ nginx를 이용한 무중단 배포 👉[블로그 참고](https://velog.io/@mw310/NginxSpring-Boot-%EB%AC%B4%EC%A4%91%EB%8B%A8-%EB%B0%B0%ED%8F%AC-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
    - 8081,8082 두개로 배포시에도 서비스가 이용가능하게 구현<br/>
    
- ✔️ Github Actions을 통한 CI/CD 파이프 라인 구축
+ ✔️ Github Actions을 통한 CI/CD 파이프 라인 구축 👉[블로그 참고](https://velog.io/@mw310/Spring-Boot-GitHub-Actions-AWS-CodeDeploy%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-CICD-%EA%B5%AC%EC%B6%95)
   
 
 ## ⚙ 기술 스택 | Technology Stack

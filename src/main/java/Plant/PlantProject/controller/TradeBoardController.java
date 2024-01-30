@@ -40,7 +40,7 @@ public class TradeBoardController {
         UserDetails userDetails = (UserDetails) memberService.loadUserByUsername(principal.getName());
         System.out.println("userDetails = " + userDetails);
         Member member = memberService.getUser(userDetails.getUsername());
-        tradeBoardDto.setCreateBy(userDetails.getUsername());
+        tradeBoardDto.setCreateBy(member.getNickname());
         tradeBoardDto.setMemberId(member.getId());
         TradeDto tradeDto = tradeBoardService.saveTradePost(tradeBoardDto);
         System.out.println("tradeBoardDto = " + tradeBoardDto.getId());

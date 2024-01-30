@@ -44,7 +44,7 @@ public class RegisterMail implements MailServiceInter {
 		msgg += ePw + "</strong><div><br/> "; // 메일에 인증번호 넣기
 		msgg += "</div>";
 		message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
-		message.setFrom(new InternetAddress("mw310@naver.com", "이민우"));// 보내는 사람
+		message.setFrom(new InternetAddress("mw310@naver.com", "홍근원"));// 보내는 사람
 
 		return message;
 	}

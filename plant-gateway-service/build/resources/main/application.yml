@@ -1,0 +1,33 @@
+server:
+  port: 8000
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  main:
+    web-application-type: reactive
+
+  application:
+    name: plant-gateway-service
+
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
+      routes:
+        - id: plant-chat-service
+          uri: lb://CHAT-SERVICE
+          predicates:
+            - Path=/plant-chat-service/**
+        - id: plant-service
+          uri: lb://PLANT-SERVICE
+          predicates:
+            - Path=/plant-service/**

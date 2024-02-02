@@ -18,6 +18,8 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
+bootstrap.yml
+
 .idea
 *.iws
 *.iml
@@ -25,7 +27,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-/src/main/resources/bootstrap.yml
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

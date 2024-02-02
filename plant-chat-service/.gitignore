@@ -5,6 +5,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+
+
 ### STS ###
 .apt_generated
 .classpath
@@ -18,6 +20,8 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
+bootstrap.yml
+
 .idea
 *.iws
 *.iml

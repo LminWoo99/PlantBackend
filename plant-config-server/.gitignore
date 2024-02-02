@@ -18,8 +18,8 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
+application.yml
 bootstrap.yml
-
 .idea
 *.iws
 *.iml

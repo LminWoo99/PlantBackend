@@ -5,7 +5,7 @@
 - 지금 식구하자에서 거래되고 있는 다양한 식물, 식물 용품을 구경해보세요.
 - 식물에 대한 정확한 정보를 얻어가세요! 💬
   
- 👉 식구하자 노션 [바로가기](https://www.notion.so/513e3f3e40cf4b1c989de585de632618)<br/>
+ 👉 식구하자 노션 [바로가기](https://gleaming-plant-c17.notion.site/9ac3a2906dbc43149237f3c8365b7df9?pvs=4)<br/>
  👉 식구하자 프론트 [바로가기](https://github.com/Hanttogang/Plant_Frontend)
   <br/>
 

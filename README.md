@@ -1,16 +1,36 @@
 # PlantBackend
 식구하자(백엔드)
->__현재 서비스는 aws 무료기간이 지나 종료하였습니다__
 ## 프로젝트 소개
 ✅ 당근 마켓을 벤치마킹하여 식집사들을 위한 식물, 식물 용품 중고 거래 및 식물 정보 공유 사이트✅
 - 지금 식구하자에서 거래되고 있는 다양한 식물, 식물 용품을 구경해보세요.
 - 식물에 대한 정확한 정보를 얻어가세요! 💬
-  <br/>
   
-  
-
  👉 식구하자 노션 [바로가기](https://www.notion.so/513e3f3e40cf4b1c989de585de632618)<br/>
  👉 식구하자 프론트 [바로가기](https://github.com/Hanttogang/Plant_Frontend)
+  <br/>
+
+## 프로젝트 확장 및 MSA 전환 (2024.1 ~ 현재) [진행 중]
+
+- https://github.com/LminWoo99/PlantBackend/tree/msa-master
+- **프로젝트 진행 상황 업데이트:**
+    - 2023년 9월에 완료한 "식구하자" 프로젝트를 바탕으로 현재는 **MSA(Microservices Architecture) 전환**을 위해 추가 개발 중입니다.
+    - 이번 단계에서는 기존의 기능을 확장하고, **채팅 서비스**와 **결제 서비스**를 도입하여 더 나은 사용자 경험을 제공할 예정입니다.
+    - 또한, **Spring Cloud, Gateway, Config, Docker, Jenkins, RabbitMq, Redis, Kafka** 등의 기술을 도입하여 **MSA 아키텍처**로의 전환을 진행 중입니다.
+### 현재 개발 진행 상황
+  **Spring Cloud Eureka 서버 및 Gateway 구축**
+  
+  - 서비스 디스커버리 및 API Gateway에서 인증,인가, 로드밸런싱 역할 수행
+  
+  **Spring Cloud Config 서버 구축**
+  
+  - 서비스들의 설정 정보를 중앙 집중화하고 외부에서 동적으로 관리할 수 있도록 구성
+  
+  **CI/CD 파이프라인 변경**
+  
+  - 기존 Github Actions에서 Jenkins와 Docker를 활용하여 CI/CD 파이프라인 구축
+    
+👉 **참고 포스팅** [바로가기](https://velog.io/@mw310/%EC%8B%9D%EA%B5%AC%ED%95%98%EC%9E%90-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B8%B0%EB%8A%A5-%EC%B6%94%EA%B0%80-%EB%B0%8F-MSA-%EC%A0%81%EC%9A%A9)
+  
 ## 🔭 목차 | Contents
 1️⃣ [개발 기간 및 팀원](#-개발-기간--project-period) <br/>
 2️⃣ [아키텍처](#-아키텍처--architecture) <br/>
@@ -26,7 +46,7 @@
 
 ## 👬 개발 기간 및 팀원 | Project Period
 
-개발 기간 : 23.06~23.08 (23년 2월에 시작했다가 팀원 이탈로 6월에 다시 진행)
+개발 기간 : 23.06~23.09 (23년 2월에 시작했다가 팀원 이탈로 6월에 다시 진행)
 ### 🙂 팀원 | Member
 총 3명
 <br>

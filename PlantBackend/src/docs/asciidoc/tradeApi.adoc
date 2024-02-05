@@ -1,0 +1,45 @@
+= TradeBoardController API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+
+== 글 작성
+
+=== Request
+
+include::{snippets}/api/write/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/api/write/http-response.adoc[]
+
+== 글 자세히보기
+
+=== Request
+
+include::{snippets}/api/search/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/api/search/http-response.adoc[]
+== 글 삭제
+
+=== Request
+
+include::{snippets}/api/delete/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/api/delete/http-response.adoc[]
+
+== 글 수정
+
+=== Request
+
+include::{snippets}/api/update/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/api/update/http-response.adoc[]

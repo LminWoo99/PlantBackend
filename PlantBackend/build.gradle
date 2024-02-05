@@ -1,0 +1,131 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+		set('springCloudVersion', "2021.0.4")
+	}
+}
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.6'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+	id "org.asciidoctor.jvm.convert" version "3.3.2"
+}
+
+group = 'Plant'
+version = '1.0'
+//sourceCompatibility = '11'
+configurations {
+	asciidoctorExt
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+
+}
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'mysql:mysql-connector-java'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.11.976'
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.1'
+	implementation 'com.auth0:java-jwt:3.19.2'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.6.3'
+	testImplementation 'org.mockito:mockito-core:3.12.4'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
+	implementation group: 'org.json', name: 'json', version: '20220320'
+	implementation group: 'commons-io', name: 'commons-io', version: '2.9.0'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+
+
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	// (3)
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	//querydsl 추가
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+// QueryDSL
+sourceSets {
+	main {
+		java {
+			srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+		}
+	}
+}
+
+compileJava {
+	options.compilerArgs += ["-parameters"]
+}
+tasks.named('test') {
+	useJUnitPlatform()
+	outputs.dir snippetsDir
+	enabled = false
+}
+ext { // (5)
+	snippetsDir = file('build/generated-snippets')
+}
+jar {
+	enabled=false
+	manifest {
+		attributes 'Main-Class': 'Plant.PlantProject.PlantProjectApplication'
+	}
+}
+
+asciidoctor { // (7)
+	inputs.dir snippetsDir // (8)
+	configurations 'asciidoctorExt' // (9)
+	dependsOn test // (10)
+	enabled=false
+}
+
+bootJar {
+	dependsOn asciidoctor // (1)
+	from("${asciidoctor.outputDir}") { // (2)
+		into '/docs'
+	}
+}
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+//querydsl 추가 끝

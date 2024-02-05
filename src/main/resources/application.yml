@@ -1,0 +1,61 @@
+server:
+  port: 0
+spring:
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:mysql://plantdb.copsshwdvt4e.ap-northeast-2.rds.amazonaws.com/plantdb?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: admin
+    password: ddong102
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+  logging:
+    level:
+      org.hibernate: info
+
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        ddl-auto: update
+
+JWT:
+  ISSUER: TEST
+  SECRET: SeCrEtKeY4HaShInG
+
+aws:
+  s3:
+    credentials:
+      accessKey: AKIA2PMNLBYQIY3AIBWB
+      secretKey: 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
+    bucket: minuawsbucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    end-point: s3.ap-northeast-2.amazonaws.com
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, busrefresh, actuator
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://43.202.205.242:8761/eureka
+rabbitmq:
+  host: 43.202.205.242
+  port: 15672
+  username: guest
+  password: guest

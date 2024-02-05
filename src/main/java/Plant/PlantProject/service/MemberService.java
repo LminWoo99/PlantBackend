@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static Plant.PlantProject.dto.TradeDto.convertTradeBoardToDto;
@@ -86,6 +87,10 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
 
     public Member getUser(String username) {
         return memberRepository.findByUsername(username);
+    }
+
+    public Member getUserById(Long id) {
+        return memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
     }
 
     public HttpStatus duplicateMember(String username){

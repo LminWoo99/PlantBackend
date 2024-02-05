@@ -3,7 +3,6 @@ package Plant.PlantProject.config;
 
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.security.CustomAuthenticationFilter;
-import Plant.PlantProject.security.CustomAuthorizationFilter;
 
 import Plant.PlantProject.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +27,6 @@ import static org.springframework.http.HttpMethod.POST;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MemberService memberService;
@@ -58,18 +56,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .mvcMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/api/oauth2/login/kakao").permitAll()
-                .antMatchers("/api/**", "/api/login/**", "/api/user/save", "/api/token/refresh/**", "/api/write/**", "/api/profile", "/actuator/health"
-                ).permitAll()
                 .antMatchers(GET, "/api/users/**").hasAnyAuthority("ROLE_USER")
                 .antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN")
-                .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                http
-                .addFilter(customAuthenticationFilter)
-                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilter(customAuthenticationFilter);
+
     }
 
 

@@ -15,13 +15,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 import static Plant.PlantProject.Entity.Status.판매중;
 
@@ -35,11 +38,9 @@ public class TradeBoardController {
     private final MemberService memberService;
     private final CommentService commentService;
     @PostMapping("/write")
-    public ResponseEntity<TradeDto> write(Principal principal, @RequestBody TradeBoardRequestDto tradeBoardDto) {
+    public ResponseEntity<TradeDto> write(@RequestBody TradeBoardRequestDto tradeBoardDto) {
 
-        UserDetails userDetails = (UserDetails) memberService.loadUserByUsername(principal.getName());
-        System.out.println("userDetails = " + userDetails);
-        Member member = memberService.getUser(userDetails.getUsername());
+        Member member= memberService.getUserById(tradeBoardDto.getId());
         tradeBoardDto.setCreateBy(member.getNickname());
         tradeBoardDto.setMemberId(member.getId());
         TradeDto tradeDto = tradeBoardService.saveTradePost(tradeBoardDto);
@@ -61,12 +62,13 @@ public class TradeBoardController {
     }
     //글 수정
     @PutMapping("/list/{id}")
-    public ResponseEntity<TradeBoardDto> update(Principal principal, @PathVariable("id") Long id, @RequestBody TradeBoardDto tradeBoardDto){
-        UserDetails userDetails = (UserDetails) memberService.loadUserByUsername(principal.getName());
-        System.out.println("userDetails = " + userDetails);
-        Member member = memberService.getUser(userDetails.getUsername());
-        tradeBoardDto.setCreateBy(userDetails.getUsername());
-        tradeBoardDto.setMember(member);
+    public ResponseEntity<TradeBoardDto> update( @PathVariable("id") Long id, @RequestBody TradeBoardDto tradeBoardDto){
+
+
+        TradeBoardDto byId = tradeBoardService.findById(id);
+
+        tradeBoardDto.setCreateBy(byId.getCreateBy());
+        tradeBoardDto.setMember(byId.getMember());
         TradeBoardDto updatedTradeBoardDto=tradeBoardService.updateTradePost(tradeBoardDto);
         return ResponseEntity.ok(updatedTradeBoardDto);
     }

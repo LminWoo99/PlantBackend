@@ -53,6 +53,8 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
 	implementation group: 'org.json', name: 'json', version: '20220320'
 	implementation group: 'commons-io', name: 'commons-io', version: '2.9.0'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+
 
 	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	// (3)

@@ -3,5 +3,5 @@ spring:
     name: plant-service
   cloud:
     config:
-      uri: http://127.0.0.1:8888
+      uri: http://43.202.205.242:8888
       name: plant-service

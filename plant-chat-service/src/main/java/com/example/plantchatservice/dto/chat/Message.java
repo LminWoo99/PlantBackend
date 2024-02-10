@@ -1,5 +1,6 @@
-package com.example.plantchatservice.entity;
+package com.example.plantchatservice.dto.chat;
 
+import com.example.plantchatservice.domain.mongo.Chatting;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,20 +15,20 @@ import java.time.ZoneId;
 public class Message implements Serializable {
     private String id;
     @NotNull
-    private Integer chatNo;
+    private Long chatNo;
     @NotNull
     private String contentType;
     @NotNull
     private String content;
     private String senderName;
-    private Integer senderNo;
+    private Long senderNo;
     @NotNull
-    private Integer saleNo;
+    private Long tradeBoardNo;
     private long sendTime;
     private Integer readCount;
     private String senderEmail;
 
-    public void setSendTimeAndSender(LocalDateTime sendTime, Integer senderNo, String senderName, Integer readCount) {
+    public void setSendTimeAndSender(LocalDateTime sendTime, Long senderNo, String senderName, Integer readCount) {
         this.senderName = senderName;
         this.sendTime = sendTime.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
         this.senderNo = senderNo;
@@ -49,14 +50,14 @@ public class Message implements Serializable {
                 .build();
     }
     @Builder
-    public Message(String id, @NotNull Integer chatNo, @NotNull String contentType, @NotNull String content, String senderName, Integer senderNo, @NotNull Integer saleNo, long sendTime, Integer readCount, String senderEmail) {
+    public Message(String id, @NotNull Long chatNo, @NotNull String contentType, @NotNull String content, String senderName, Long senderNo, @NotNull Long tradeBoardNo, long sendTime, Integer readCount, String senderEmail) {
         this.id = id;
         this.chatNo = chatNo;
         this.contentType = contentType;
         this.content = content;
         this.senderName = senderName;
         this.senderNo = senderNo;
-        this.saleNo = saleNo;
+        this.tradeBoardNo = tradeBoardNo;
         this.sendTime = sendTime;
         this.readCount = readCount;
         this.senderEmail = senderEmail;

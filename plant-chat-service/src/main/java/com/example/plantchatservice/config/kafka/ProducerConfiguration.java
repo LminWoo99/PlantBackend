@@ -1,6 +1,7 @@
-package com.example.plantchatservice.kafka;
+package com.example.plantchatservice.config.kafka;
 
-import com.example.plantchatservice.entity.Message;
+import com.example.plantchatservice.dto.aggregation.AggregationDto;
+import com.example.plantchatservice.dto.chat.Message;
 import com.google.common.collect.ImmutableMap;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -22,6 +23,10 @@ public class ProducerConfiguration {
     public ProducerFactory<String, Message> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
     }
+    @Bean
+    public ProducerFactory<String, AggregationDto> aggregationProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigurations());
+    }
     // Kafka Producer 구성을 위한 설정값들을 포함한 맵을 반환하는 메서드
     @Bean
     public Map<String, Object> producerConfigurations() {
@@ -37,5 +42,11 @@ public class ProducerConfiguration {
     public KafkaTemplate<String, Message> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
+
+    @Bean
+    public KafkaTemplate<String, AggregationDto> aggregationKafkaTemplate() {
+        return new KafkaTemplate<>(aggregationProducerFactory());
+    }
+
 
 }

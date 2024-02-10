@@ -1,4 +1,4 @@
-package com.example.plantchatservice.mongo;
+package com.example.plantchatservice.config.mongo;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

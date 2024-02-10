@@ -1,4 +1,4 @@
-package com.example.plantchatservice.mongo;
+package com.example.plantchatservice.config.mongo;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @RequiredArgsConstructor
-@EnableMongoRepositories(basePackages = "com.example.plantchatservice.mongo")
+@EnableMongoRepositories(basePackages = "com.example.plantchatservice.repository.mongo")
 public class MongoConfig {
     private final MongoProperties mongoProperties;
 

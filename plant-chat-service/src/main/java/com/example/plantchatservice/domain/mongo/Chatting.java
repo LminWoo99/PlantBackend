@@ -1,9 +1,8 @@
-package com.example.plantchatservice.entity;
+package com.example.plantchatservice.domain.mongo;
 
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
@@ -15,8 +14,8 @@ import java.time.LocalDateTime;
 public class Chatting {
     @Id
     private String id;
-    private Integer chatRoomNo;
-    private Integer senderNo;
+    private Long chatRoomNo;
+    private Long senderNo;
     private String senderName;
     private String contentType;
     private String content;
@@ -27,7 +26,7 @@ public class Chatting {
      * 생성자 선언해서 @Builder
      */
     @Builder
-    public Chatting(String id, Integer chatRoomNo, Integer senderNo, String senderName, String contentType, String content, LocalDateTime sendDate, long readCount) {
+    public Chatting(String id, Long chatRoomNo, Long senderNo, String senderName, String contentType, String content, LocalDateTime sendDate, long readCount) {
         this.id = id;
         this.chatRoomNo = chatRoomNo;
         this.senderNo = senderNo;

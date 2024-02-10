@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.6'
     id 'io.spring.dependency-management' version '1.1.4'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'com.example'
@@ -14,9 +15,9 @@ java {
 repositories {
     mavenCentral()
 }
-
 ext {
     set('springCloudVersion', "2021.0.4")
+    set('queryDslVersion', "5.0.0")
 }
 
 dependencies {
@@ -31,6 +32,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
@@ -39,7 +42,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // QueryDSL
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-core:${queryDslVersion}"
 }
+
 
 dependencyManagement {
     imports {
@@ -51,3 +61,27 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+//QueryDSL 플로그인 설정 START
+
+def querydslDir = "$buildDir/generated/querydsl" //QueryDSL로 생성된 소스가 저장되는 위치
+
+querydsl {
+    jpa = true //JPA 사용여부 설정
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir// 빌드시 컴파일이 필요한 소스위치
+}
+
+//QueryDSL 컴파일시 참조할 설정정보
+compileQuerydsl{
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath //외부라이브러리 컴파일 경로 상속
+}

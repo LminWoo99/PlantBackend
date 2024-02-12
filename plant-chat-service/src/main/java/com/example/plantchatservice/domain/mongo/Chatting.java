@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Chatting {
     @Id
     private String id;
-    private Long chatRoomNo;
+    private Integer chatRoomNo;
     private Long senderNo;
     private String senderName;
     private String contentType;
@@ -26,7 +26,7 @@ public class Chatting {
      * 생성자 선언해서 @Builder
      */
     @Builder
-    public Chatting(String id, Long chatRoomNo, Long senderNo, String senderName, String contentType, String content, LocalDateTime sendDate, long readCount) {
+    public Chatting(String id, Integer chatRoomNo, Long senderNo, String senderName, String contentType, String content, LocalDateTime sendDate, long readCount) {
         this.id = id;
         this.chatRoomNo = chatRoomNo;
         this.senderNo = senderNo;

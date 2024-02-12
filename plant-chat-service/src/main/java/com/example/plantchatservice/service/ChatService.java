@@ -13,6 +13,7 @@ import com.example.plantchatservice.dto.vo.ResponseTradeBoardDto;
 import com.example.plantchatservice.repository.ChatRepository;
 import com.example.plantchatservice.repository.mongo.MongoChatRepository;
 import com.example.plantchatservice.util.KafkaUtil;
+import com.example.plantchatservice.util.TokenHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
@@ -39,17 +40,18 @@ public class ChatService {
     private final ChatRoomService chatRoomService;
     private final PlantServiceClient plantServiceClient;
     private final CircuitBreakerFactory circuitBreakerFactory;
+    private final TokenHandler tokenHandler;
     /**
      * 채팅방 생성 메서드
      * FeignCLient를 통해 plant-service에서 거래가능 여부 확인
      * @param : MemberDto memberDto, ChatRequestDto requestDto
      */
     @Transactional
-    public Chat makeChatRoom(Long memberNo, ChatRequestDto requestDto) {
+    public Chat makeChatRoom(Integer memberNo, ChatRequestDto requestDto) {
         CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
         // 채팅을 걸려고 하는 거래글이 거래 가능 상태인지 조회해본다.
         ResponseEntity<ResponseTradeBoardDto> tradeBoardDto = circuitbreaker.run(() ->
-                plantServiceClient.boardContent(requestDto.getTradeBoardNo()),
+                plantServiceClient.boardContent(requestDto.getTradeBoardNo().longValue()),
                 throwable -> ResponseEntity.ok(null));
 
 
@@ -79,7 +81,7 @@ public class ChatService {
         return savedChat;
     }
 
-    public List<ChatRoomResponseDto> getChatList(Long memberNo, Long tradeBoardNo) {
+    public List<ChatRoomResponseDto> getChatList(Integer memberNo, Integer tradeBoardNo) {
         List<ChatRoomResponseDto> chatRoomList = chatRepository.getChattingList(memberNo, tradeBoardNo);
 
         //Participant 채워야됨(username)
@@ -87,13 +89,13 @@ public class ChatService {
                     .forEach(chatRoomDto -> {
                         //param으로 넘어온 멤버가 채팅 만든 멤버일 경우 => Participant에 참가한 멤버
                         //param으로 넘어온 멤버가 채팅방에 참가한 멤버일 경우 => Participant에 채팅방 민든 멤버
-                        ResponseEntity<MemberDto> byId = plantServiceClient.findById(chatRoomDto.getCreateMember());
+                        ResponseEntity<MemberDto> byId = plantServiceClient.findById(chatRoomDto.getCreateMember().longValue());
                         if (byId.getBody().getId().equals(chatRoomDto.getCreateMember())) {
-                            ResponseEntity<MemberDto> memberDtoResponse = plantServiceClient.findById(chatRoomDto.getJoinMember());
+                            ResponseEntity<MemberDto> memberDtoResponse = plantServiceClient.findById(chatRoomDto.getJoinMember().longValue());
 
                             chatRoomDto.setParticipant(new ChatRoomResponseDto.Participant(memberDtoResponse.getBody().getUsername(), memberDtoResponse.getBody().getNickname()));
                         } else {
-                            ResponseEntity<MemberDto> memberDtoResponse = plantServiceClient.findById(chatRoomDto.getCreateMember());
+                            ResponseEntity<MemberDto> memberDtoResponse = plantServiceClient.findById(chatRoomDto.getCreateMember().longValue());
                             chatRoomDto.setParticipant(new ChatRoomResponseDto.Participant(memberDtoResponse.getBody().getUsername(), memberDtoResponse.getBody().getNickname()));
                         }
 
@@ -117,9 +119,9 @@ public class ChatService {
         return chatRoomList;
     }
 
-    public void sendMessage(Message message, Long id) {
+    public void sendMessage(Message message, String accessToken) {
         // member id로 조화
-        ResponseEntity<MemberDto> memberDto = plantServiceClient.findById(id);
+        ResponseEntity<MemberDto> memberDto = plantServiceClient.findByUsername(tokenHandler.getUid(accessToken));
 
         // 채팅방에 모든 유저가 참여중인지 확인한다.
         boolean isConnectedAll = chatRoomService.isAllConnected(message.getChatNo());
@@ -131,7 +133,7 @@ public class ChatService {
         sender.send(KafkaUtil.KAFKA_TOPIC, message);
     }
 
-    public void updateMessage(String email, Long chatRoomNo) {
+    public void updateMessage(String email, Integer chatRoomNo) {
         Message message = Message.builder()
                 .contentType("notice")
                 .chatNo(chatRoomNo)

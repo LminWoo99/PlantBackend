@@ -26,7 +26,7 @@ public class ChatRepositoryImpl implements CustomChatRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     // 내가 만든 채팅방또는 내가 참여중인 채팅방을 전부 찾아주기
-    public List<Chat> findChattingRoom(@Param("memberNo") Long memberNo) {
+    public List<Chat> findChattingRoom(@Param("memberNo") Integer memberNo) {
         return jpaQueryFactory.selectFrom(chat)
                 .where(chat.chatNo.eq(memberNo)
                         .or(chat.joinMember.eq(memberNo)))
@@ -35,7 +35,7 @@ public class ChatRepositoryImpl implements CustomChatRepository {
 
     // 채팅방 리스트 조회
     //엔티티와 다른 반환 타입인 경우 Projections를 사용
-    public List<ChatRoomResponseDto> getChattingList(Long memberNo, Long tradeBoardNo) {
+    public List<ChatRoomResponseDto> getChattingList(Integer memberNo, Integer tradeBoardNo) {
         return jpaQueryFactory.select(Projections.constructor(ChatRoomResponseDto.class,
                         chat.chatNo,
                         chat.createMember,
@@ -48,7 +48,7 @@ public class ChatRepositoryImpl implements CustomChatRepository {
                 ;
     }
     // 채팅방 한건 조회
-    public Chat getChatting(Long chatNo, Long senderNo) {
+    public Chat getChatting(Integer chatNo, Integer senderNo) {
         Chat chatRoom = jpaQueryFactory.select(QChat.chat)
                 .from(QChat.chat)
                 .where(QChat.chat.chatNo.eq(chatNo))
@@ -56,7 +56,7 @@ public class ChatRepositoryImpl implements CustomChatRepository {
         return chatRoom;
     }
 
-    private BooleanExpression tradeBoardNoEq(Long tradeBoardNo) {
+    private BooleanExpression tradeBoardNoEq(Integer tradeBoardNo) {
         return Objects.nonNull(tradeBoardNo) ? chat.tradeBoardNo.eq(tradeBoardNo) : null;
     }
 

@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface ChatRoomRepository extends CrudRepository<ChatRoom, Long> {
 
-    Optional<ChatRoom> findByChatroomNoAndUsername(Long chatRoomNo, String username);
+    Optional<ChatRoom> findByChatroomNoAndUsername(Integer chatRoomNo, String username);
 
-    List<ChatRoom> findByChatroomNo(Long chatRoomNo);
+    List<ChatRoom> findByChatroomNo(Integer chatRoomNo);
 
 }

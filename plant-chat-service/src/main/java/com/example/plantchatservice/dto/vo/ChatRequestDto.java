@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull;
 public class ChatRequestDto {
 
     @NotNull
-    private Long tradeBoardNo;
+    private Integer tradeBoardNo;
     @NotNull
-    private Long createMember;
+    private Integer createMember;
 
 }

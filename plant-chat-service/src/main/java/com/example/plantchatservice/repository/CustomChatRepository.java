@@ -12,11 +12,11 @@ import java.util.List;
 
 public interface CustomChatRepository {
 
-    List<Chat> findChattingRoom(@Param("memberNo") Long memberNo);
+    List<Chat> findChattingRoom(@Param("memberNo") Integer memberNo);
 
-    List<ChatRoomResponseDto> getChattingList(Long memberNo, Long tradeBoardNo);
+    List<ChatRoomResponseDto> getChattingList(Integer memberNo, Integer tradeBoardNo);
 
-    Chat getChatting(Long chatNo, Long senderNo);
+    Chat getChatting(Integer chatNo, Integer senderNo);
 
 
 

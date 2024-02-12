@@ -23,7 +23,7 @@ public class ChatRoomService {
      * @param : Long chatRoomNo , String nickname
      */
     @Transactional
-    public void connectChatRoom(Long chatRoomNo, String nickname) {
+    public void connectChatRoom(Integer chatRoomNo, String nickname) {
         ChatRoom chatRoom = ChatRoom.builder()
                 .nickname(nickname)
                 .chatroomNo(chatRoomNo)
@@ -36,7 +36,7 @@ public class ChatRoomService {
      * @param : Long chatRoomNo , String nickname
      */
     @Transactional
-    public void disconnectChatRoom(Long chatRoomNo, String nickname) {
+    public void disconnectChatRoom(Integer chatRoomNo, String nickname) {
         ChatRoom chatRoom = chatRoomRepository.findByChatroomNoAndUsername(chatRoomNo, nickname)
                 .orElseThrow(IllegalStateException::new);
         chatRoomRepository.delete(chatRoom);
@@ -45,7 +45,7 @@ public class ChatRoomService {
      * 채팅방 정원 2명 찼는지 확인 메서드
      * @param : Long chatRoomNo
      */
-    public boolean isAllConnected(Long chatRoomNo) {
+    public boolean isAllConnected(Integer chatRoomNo) {
         List<ChatRoom> connectedList = chatRoomRepository.findByChatroomNo(chatRoomNo);
         return connectedList.size() == 2;
     }
@@ -53,7 +53,7 @@ public class ChatRoomService {
      * 채팅방에 1명 연결됐는지 확인 메서드
      * @param : Long chatRoomNo
      */
-    public boolean isConnected(Long chatRoomNo) {
+    public boolean isConnected(Integer chatRoomNo) {
         List<ChatRoom> connectedList = chatRoomRepository.findByChatroomNo(chatRoomNo);
         return connectedList.size() == 1;
     }

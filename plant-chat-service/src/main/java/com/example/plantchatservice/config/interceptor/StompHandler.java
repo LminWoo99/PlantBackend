@@ -5,6 +5,8 @@ import com.example.plantchatservice.service.ChatService;
 import com.example.plantchatservice.util.TokenHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-
+@Order(Ordered.HIGHEST_PRECEDENCE + 99)
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -38,6 +40,7 @@ public class StompHandler implements ChannelInterceptor {
     }
 
     private void handleMessage(StompCommand stompCommand, StompHeaderAccessor accessor, String username) {
+        log.info(stompCommand.toString());
         switch (stompCommand) {
 
             case CONNECT:
@@ -46,10 +49,10 @@ public class StompHandler implements ChannelInterceptor {
                 break;
             case SUBSCRIBE:
             case SEND:
+                verifyAccessToken(getAccessToken(accessor));
                 break;
         }
     }
-
     private String getAccessToken(StompHeaderAccessor accessor) {
         return accessor.getFirstNativeHeader("Authorization");
     }
@@ -63,7 +66,7 @@ public class StompHandler implements ChannelInterceptor {
 
     private void connectToChatRoom(StompHeaderAccessor accessor, String username) {
         // 채팅방 번호를 가져온다.
-        Long chatRoomNo = getChatRoomNo(accessor);
+        Integer chatRoomNo = getChatRoomNo(accessor);
 
         // 채팅방 입장 처리 -> Redis에 입장 내역 저장
         chatRoomService.connectChatRoom(chatRoomNo, username);
@@ -78,9 +81,9 @@ public class StompHandler implements ChannelInterceptor {
     }
 
 
-    private Long getChatRoomNo(StompHeaderAccessor accessor) {
+    private Integer getChatRoomNo(StompHeaderAccessor accessor) {
         return
-                Long.valueOf(
+                Integer.valueOf(
                         Objects.requireNonNull(
                                 accessor.getFirstNativeHeader("chatRoomNo")
                         ));

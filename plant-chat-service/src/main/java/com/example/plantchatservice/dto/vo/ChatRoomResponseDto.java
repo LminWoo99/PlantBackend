@@ -13,25 +13,25 @@ import java.time.ZoneId;
 @ToString
 public class ChatRoomResponseDto {
 
-    private Long chatNo;
+    private Integer chatNo;
 
-    private Long createMember;
+    private Integer createMember;
 
-    private Long joinMember;
+    private Integer joinMember;
 
-    private Long tradeBoardNo;
+    private Integer tradeBoardNo;
 
     private long regDate;
     private Participant participant;
     private LatestMessage latestMessage;
 
-    private Long unReadCount;
+    private Integer unReadCount;
 
-    public void setUnReadCount(Long unReadCount) {
+    public void setUnReadCount(Integer unReadCount) {
         this.unReadCount = unReadCount;
     }
 
-    public ChatRoomResponseDto(Long chatNo, Long createMember, Long joinMember, Long tradeBoardNo, LocalDateTime regDate
+    public ChatRoomResponseDto(Integer chatNo, Integer createMember, Integer joinMember, Integer tradeBoardNo, LocalDateTime regDate
                               ) {
         this.chatNo = chatNo;
         this.createMember = createMember;

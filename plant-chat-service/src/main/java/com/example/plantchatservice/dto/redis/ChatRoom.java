@@ -16,13 +16,13 @@ public class ChatRoom {
     private String id;
 
     @Indexed
-    private Long chatroomNo;
+    private Integer chatroomNo;
 
     @Indexed
     private String nickname;
 
     @Builder
-    public ChatRoom(Long chatroomNo, String nickname) {
+    public ChatRoom(Integer chatroomNo, String nickname) {
         this.chatroomNo = chatroomNo;
         this.nickname = nickname;
     }

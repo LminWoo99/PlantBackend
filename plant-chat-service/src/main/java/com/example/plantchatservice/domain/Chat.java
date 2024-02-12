@@ -20,20 +20,20 @@ public class Chat {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_no")
-    private Long chatNo;
+    private Integer chatNo;
 
     @Column(name = "create_member")
-    private Long createMember;
+    private Integer createMember;
 
     @Column(name = "join_member")
-    private Long joinMember;
+    private Integer joinMember;
     @Column(name = "trade_board")
-    private Long tradeBoardNo;
+    private Integer tradeBoardNo;
 
     @Column(name = "reg_date")
     private LocalDateTime regDate;
     @Builder
-    public Chat(Long chatNo, Long createMember, Long joinMember, Long tradeBoardNo, LocalDateTime regDate) {
+    public Chat(Integer chatNo, Integer createMember, Integer joinMember, Integer tradeBoardNo, LocalDateTime regDate) {
         this.chatNo = chatNo;
         this.createMember = createMember;
         this.joinMember = joinMember;

@@ -4,14 +4,11 @@ import Plant.PlantProject.Entity.Member;
 import Plant.PlantProject.Entity.Role;
 import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.dto.RoleDto;
-import Plant.PlantProject.dto.TradeDto;
-import Plant.PlantProject.repository.MemberRepository;
+import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
 import Plant.PlantProject.repository.RoleRepository;
 import Plant.PlantProject.service.MemberService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -20,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -49,14 +45,14 @@ public class MemberController {
 
 
     @GetMapping("/tradeInfo/{id}")
-    public ResponseEntity<List<TradeDto>> showTradeInfo(@PathVariable Long id){
-        List<TradeDto> tradeDtos = memberService.showTradeInfo(id);
-        return ResponseEntity.ok().body(tradeDtos);
+    public ResponseEntity<List<ResponseTradeBoardDto>> showTradeInfo(@PathVariable Long id){
+        List<ResponseTradeBoardDto> responseTradeBoardDtos = memberService.showTradeInfo(id);
+        return ResponseEntity.ok().body(responseTradeBoardDtos);
     }
     @GetMapping("/buyInfo/{id}")
-    public ResponseEntity<List<TradeDto>> showBuyInfo(@PathVariable Long id){
-        List<TradeDto> tradeDtos = memberService.showBuyInfo(id);
-        return ResponseEntity.ok().body(tradeDtos);
+    public ResponseEntity<List<ResponseTradeBoardDto>> showBuyInfo(@PathVariable Long id){
+        List<ResponseTradeBoardDto> responseTradeBoardDtos = memberService.showBuyInfo(id);
+        return ResponseEntity.ok().body(responseTradeBoardDtos);
     }
     @GetMapping("/users")
     public ResponseEntity<List<MemberDto>> findAll() {
@@ -147,20 +143,31 @@ public class MemberController {
 
         return new ResponseEntity<>(httpStatus);
     }
-    @GetMapping("findId")
+    @GetMapping("findEmail")
     public ResponseEntity<MemberDto> findIdByEmail(@RequestParam String email){
         MemberDto memberDto = memberService.findIdByEmail(email);
         return ResponseEntity.ok().body(memberDto);
     }
     @GetMapping("findPassword")
-    public ResponseEntity<Member> findPasswordById(@RequestParam String userId){
-        Member member = memberService.findPasswordById(userId);
-        return ResponseEntity.ok().body(member);
+    public ResponseEntity<MemberDto> findPasswordById(@RequestParam String userId){
+        MemberDto passwordById = memberService.findPasswordById(userId);
+        return ResponseEntity.ok().body(passwordById);
     }
     @PostMapping("findPassword")
     public ResponseEntity<Member> setPassword(@RequestBody MemberDto memberDto){
         Member member=memberService.find(memberDto);
         return ResponseEntity.ok().body(member);
+    }
+
+    @GetMapping("/findUsername")
+    public ResponseEntity<MemberDto> findByUsername(@RequestParam String username) {
+        MemberDto memberDto = memberService.findByUsername(username);
+        return ResponseEntity.ok().body(memberDto);
+    }
+    @GetMapping("/findId")
+    public ResponseEntity<MemberDto> findById(@RequestParam Long id) {
+        MemberDto memberDto = memberService.findById(id);
+        return ResponseEntity.ok().body(memberDto);
     }
 }
 

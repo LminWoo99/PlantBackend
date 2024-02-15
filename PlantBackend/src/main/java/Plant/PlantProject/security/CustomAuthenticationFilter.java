@@ -1,6 +1,7 @@
 package Plant.PlantProject.security;
 
 import Plant.PlantProject.Entity.Member;
+import Plant.PlantProject.exception.MemberNotFoundException;
 import Plant.PlantProject.repository.MemberRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -110,7 +111,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(algorithm);
 
         Map<String, Object> tokens = new HashMap<>();
-        Member byUsername = memberRepository.findByUsername(username);
+        Member byUsername = memberRepository.findByUsername(username).orElseThrow(MemberNotFoundException::new);
         byUsername.setRefreshToken(refreshToken);
         memberRepository.save(byUsername);
 

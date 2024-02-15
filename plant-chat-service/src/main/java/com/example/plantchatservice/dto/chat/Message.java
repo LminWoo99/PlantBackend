@@ -23,14 +23,14 @@ public class Message implements Serializable {
     @NotNull
     private String content;
     private String senderName;
-    private Long senderNo;
+    private Integer senderNo;
     @NotNull
     private Integer tradeBoardNo;
     private long sendTime;
     private Integer readCount;
     private String senderEmail;
 
-    public void setSendTimeAndSender(@NotNull LocalDateTime sendTime, Long senderNo, String senderName, Integer readCount) {
+    public void setSendTimeAndSender(@NotNull LocalDateTime sendTime, Integer senderNo, String senderName, Integer readCount) {
         this.senderName = senderName;
         this.sendTime = sendTime.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
         this.senderNo = senderNo;

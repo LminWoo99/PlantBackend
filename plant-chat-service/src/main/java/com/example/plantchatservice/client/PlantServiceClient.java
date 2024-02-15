@@ -22,4 +22,6 @@ public interface PlantServiceClient {
 
     @GetMapping("/api/findUsername")
     ResponseEntity<MemberDto> findByUsername(@RequestParam String username);
+    @GetMapping("/api/findEmail")
+    ResponseEntity<MemberDto> findIdByEmail(@RequestParam String email);
 }

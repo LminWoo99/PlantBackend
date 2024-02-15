@@ -25,9 +25,9 @@ public class ChatRoomResponseDto {
     private Participant participant;
     private LatestMessage latestMessage;
 
-    private Integer unReadCount;
+    private long unReadCount;
 
-    public void setUnReadCount(Integer unReadCount) {
+    public void setUnReadCount(long unReadCount) {
         this.unReadCount = unReadCount;
     }
 

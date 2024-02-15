@@ -1,11 +1,11 @@
 package com.example.plantchatservice.controller;
 
 import com.example.plantchatservice.dto.chat.Message;
-import com.example.plantchatservice.dto.member.MemberDto;
 import com.example.plantchatservice.dto.vo.ChatRequestDto;
 import com.example.plantchatservice.dto.vo.ChatRoomResponseDto;
-import com.example.plantchatservice.service.ChatRoomService;
-import com.example.plantchatservice.service.ChatService;
+import com.example.plantchatservice.dto.vo.ChattingHistoryResponseDto;
+import com.example.plantchatservice.service.chat.ChatRoomService;
+import com.example.plantchatservice.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,8 +18,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 
 @Slf4j
@@ -42,6 +40,13 @@ public class ChatController {
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 
+    // 채팅내역 조회
+    @GetMapping("/chatroom/{roomNo}")
+    public ResponseEntity<ChattingHistoryResponseDto> chattingList(@PathVariable("roomNo") Integer roomNo, @RequestParam Integer memberNo) {
+        ChattingHistoryResponseDto chattingList = chatService.getChattingList(roomNo, memberNo);
+        return ResponseEntity.ok().body(chattingList);
+    }
+
     // 채팅방 리스트 조회
     @GetMapping("/chatroom")
     public ResponseEntity<List<ChatRoomResponseDto>> chatRoomList(@RequestParam(value = "tradeBoardNo", required = false) Integer tradeBoardNo,
@@ -59,8 +64,6 @@ public class ChatController {
     @SendTo("/error")
     public String handleException(Exception e) {
 
-
-        log.error("WebSocket 메시지 핸들러에서 예외가 발생했습니다.", e);
         return "WebSocket 메시지 핸들러에서 예외가 발생했습니다: " + e;
     }
     // 채팅방 접속 끊기
@@ -69,6 +72,11 @@ public class ChatController {
                                                             @RequestParam("nickname") String nickname) {
         chatRoomService.disconnectChatRoom(chatroomNo, nickname);
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    }
+    @PostMapping("/chatroom/notification")
+    public ResponseEntity<Message> sendNotification(@Valid @RequestBody Message message) {
+        Message savedMessage = chatService.sendNotificationAndSaveMessage(message);
+        return ResponseEntity.ok(savedMessage);
     }
 
 }

@@ -1,9 +1,8 @@
 package Plant.PlantProject.service;
 
 import Plant.PlantProject.Entity.Goods;
-import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.GoodsDto;
-import Plant.PlantProject.dto.GoodsRequestDto;
+import Plant.PlantProject.dto.vo.GoodsRequestDto;
 import Plant.PlantProject.exception.TradeBoardNotFoundException;
 import Plant.PlantProject.exception.UserNotFoundException;
 import Plant.PlantProject.repository.GoodsRepository;

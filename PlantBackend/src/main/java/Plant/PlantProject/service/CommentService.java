@@ -6,7 +6,7 @@ import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.exception.PlantNotFoundException;
 import Plant.PlantProject.exception.TradeBoardNotFoundException;
 import Plant.PlantProject.exception.UserNotFoundException;
-import Plant.PlantProject.dto.CommentCreateRequestDto;
+import Plant.PlantProject.dto.vo.CommentCreateRequestDto;
 import Plant.PlantProject.dto.CommentDto;
 import Plant.PlantProject.repository.CommentRepository;
 import Plant.PlantProject.repository.MemberRepository;

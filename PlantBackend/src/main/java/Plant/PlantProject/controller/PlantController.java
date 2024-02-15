@@ -1,7 +1,6 @@
 package Plant.PlantProject.controller;
 
 import Plant.PlantProject.dto.PlantDto;
-import Plant.PlantProject.dto.TradeDto;
 import Plant.PlantProject.service.PlantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

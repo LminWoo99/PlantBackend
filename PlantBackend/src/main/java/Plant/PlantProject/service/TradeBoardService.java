@@ -4,8 +4,8 @@ import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.exception.TradeBoardNotFoundException;
 import Plant.PlantProject.exception.UserNotFoundException;
 import Plant.PlantProject.dto.TradeBoardDto;
-import Plant.PlantProject.dto.TradeBoardRequestDto;
-import Plant.PlantProject.dto.TradeDto;
+import Plant.PlantProject.dto.vo.TradeBoardRequestDto;
+import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
 import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,7 +28,7 @@ public class TradeBoardService {
     private final MemberRepository memberRepository;
     private final GoodsRepository goodsRepository;
     // 트랜잭션은 readOnly true 로 설정하면 데이터베이스의 상태를 변경하지 않는 읽기 전용 메서드에서 성능 향상을 기대할 수 있음
-// 트랜잭션 설정을 하면 롤백 가능, 즉 DB에서 무언가 잘못되었을 경우 이전 상태로 되돌릴 수 있음
+    // 트랜잭션 설정을 하면 롤백 가능, 즉 DB에서 무언가 잘못되었을 경우 이전 상태로 되돌릴 수 있음
     @Transactional
     public TradeBoardDto saveTradePost(TradeBoardDto tradeBoardDto){
 
@@ -40,7 +38,7 @@ public class TradeBoardService {
         return tradeBoardDto;
     }
     @Transactional
-    public TradeDto saveTradePost(TradeBoardRequestDto tradeBoardDto){
+    public ResponseTradeBoardDto saveTradePost(TradeBoardRequestDto tradeBoardDto){
         TradeBoard tradeBoard=tradeBoardRepository.save(
                 TradeBoard.createTradeBoard(memberRepository.findById(tradeBoardDto.getMemberId()).orElseThrow(UserNotFoundException::new),
                         tradeBoardDto.getTitle(),
@@ -53,7 +51,7 @@ public class TradeBoardService {
                         )
         );
 
-        return TradeDto.convertTradeBoardToDto(tradeBoard);
+        return ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
     }
     @Transactional
     public TradeBoardDto updateTradePost(TradeBoardDto tradeBoardDto) {
@@ -112,14 +110,14 @@ public class TradeBoardService {
     }
 
     @Transactional
-    public TradeDto setBuyer(Long id, TradeBoardRequestDto tradeBoardRequestDto) {
+    public ResponseTradeBoardDto setBuyer(Long id, TradeBoardRequestDto tradeBoardRequestDto) {
         TradeBoard tradeBoard = tradeBoardRepository.findTradeBoardById(id);
         tradeBoardRepository.updateBuyer(tradeBoard.getId(), tradeBoardRequestDto.getBuyer());
-        return TradeDto.convertTradeBoardToDto(tradeBoard);
+        return ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
 
     }
     @Transactional
-    public Page<TradeDto> pageList(String search, Pageable pageable) {
+    public Page<ResponseTradeBoardDto> pageList(String search, Pageable pageable) {
         Page<TradeBoard> tradeBoards;
 
 //        if (search != null && !search.trim().isEmpty()) {
@@ -127,7 +125,7 @@ public class TradeBoardService {
 //        } else {
 //            tradeBoards = tradeBoardRepository.findAll(pageable);
 //        }
-        return tradeBoards.map(tradeBoard -> TradeDto.convertTradeBoardToDto(tradeBoard));
+        return tradeBoards.map(tradeBoard -> ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard));
 //
 //        return tradeBoards.map(tradeBoard -> new TradeBoardDto(tradeBoard.getId(), tradeBoard.getCreateBy(), tradeBoard.getMember(), tradeBoard.getTitle(),
 //                tradeBoard.getContent(), tradeBoard.getStatus(), tradeBoard.getCreatedAt(), tradeBoard.getUpdatedAt(), tradeBoard.getView()));
@@ -136,10 +134,10 @@ public class TradeBoardService {
         return tradeBoardRepository.findById(id).map(tradeBoard -> new TradeBoardDto(tradeBoard.getId(), tradeBoard.getCreateBy(),tradeBoard.getMember(),tradeBoard.getTitle(),
                 tradeBoard.getContent(),tradeBoard.getStatus(), tradeBoard.getCreatedAt(),tradeBoard.getUpdatedAt(), tradeBoard.getView())).get();
     }
-    public TradeDto findByIdx(Long id){
+    public ResponseTradeBoardDto findByIdx(Long id){
         TradeBoard tradeBoard = tradeBoardRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        TradeDto tradeDto = TradeDto.convertTradeBoardToDto(tradeBoard);
-        return tradeDto;
+        ResponseTradeBoardDto responseTradeBoardDto = ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
+        return responseTradeBoardDto;
     }
     @Transactional
     public void increaseGoodCount(Long tradeBoardId) {

@@ -3,8 +3,8 @@ package Plant.PlantProject.controller;
 import Plant.PlantProject.Entity.Goods;
 import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.GoodsDto;
-import Plant.PlantProject.dto.GoodsRequestDto;
-import Plant.PlantProject.dto.TradeDto;
+import Plant.PlantProject.dto.vo.GoodsRequestDto;
+import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
 import Plant.PlantProject.exception.GoodsNotFoundException;
 import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.service.GoodsService;
@@ -35,13 +35,13 @@ public class GoodsController {
         return ResponseEntity.ok().body(goodsService.saveGoods(goodsRequestDto));
     }
     @GetMapping("/goods/{memberId}")
-    public ResponseEntity<List<TradeDto>> searchGoods(@PathVariable Long memberId){
+    public ResponseEntity<List<ResponseTradeBoardDto>> searchGoods(@PathVariable Long memberId){
         List<GoodsDto> goodsDtos = goodsService.searchGoods(memberId);
-        List<TradeDto> tradeBoards = new ArrayList<>();
+        List<ResponseTradeBoardDto> tradeBoards = new ArrayList<>();
         for (GoodsDto goodsDto : goodsDtos) {
             TradeBoard tradeBoard = tradeBoardService.findTradeBoardById(goodsDto.getTradeBoardId());
-            TradeDto tradeDto = TradeDto.convertTradeBoardToDto(tradeBoard);
-            tradeBoards.add(tradeDto);
+            ResponseTradeBoardDto responseTradeBoardDto = ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
+            tradeBoards.add(responseTradeBoardDto);
         }
         return ResponseEntity.ok().body(tradeBoards);
 

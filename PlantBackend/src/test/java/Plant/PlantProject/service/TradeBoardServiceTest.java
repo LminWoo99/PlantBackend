@@ -1,42 +1,25 @@
 package Plant.PlantProject.service;
 
-import Plant.PlantProject.Entity.Comment;
-import Plant.PlantProject.Entity.Member;
 import Plant.PlantProject.Entity.Status;
 import Plant.PlantProject.controller.TradeBoardController;
-import Plant.PlantProject.dto.CommentDto;
 import Plant.PlantProject.dto.TradeBoardDto;
-import Plant.PlantProject.dto.TradeBoardRequestDto;
-import Plant.PlantProject.dto.TradeDto;
-import Plant.PlantProject.repository.CommentRepository;
-import Plant.PlantProject.repository.TradeBoardRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.aspectj.lang.annotation.Before;
+import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentationConfigurer;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -100,7 +83,7 @@ class TradeBoardServiceTest {
         //when
         Pageable paging = PageRequest.of(0,10,Sort.Direction.ASC,"tTitle");
         String search = "";
-        Page<TradeDto> result= tradeBoardService.pageList(search,paging);
+        Page<ResponseTradeBoardDto> result= tradeBoardService.pageList(search,paging);
         //then
        Assertions.assertThat(result.getSize()).isEqualTo(10);
     }

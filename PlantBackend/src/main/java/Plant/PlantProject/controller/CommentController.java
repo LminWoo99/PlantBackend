@@ -1,8 +1,7 @@
 package Plant.PlantProject.controller;
 
-import Plant.PlantProject.Entity.Comment;
 import Plant.PlantProject.Entity.TradeBoard;
-import Plant.PlantProject.dto.CommentCreateRequestDto;
+import Plant.PlantProject.dto.vo.CommentCreateRequestDto;
 import Plant.PlantProject.dto.CommentDto;
 import Plant.PlantProject.service.CommentService;
 import Plant.PlantProject.service.MemberService;

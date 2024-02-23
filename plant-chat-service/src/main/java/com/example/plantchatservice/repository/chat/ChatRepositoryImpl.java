@@ -25,7 +25,34 @@ public class ChatRepositoryImpl implements CustomChatRepository {
                         .or(chat.joinMember.eq(memberNo)))
                 .fetch();
     }
+    //채팅방 해당 거래 게시글, 거래 게시글 올린 사용자와 만든 채팅방이 있는지 확인
+    //존재 ==> true, 존재 x==> false
+    public boolean existChatRoomByBuyer(Integer tradeBoardNo, Integer createMemberNo, Integer joinMemberNo) {
+        BooleanExpression conditions = chat.tradeBoardNo.eq(tradeBoardNo)
+                .and(chat.createMember.eq(createMemberNo))
+                .and(chat.joinMember.eq(joinMemberNo));
 
+        return !jpaQueryFactory.selectFrom(chat)
+                .where(conditions)
+                .fetch()
+                .isEmpty();
+    }
+    //거래 게시글 올린 사람이 참가하거나 만든 채팅방 존재하는지 확인
+    //존재 ==> true, 존재 x==> false
+    public boolean existChatRoomBySeller(Integer tradeBoardNo, Integer tradeMemberNo) {
+        BooleanExpression conditions = chat.tradeBoardNo.eq(tradeBoardNo)
+                .and(chat.joinMember.eq(tradeMemberNo));
+
+        return !jpaQueryFactory.selectFrom(chat)
+                .where(conditions)
+                .fetch()
+                .isEmpty();
+    }
+    public Chat findByTradeBoardNoAndChatNo(Integer tradeBoardNo, Integer joinMemberNo) {
+        return jpaQueryFactory.selectFrom(chat)
+                .where(chat.tradeBoardNo.eq(tradeBoardNo).and(chat.joinMember.eq(joinMemberNo)))
+                .fetchOne();
+    }
     // 채팅방 리스트 조회
     //엔티티와 다른 반환 타입인 경우 Projections를 사용
     public List<ChatRoomResponseDto> getChattingList(Integer memberNo, Integer tradeBoardNo) {

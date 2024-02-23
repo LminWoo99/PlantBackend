@@ -32,6 +32,8 @@ public class Chat {
 
     @Column(name = "reg_date")
     private LocalDateTime regDate;
+
+
     @Builder
     public Chat(Integer chatNo, Integer createMember, Integer joinMember, Integer tradeBoardNo, LocalDateTime regDate) {
         this.chatNo = chatNo;

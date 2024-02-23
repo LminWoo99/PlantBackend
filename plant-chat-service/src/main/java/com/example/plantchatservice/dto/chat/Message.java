@@ -2,6 +2,7 @@ package com.example.plantchatservice.dto.chat;
 
 import com.example.plantchatservice.domain.mongo.Chatting;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -12,7 +13,7 @@ import java.time.ZoneId;
 @Getter
 @ToString
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Message implements Serializable {
     private String id;
@@ -26,15 +27,19 @@ public class Message implements Serializable {
     private Integer senderNo;
     @NotNull
     private Integer tradeBoardNo;
+
     private long sendTime;
     private Integer readCount;
     private String senderEmail;
 
-    public void setSendTimeAndSender(@NotNull LocalDateTime sendTime, Integer senderNo, String senderName, Integer readCount) {
+
+    public void setSendTimeAndSender(LocalDateTime sendTime, Integer senderNo, String senderName, Integer readCount) {
         this.senderName = senderName;
         this.sendTime = sendTime.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
+//        this.sendTime=sendTime.toInstant(ZoneOffset.UTC).toEpochMilli();
         this.senderNo = senderNo;
         this.readCount = readCount;
+
     }
 
     public void setId(String id) {

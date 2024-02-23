@@ -44,7 +44,6 @@ public class StompHandler implements ChannelInterceptor {
         switch (stompCommand) {
 
             case CONNECT:
-                log.info("wow");
                 connectToChatRoom(accessor, username);
                 break;
             case SUBSCRIBE:

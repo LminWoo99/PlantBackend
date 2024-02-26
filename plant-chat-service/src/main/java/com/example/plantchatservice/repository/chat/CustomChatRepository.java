@@ -2,11 +2,7 @@ package com.example.plantchatservice.repository.chat;
 
 import com.example.plantchatservice.domain.Chat;
 import com.example.plantchatservice.dto.vo.ChatRoomResponseDto;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -19,6 +15,13 @@ public interface CustomChatRepository {
     Chat getChatting(Integer chatNo, Integer senderNo);
 
     Integer getReceiverMember(Integer chatNo, Integer senderNo);
+
+    boolean existChatRoomByBuyer(Integer tradeBoardNo, Integer createMemberNo, Integer joinMemberNo);
+
+    Chat findByTradeBoardNoAndChatNo(Integer tradeBoardNo, Integer joinMemberNo);
+
+    boolean existChatRoomBySeller(Integer tradeBoardNo, Integer tradeMemberNo);
+
 
 
 

@@ -54,6 +54,8 @@ public class ChatService {
 
     /**
      * 채팅방 생성 메서드
+     * 거래 게시글을 올리지 않은 사람만 호출하는 메서드
+     * 구매 희망자만 채팅방을 생성 가능
      * FeignCLient를 통해 plant-service에서 거래가능 여부 확인
      * @param : MemberDto memberDto, ChatRequestDto requestDto
      */
@@ -62,56 +64,70 @@ public class ChatService {
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
         // 채팅을 걸려고 하는 거래글이 거래 가능 상태인지 조회해본다.
         ResponseEntity<ResponseTradeBoardDto> tradeBoardDto = circuitBreaker.run(() ->
-                plantServiceClient.boardContent(requestDto.getTradeBoardNo().longValue()),
+                        plantServiceClient.boardContent(requestDto.getTradeBoardNo().longValue()),
                 throwable -> ResponseEntity.ok(null));
 
-
-        // 조회해온 거래글 상태가 거래완료 이라면 분양이 불가능한 상태이다.
+        // 조회해온 거래글 상태가 거래완료 이라면 거래가 불가능한 상태이다.
         if (tradeBoardDto.getBody().getStatus().equals("거래완료")) {
             throw new IllegalStateException("현재 거래가능 상태가 아닙니다.");
         }
+        Integer tradeBoardNo = tradeBoardDto.getBody().getId().intValue();
 
-        Chat chat = Chat.builder()
-                .tradeBoardNo(requestDto.getTradeBoardNo())
-                .createMember(requestDto.getCreateMember())
-                .joinMember(memberNo)
-                .regDate(LocalDateTime.now())
-                .build();
+        //이미 해당글 기준으로 채팅을 요청한 사람과 받는 사람이 일치할 경우 체크
+        if (chatRepository.existChatRoomByBuyer(tradeBoardNo, requestDto.getCreateMember(), memberNo)) {
+            Chat existedChat = chatRepository.findByTradeBoardNoAndChatNo(tradeBoardNo, memberNo);
+            return existedChat;
 
-        Chat savedChat = chatRepository.save(chat);
+        }
+        if (!chatRepository.existChatRoomByBuyer(tradeBoardNo, requestDto.getCreateMember(), memberNo)) {
+            Chat chat = Chat.builder()
+                    .tradeBoardNo(requestDto.getTradeBoardNo())
+                    .createMember(requestDto.getCreateMember())
+                    .joinMember(memberNo)
+                    .regDate(LocalDateTime.now())
+                    .build();
 
-        // 채팅방 카운트 증가
-        AggregationDto aggregationDto = AggregationDto
-                .builder()
-                .isIncrease("true")
-                .target(AggregationTarget.CHAT)
-                .tradeBoardNo(requestDto.getTradeBoardNo())
-                .build();
+            Chat savedChat = chatRepository.save(chat);
 
-        aggregationSender.send(KafkaUtil.KAFKA_AGGREGATION, aggregationDto);
-        return savedChat;
+
+            // 채팅방 카운트 증가
+            AggregationDto aggregationDto = AggregationDto
+                    .builder()
+                    .isIncrease("true")
+                    .target(AggregationTarget.CHAT)
+                    .tradeBoardNo(requestDto.getTradeBoardNo())
+                    .build();
+
+            aggregationSender.send(KafkaUtil.KAFKA_AGGREGATION, aggregationDto);
+            return savedChat;
+        }
+        throw new IllegalArgumentException("존재하지 않는 게시글 입니다");
     }
-
+    /**
+     * 채팅방 리스트 조회 메서드
+     * FeignCLient를 통해 plant-service에서 유저 정보 조회후 채팅방 만든 사람인지 확인
+     * mongodb에서 채팅 메세지 보낸 시간을 내림차순으로 정렬후 첫번째 값 마지막 메세지로 세팅
+     * @param : Integer memberNo, Integer tradeBoardNo
+     */
     public List<ChatRoomResponseDto> getChatList(Integer memberNo, Integer tradeBoardNo) {
         List<ChatRoomResponseDto> chatRoomList = chatRepository.getChattingList(memberNo, tradeBoardNo);
-
         //Participant 채워야됨(username)
             chatRoomList
                     .forEach(chatRoomDto -> {
                         //param으로 넘어온 멤버가 채팅 만든 멤버일 경우 => Participant에 참가한 멤버
-                        //param으로 넘어온 멤버가 채팅방에 참가한 멤버일 경우 => Participant에 채팅방 민든 멤버
-                        ResponseEntity<MemberDto> byId = plantServiceClient.findById(chatRoomDto.getCreateMember().longValue());
-                        if (byId.getBody().getId().equals(chatRoomDto.getCreateMember())) {
+//                        ResponseEntity<MemberDto> byId = plantServiceClient.findById(chatRoomDto.getCreateMember().longValue());
+                        if (memberNo.equals(chatRoomDto.getCreateMember())) {
                             ResponseEntity<MemberDto> memberDtoResponse = plantServiceClient.findById(chatRoomDto.getJoinMember().longValue());
 
                             chatRoomDto.setParticipant(new ChatRoomResponseDto.Participant(memberDtoResponse.getBody().getUsername(), memberDtoResponse.getBody().getNickname()));
-                        } else {
+                        }
+                        //param으로 넘어온 멤버가 채팅방에 참가한 멤버일 경우 => Participant에 채팅방 만든 멤버
+                        if (!memberNo.equals(chatRoomDto.getCreateMember())){
                             ResponseEntity<MemberDto> memberDtoResponse = plantServiceClient.findById(chatRoomDto.getCreateMember().longValue());
                             chatRoomDto.setParticipant(new ChatRoomResponseDto.Participant(memberDtoResponse.getBody().getUsername(), memberDtoResponse.getBody().getNickname()));
                         }
-
-//                        // 채팅방별로 읽지 않은 메시지 개수를 셋팅
-                        long unReadCount = countUnReadMessage(chatRoomDto.getChatNo(), byId.getBody().getId().intValue());
+//                      // 채팅방별로 읽지 않은 메시지 개수를 셋팅
+                        long unReadCount = countUnReadMessage(chatRoomDto.getChatNo(), memberNo);
                         chatRoomDto.setUnReadCount(unReadCount);
 
                         // 채팅방별로 마지막 채팅내용과 시간을 셋팅
@@ -129,6 +145,11 @@ public class ChatService {
 
         return chatRoomList;
     }
+    /**
+     * 채팅 메세지 조회 메서드
+     * 채팅 메세지 조회시 해당 메세지를 읽은 것이므로 메세지 읽음 처리도 진행
+     * @param : Integer chatRoomNo, Integer memberNo
+     */
     public ChattingHistoryResponseDto getChattingList(Integer chatRoomNo, Integer memberNo) {
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
         // member id로 조화
@@ -138,7 +159,8 @@ public class ChatService {
         updateCountAllZero(chatRoomNo, memberDto.getBody().getEmail());
         List<ChatResponseDto> chattingList = mongoChatRepository.findByChatRoomNo(chatRoomNo)
                 .stream()
-                .map(chat -> new ChatResponseDto(chat, memberNo))
+                .map(chat -> new ChatResponseDto(chat, memberNo)
+                )
                 .collect(Collectors.toList());
 
         return ChattingHistoryResponseDto.builder()
@@ -146,6 +168,12 @@ public class ChatService {
                 .email(memberDto.getBody().getEmail())
                 .build();
     }
+    /**
+     * 메세지 전송 메서드
+     * jwt 토큰에서 username 추출
+     * 카프카 토픽으로 메세 전송
+     * @param : Message message, String accessToken
+     */
     public void sendMessage(Message message, String accessToken) {
         // member id로 조화
         ResponseEntity<MemberDto> memberDto = plantServiceClient.findByUsername(tokenHandler.getUid(accessToken));
@@ -159,7 +187,12 @@ public class ChatService {
         // 메시지를 전송한다.
         sender.send(KafkaUtil.KAFKA_TOPIC, message);
     }
-
+    /**
+     * 알림 전송 및 메세지 저장 메서드
+     * FeignCLient를 통해 plant-service에서 메세지 보낸 유저 정보 조회
+     * 알림은 상대방이 읽지 않은 경우만 전송
+     * @param : Message message
+     */
     @Transactional
     public Message sendNotificationAndSaveMessage(Message message) {
 
@@ -192,6 +225,10 @@ public class ChatService {
         }
         return message;
     }
+    /**
+     * 참가자 입장 알림 메서드
+     * @param : String email, Integer chatRoomNo
+     */
     public void updateMessage(String email, Integer chatRoomNo) {
         Message message = Message.builder()
                 .contentType("notice")
@@ -201,8 +238,10 @@ public class ChatService {
 
         sender.send(KafkaUtil.KAFKA_TOPIC, message);
     }
-
-    // 읽지 않은 메시지 채팅장 입장시 읽음 처리
+    /**
+     * 읽지 않은 메시지 채팅장 입장시 읽음 처리 메서드
+     * @param : Integer chatNo, String username
+     */
     public void updateCountAllZero(Integer chatNo, String username) {
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
         ResponseEntity<MemberDto> findMember = circuitBreaker.run(() -> plantServiceClient.findByUsername(username),
@@ -216,7 +255,10 @@ public class ChatService {
         mongoTemplate.updateMulti(query, update, Chatting.class);
     }
 
-    //읽지 않은 메세지 카운트
+    /**
+     * 읽지 않은 메시지 카운트 메서드
+     * @param : Integer chatNo, Integer senderNo
+     */
     long countUnReadMessage(Integer chatRoomNo, Integer senderNo) {
         Query query = new Query(Criteria.where("chatRoomNo").is(chatRoomNo)
                 .and("readCount").is(1)
@@ -230,4 +272,15 @@ public class ChatService {
                 tradeBoardNo;
     }
 
+
+    /**
+     * 판매자가 참가한  채팅방이 존재하는지 유무 처리 메서드
+     * 단순 조회용 메서드라 readOnly = true
+     *
+     * @param : Integer tradeBoardNo,  Integer memberNo
+     */
+    @Transactional(readOnly = true)
+    public Boolean existChatRoomBySeller(Integer tradeBoardNo, Integer memberNo) {
+        return chatRepository.existChatRoomBySeller(tradeBoardNo, memberNo);
+    }
 }

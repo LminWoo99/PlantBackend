@@ -48,10 +48,11 @@ public class ChatRepositoryImpl implements CustomChatRepository {
                 .fetch()
                 .isEmpty();
     }
-    public Chat findByTradeBoardNoAndChatNo(Integer tradeBoardNo, Integer joinMemberNo) {
+    public Chat findByTradeBoardNoAndChatNo(Integer tradeBoardNo, Integer createMemberNo) {
         return jpaQueryFactory.selectFrom(chat)
-                .where(chat.tradeBoardNo.eq(tradeBoardNo).and(chat.joinMember.eq(joinMemberNo)))
+                .where(chat.tradeBoardNo.eq(tradeBoardNo).and(chat.createMember.eq(createMemberNo)))
                 .fetchOne();
+
     }
     // 채팅방 리스트 조회
     //엔티티와 다른 반환 타입인 경우 Projections를 사용

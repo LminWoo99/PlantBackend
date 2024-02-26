@@ -75,7 +75,7 @@ public class ChatService {
 
         //이미 해당글 기준으로 채팅을 요청한 사람과 받는 사람이 일치할 경우 체크
         if (chatRepository.existChatRoomByBuyer(tradeBoardNo, requestDto.getCreateMember(), memberNo)) {
-            Chat existedChat = chatRepository.findByTradeBoardNoAndChatNo(tradeBoardNo, memberNo);
+            Chat existedChat = chatRepository.findByTradeBoardNoAndChatNo(tradeBoardNo, requestDto.getCreateMember());
             return existedChat;
 
         }
@@ -156,7 +156,7 @@ public class ChatService {
         ResponseEntity<MemberDto> memberDto = circuitBreaker.run(() -> plantServiceClient.findById(memberNo.longValue()),
                 throwable -> ResponseEntity.ok(null));
 
-        updateCountAllZero(chatRoomNo, memberDto.getBody().getEmail());
+        updateCountAllZero(chatRoomNo, memberDto.getBody().getUsername());
         List<ChatResponseDto> chattingList = mongoChatRepository.findByChatRoomNo(chatRoomNo)
                 .stream()
                 .map(chat -> new ChatResponseDto(chat, memberNo)

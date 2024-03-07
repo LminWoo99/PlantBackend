@@ -1,5 +1,6 @@
 package Plant.PlantProject.service;
 
+import Plant.PlantProject.Entity.Status;
 import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.exception.TradeBoardNotFoundException;
 import Plant.PlantProject.exception.UserNotFoundException;
@@ -80,12 +81,12 @@ public class TradeBoardService {
         }
     }
     @Transactional
-    public TradeBoardDto updateStatus(TradeBoardDto tradeBoardDto) {
-        Optional<TradeBoard> optionalTradeBoard = tradeBoardRepository.findById(tradeBoardDto.getId());
+    public TradeBoardDto updateStatus(Long id) {
+        Optional<TradeBoard> optionalTradeBoard = tradeBoardRepository.findById(id);
 
         if (optionalTradeBoard.isPresent()) {
             TradeBoard tradeBoard = optionalTradeBoard.get();
-            tradeBoard.setStatus(tradeBoardDto.getStatus());
+            tradeBoard.setStatus(Status.거래완료);
             TradeBoard savedEntity = tradeBoardRepository.save(tradeBoard);
 
             // 업데이트된 정보를 TradeBoardDto로 변환하여 반환
@@ -98,7 +99,7 @@ public class TradeBoardService {
             return updatedTradeBoardDto;
         } else {
             // 해당 id에 해당하는 게시글이 없는 경우 처리
-            throw new EntityNotFoundException("TradeBoard not found with id: " + tradeBoardDto.getId());
+            throw new EntityNotFoundException("TradeBoard not found with id: " + id);
         }
     }
     @Transactional

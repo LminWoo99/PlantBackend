@@ -12,6 +12,7 @@ import Plant.PlantProject.repository.RoleRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.security.SecurityUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static Plant.PlantProject.dto.vo.ResponseTradeBoardDto.convertTradeBoardToDto;
@@ -91,8 +93,8 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
 
     public HttpStatus duplicateMember(String username){
 
-        Member member = memberRepository.findByUsername(username).orElseThrow(MemberNotFoundException::new);
-        if(member == null){
+        Optional<Member> member = memberRepository.findByUsername(username);
+        if(member.isEmpty()){
             return HttpStatus.OK;
         }
         else{
@@ -179,4 +181,5 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
         )).orElseThrow(MemberNotFoundException::new);
         return memberDto;
     }
+
 }

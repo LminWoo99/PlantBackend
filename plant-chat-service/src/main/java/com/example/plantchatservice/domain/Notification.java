@@ -45,6 +45,9 @@ public class Notification extends BaseTimeEntity{
     @Column(name = "receiver_No")
     private Integer receiverNo;
 
+    @Column(name = "sender_Name")
+    private String senderName;
+
     @Builder
     public Notification(Long notifiNo, NotifiTypeEnum typeEnum, String url, String content, boolean isDel, boolean isRead, Integer senderNo, Integer receiverNo) {
         this.notifiNo = notifiNo;
@@ -58,5 +61,9 @@ public class Notification extends BaseTimeEntity{
     }
     public void read() {
         this.isRead = true;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 }

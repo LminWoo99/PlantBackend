@@ -268,7 +268,7 @@ public class ChatService {
     }
     private String getNotificationUrl(Integer tradeBoardNo, Integer chatNo) {
         return chatNo +
-                "?tradeBoardId=" +
+                "/" +
                 tradeBoardNo;
     }
 

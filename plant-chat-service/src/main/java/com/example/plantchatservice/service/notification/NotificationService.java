@@ -10,11 +10,9 @@ import com.example.plantchatservice.repository.notification.EmitterRepository;
 import com.example.plantchatservice.repository.notification.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -29,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class NotificationService {
-    private static final Long DEFAULT_TIMEOUT = 1000L * 60 * 30 ;// 30분
+    private static final Long DEFAULT_TIMEOUT = 1000L * 60 * 29 ;// 29분
     public static final String PREFIX_URL = "http://localhost:3000/";
     private final NotificationRepository notificationRepository;
     private final EmitterRepository emitterRepository;
@@ -42,8 +40,9 @@ public class NotificationService {
      * @param : MemberDto memberDto, String lastEnventId
      */
     @Transactional
-    public SseEmitter subscribe(MemberDto memberDto, String lastEventId) {
-        Long memberNo = memberDto.getId();
+    public SseEmitter subscribe(String lastEventId, String jwtToken) {
+        ResponseEntity<MemberDto> joinMember = plantServiceClient.getJoinMember(jwtToken);
+        Integer memberNo = joinMember.getBody().getId().intValue();
         //Emitter map에 저장하기 위한 key 생성
         String id = memberNo + "_" + System.currentTimeMillis();
         // SseEmitter map에 저장
@@ -87,6 +86,12 @@ public class NotificationService {
                 .isRead(false)
                 .isDel(false)
                 .build();
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        //보낸 사람 이름 찾기 위해 feignClient를 통해 호출
+        ResponseEntity<MemberDto> findMember = circuitBreaker.run(() -> plantServiceClient.findById(sender.getId()),
+                throwable -> ResponseEntity.ok(null));
+
+        notification.setSenderName(findMember.getBody().getNickname());
         // SseEmitter 캐시 조회를 위해 key의 prefix 생성
         String id = String.valueOf(notification.getReceiverNo());
 
@@ -110,10 +115,12 @@ public class NotificationService {
      */
     private void sendToClient(SseEmitter emitter, String id, Object data) {
         try {
+            log.info("event : " + data);
             emitter.send(SseEmitter.event()
                     .id(id)
                     .name("sse")
                     .data(data));
+            log.info("event call: " + emitter);
         } catch (IOException ex) {
             emitterRepository.deleteById(id);
             log.error("--- SSE 연결 오류 ----", ex);
@@ -123,16 +130,12 @@ public class NotificationService {
     /**
      * 로그인한 멤버 알림 전체 조회
      * 조회용 메서드 => (readOnly = true)
-     *
      * @param : MemberDto memberDto
      */
-    public List<NotificationResponse> findAllById(MemberDto memberDto) {
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-        ResponseEntity<MemberDto> member = circuitBreaker.run(() -> plantServiceClient.findById(memberDto.getId()),
-                throwable -> ResponseEntity.ok(null));
+    public List<NotificationResponse> findAllById(Long memberNo) {
         // 채팅의 마지막 알림 조회
         List<Notification> chat
-                = notificationRepository.findChatByReceiver(member.getBody().getId().intValue());
+                = notificationRepository.findChatByReceiver(memberNo.intValue());
 
         return chat.stream()
                 .map(NotificationResponse::toDto)
@@ -144,9 +147,9 @@ public class NotificationService {
      * 일림 읽음 처리 메서드
      * @param : Long id
      */
+    @Transactional
     public void readNotification(Long id) {
-        Notification notification = getNotification(id);
-        notification.read();
+        notificationRepository.updateIsReadById(id);
     }
     /**
      * 일림 삭제 처리 메서드
@@ -160,7 +163,6 @@ public class NotificationService {
 
 
     }
-
     //== 개별 알림 조회 ==//
     private Notification getNotification(Long id) {
         return notificationRepository.findById(id)

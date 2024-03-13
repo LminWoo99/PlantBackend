@@ -31,8 +31,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Slf4j
 @Service
@@ -75,7 +80,7 @@ public class ChatService {
 
         //이미 해당글 기준으로 채팅을 요청한 사람과 받는 사람이 일치할 경우 체크
         if (chatRepository.existChatRoomByBuyer(tradeBoardNo, requestDto.getCreateMember(), memberNo)) {
-            Chat existedChat = chatRepository.findByTradeBoardNoAndChatNo(tradeBoardNo, memberNo);
+            Chat existedChat = chatRepository.findByTradeBoardNoAndChatNo(tradeBoardNo, requestDto.getCreateMember());
             return existedChat;
 
         }
@@ -156,7 +161,7 @@ public class ChatService {
         ResponseEntity<MemberDto> memberDto = circuitBreaker.run(() -> plantServiceClient.findById(memberNo.longValue()),
                 throwable -> ResponseEntity.ok(null));
 
-        updateCountAllZero(chatRoomNo, memberDto.getBody().getEmail());
+        updateCountAllZero(chatRoomNo, memberDto.getBody().getUsername());
         List<ChatResponseDto> chattingList = mongoChatRepository.findByChatRoomNo(chatRoomNo)
                 .stream()
                 .map(chat -> new ChatResponseDto(chat, memberNo)
@@ -249,26 +254,26 @@ public class ChatService {
         //MongoDb Update Query
         Update update = new Update().set("readCount", 0);
         //ne-> not equal
-        Query query = new Query(Criteria.where("chatRoomNo").is(chatNo)
+        Query query = new Query(where("chatRoomNo").is(chatNo)
                 .and("senderNo").ne(findMember.getBody().getId().intValue()));
 
         mongoTemplate.updateMulti(query, update, Chatting.class);
     }
-
     /**
      * 읽지 않은 메시지 카운트 메서드
      * @param : Integer chatNo, Integer senderNo
      */
     long countUnReadMessage(Integer chatRoomNo, Integer senderNo) {
-        Query query = new Query(Criteria.where("chatRoomNo").is(chatRoomNo)
+        Query query = new Query(where("chatRoomNo").is(chatRoomNo)
                 .and("readCount").is(1)
                 .and("senderNo").ne(senderNo));
 
         return mongoTemplate.count(query, Chatting.class);
     }
+
     private String getNotificationUrl(Integer tradeBoardNo, Integer chatNo) {
         return chatNo +
-                "?tradeBoardId=" +
+                "/" +
                 tradeBoardNo;
     }
 
@@ -282,5 +287,25 @@ public class ChatService {
     @Transactional(readOnly = true)
     public Boolean existChatRoomBySeller(Integer tradeBoardNo, Integer memberNo) {
         return chatRepository.existChatRoomBySeller(tradeBoardNo, memberNo);
+    }
+
+    /**
+     * 채팅방 삭제 메서드
+     * plant-service에서 kafka를 통해 거래 게시글 삭제 요청을 받으면 삭제
+     *
+     * @param : Integer tradeBoardNo
+     */
+    @Transactional
+    public void deleteChatRoom(Integer tradeBoardNo) {
+        List<Integer> chatRoomNoList = chatRepository.deleteChatRoomAndReturnChatNo(tradeBoardNo);
+        deleteChatting(chatRoomNoList);
+    }
+    @Transactional
+    public void deleteChatting(List<Integer> chatRoomNoList) {
+        // 중복된 chatNo 제거
+        Set<Integer> uniqueChatNoSet = new HashSet<>(chatRoomNoList);
+
+        // 중복 제거 후의 chatNo에 해당하는 채팅 데이터 삭제
+        mongoTemplate.remove(query(where("chatRoomNo").in(uniqueChatNoSet)), Chatting.class);
     }
 }

@@ -1,15 +1,18 @@
 package Plant.PlantProject.service;
 
+import Plant.PlantProject.Entity.Status;
 import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.exception.TradeBoardNotFoundException;
 import Plant.PlantProject.exception.UserNotFoundException;
 import Plant.PlantProject.dto.TradeBoardDto;
 import Plant.PlantProject.dto.vo.TradeBoardRequestDto;
 import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.messagequeue.KafkaProducer;
 import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +25,12 @@ import java.util.Optional;
 @Service
 @Transactional
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TradeBoardService {
     private final TradeBoardRepository tradeBoardRepository;
     private final MemberRepository memberRepository;
     private final GoodsRepository goodsRepository;
+    private final KafkaProducer kafkaProducer;
     // 트랜잭션은 readOnly true 로 설정하면 데이터베이스의 상태를 변경하지 않는 읽기 전용 메서드에서 성능 향상을 기대할 수 있음
     // 트랜잭션 설정을 하면 롤백 가능, 즉 DB에서 무언가 잘못되었을 경우 이전 상태로 되돌릴 수 있음
     @Transactional
@@ -80,12 +84,12 @@ public class TradeBoardService {
         }
     }
     @Transactional
-    public TradeBoardDto updateStatus(TradeBoardDto tradeBoardDto) {
-        Optional<TradeBoard> optionalTradeBoard = tradeBoardRepository.findById(tradeBoardDto.getId());
+    public TradeBoardDto updateStatus(Long id) {
+        Optional<TradeBoard> optionalTradeBoard = tradeBoardRepository.findById(id);
 
         if (optionalTradeBoard.isPresent()) {
             TradeBoard tradeBoard = optionalTradeBoard.get();
-            tradeBoard.setStatus(tradeBoardDto.getStatus());
+            tradeBoard.setStatus(Status.거래완료);
             TradeBoard savedEntity = tradeBoardRepository.save(tradeBoard);
 
             // 업데이트된 정보를 TradeBoardDto로 변환하여 반환
@@ -98,7 +102,7 @@ public class TradeBoardService {
             return updatedTradeBoardDto;
         } else {
             // 해당 id에 해당하는 게시글이 없는 경우 처리
-            throw new EntityNotFoundException("TradeBoard not found with id: " + tradeBoardDto.getId());
+            throw new EntityNotFoundException("TradeBoard not found with id: " + id);
         }
     }
     @Transactional
@@ -158,7 +162,10 @@ public class TradeBoardService {
 
 
     public void deletePost(TradeBoardDto tradeBoardDto) {
+
         tradeBoardRepository.delete(tradeBoardDto.toEntity());
+        /*send this deletePost to the kafka*/
+        kafkaProducer.send("deletePost", tradeBoardDto);
     }
 
     public TradeBoard findTradeBoardById(Long tradeBoardId) {

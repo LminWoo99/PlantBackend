@@ -2,6 +2,7 @@ package Plant.PlantProject.controller;
 
 import Plant.PlantProject.Entity.Member;
 import Plant.PlantProject.Entity.Role;
+import Plant.PlantProject.config.JwtTokenUtil;
 import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.dto.RoleDto;
 import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
@@ -15,8 +16,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 
+import org.apache.catalina.security.SecurityUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -42,7 +48,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 public class MemberController {
     private final MemberService memberService;
     private final RoleRepository roleRepository;
-
+    private final JwtTokenUtil jwtTokenUtil;
 
     @GetMapping("/tradeInfo/{id}")
     public ResponseEntity<List<ResponseTradeBoardDto>> showTradeInfo(@PathVariable Long id){
@@ -168,6 +174,14 @@ public class MemberController {
     public ResponseEntity<MemberDto> findById(@RequestParam Long id) {
         MemberDto memberDto = memberService.findById(id);
         return ResponseEntity.ok().body(memberDto);
+    }
+
+    @GetMapping("/joinMember")
+    public ResponseEntity<MemberDto> getJoinMember(@RequestHeader("Authorization") String jwtToken) {
+        String username = jwtTokenUtil.getCurrentMember(jwtToken);
+        MemberDto memberDto = memberService.findByUsername(username);
+        return ResponseEntity.ok(memberDto);
+
     }
 }
 

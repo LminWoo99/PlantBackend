@@ -80,8 +80,8 @@ public class TradeBoardController {
         return ResponseEntity.ok(view);
 }
     @PutMapping("/updateStatus/{id}")
-    public ResponseEntity<TradeBoardDto> updateStatus(@PathVariable Long id, @RequestBody TradeBoardDto tradeBoardDto) {
-        TradeBoardDto updateStatus = tradeBoardService.updateStatus(tradeBoardDto);
+    public ResponseEntity<TradeBoardDto> updateStatus(@PathVariable Long id) {
+        TradeBoardDto updateStatus = tradeBoardService.updateStatus(id);
         return ResponseEntity.ok().body(updateStatus);
     }
     @GetMapping("/buyer/{id}")

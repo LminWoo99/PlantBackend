@@ -22,6 +22,8 @@ public interface CustomChatRepository {
 
     boolean existChatRoomBySeller(Integer tradeBoardNo, Integer tradeMemberNo);
 
+    public List<Integer> deleteChatRoomAndReturnChatNo(Integer tradeBoardNo);
+
 
 
 

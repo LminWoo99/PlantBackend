@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -22,6 +23,9 @@ public interface PlantServiceClient {
 
     @GetMapping("/api/findUsername")
     ResponseEntity<MemberDto> findByUsername(@RequestParam String username);
-    @GetMapping("/api/findEmail")
-    ResponseEntity<MemberDto> findIdByEmail(@RequestParam String email);
+//    @GetMapping("/api/findEmail")
+//    ResponseEntity<MemberDto> findIdByEmail(@RequestParam String email);
+
+    @GetMapping("/api/joinMember")
+    ResponseEntity<MemberDto> getJoinMember(@RequestHeader("Authorization") String jwtToken);
 }

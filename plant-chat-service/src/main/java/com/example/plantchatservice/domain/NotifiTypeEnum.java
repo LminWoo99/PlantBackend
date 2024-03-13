@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum NotifiTypeEnum {
     NOTICE("notice/","announcement"),
-    CHAT("chat/","chat");
+    CHAT("chatroom/","chat");
 
     private final String path;
     private final String alias;

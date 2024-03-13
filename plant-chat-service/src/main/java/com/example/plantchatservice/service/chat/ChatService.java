@@ -31,8 +31,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Slf4j
 @Service
@@ -249,23 +254,23 @@ public class ChatService {
         //MongoDb Update Query
         Update update = new Update().set("readCount", 0);
         //ne-> not equal
-        Query query = new Query(Criteria.where("chatRoomNo").is(chatNo)
+        Query query = new Query(where("chatRoomNo").is(chatNo)
                 .and("senderNo").ne(findMember.getBody().getId().intValue()));
 
         mongoTemplate.updateMulti(query, update, Chatting.class);
     }
-
     /**
      * 읽지 않은 메시지 카운트 메서드
      * @param : Integer chatNo, Integer senderNo
      */
     long countUnReadMessage(Integer chatRoomNo, Integer senderNo) {
-        Query query = new Query(Criteria.where("chatRoomNo").is(chatRoomNo)
+        Query query = new Query(where("chatRoomNo").is(chatRoomNo)
                 .and("readCount").is(1)
                 .and("senderNo").ne(senderNo));
 
         return mongoTemplate.count(query, Chatting.class);
     }
+
     private String getNotificationUrl(Integer tradeBoardNo, Integer chatNo) {
         return chatNo +
                 "/" +
@@ -282,5 +287,25 @@ public class ChatService {
     @Transactional(readOnly = true)
     public Boolean existChatRoomBySeller(Integer tradeBoardNo, Integer memberNo) {
         return chatRepository.existChatRoomBySeller(tradeBoardNo, memberNo);
+    }
+
+    /**
+     * 채팅방 삭제 메서드
+     * plant-service에서 kafka를 통해 거래 게시글 삭제 요청을 받으면 삭제
+     *
+     * @param : Integer tradeBoardNo
+     */
+    @Transactional
+    public void deleteChatRoom(Integer tradeBoardNo) {
+        List<Integer> chatRoomNoList = chatRepository.deleteChatRoomAndReturnChatNo(tradeBoardNo);
+        deleteChatting(chatRoomNoList);
+    }
+    @Transactional
+    public void deleteChatting(List<Integer> chatRoomNoList) {
+        // 중복된 chatNo 제거
+        Set<Integer> uniqueChatNoSet = new HashSet<>(chatRoomNoList);
+
+        // 중복 제거 후의 chatNo에 해당하는 채팅 데이터 삭제
+        mongoTemplate.remove(query(where("chatRoomNo").in(uniqueChatNoSet)), Chatting.class);
     }
 }

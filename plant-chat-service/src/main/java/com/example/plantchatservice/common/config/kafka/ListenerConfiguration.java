@@ -44,6 +44,27 @@ public class ListenerConfiguration {
         return new DefaultKafkaConsumerFactory<>(consumerConfigurations, new StringDeserializer(), deserializer);
     }
     @Bean
+    ConcurrentKafkaListenerContainerFactory<String, String> kafkaDeletePostContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(deletePostConsumer());
+        return factory;
+    }
+    // Kafka deletePostConsumerFactory를 생성하는 Bean 메서드
+    @Bean
+    public ConsumerFactory<String, String> deletePostConsumer() {
+
+        // Kafka Consumer 구성을 위한 설정값들을 설정 -> 변하지 않는 값이므로 ImmutableMap을 이용하여 설정
+        Map<String, Object> consumerConfigurations =
+                ImmutableMap.<String, Object>builder()
+                        .put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
+                        .put(ConsumerConfig.GROUP_ID_CONFIG, "deletePost")
+                        .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
+                        .put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
+                        .build();
+
+        return new DefaultKafkaConsumerFactory<>(consumerConfigurations);
+    }
+    @Bean
     ConcurrentKafkaListenerContainerFactory<String, AggregationDto> kafkaAggregationContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, AggregationDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(kafkaAggregationConsumer());
@@ -57,8 +78,8 @@ public class ListenerConfiguration {
         // Kafka Consumer 구성을 위한 설정값들을 설정 -> 변하지 않는 값이므로 ImmutableMap을 이용하여 설정
         Map<String, Object> consumerConfigurations =
                 ImmutableMap.<String, Object>builder()
-                        .put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
                         .put(ConsumerConfig.GROUP_ID_CONFIG, "aggregation")
+                        .put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
                         .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
                         .put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer)
                         .put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")

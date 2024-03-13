@@ -7,10 +7,12 @@ import Plant.PlantProject.exception.UserNotFoundException;
 import Plant.PlantProject.dto.TradeBoardDto;
 import Plant.PlantProject.dto.vo.TradeBoardRequestDto;
 import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.messagequeue.KafkaProducer;
 import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +25,12 @@ import java.util.Optional;
 @Service
 @Transactional
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TradeBoardService {
     private final TradeBoardRepository tradeBoardRepository;
     private final MemberRepository memberRepository;
     private final GoodsRepository goodsRepository;
+    private final KafkaProducer kafkaProducer;
     // 트랜잭션은 readOnly true 로 설정하면 데이터베이스의 상태를 변경하지 않는 읽기 전용 메서드에서 성능 향상을 기대할 수 있음
     // 트랜잭션 설정을 하면 롤백 가능, 즉 DB에서 무언가 잘못되었을 경우 이전 상태로 되돌릴 수 있음
     @Transactional
@@ -159,7 +162,10 @@ public class TradeBoardService {
 
 
     public void deletePost(TradeBoardDto tradeBoardDto) {
+
         tradeBoardRepository.delete(tradeBoardDto.toEntity());
+        /*send this deletePost to the kafka*/
+        kafkaProducer.send("deletePost", tradeBoardDto);
     }
 
     public TradeBoard findTradeBoardById(Long tradeBoardId) {

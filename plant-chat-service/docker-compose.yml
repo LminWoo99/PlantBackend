@@ -1,4 +1,74 @@
-# compose 파일 버전
+## compose 파일 버전
+#version: '3'
+#services:
+#  # 서비스 명
+#  zookeeper:
+#    # 사용할 이미지
+#    image: wurstmeister/zookeeper
+#    # 컨테이너명 설정
+#    container_name: zookeeper
+#    # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
+#    ports:
+#      - "2181:2181"
+#    networks:
+#      ecommerce-network:
+#        ipv4_address: 172.18.0.100
+#  # 서비스 명
+#  kafka:
+#    # 사용할 이미지
+#    image: wurstmeister/kafka
+#    # 컨테이너명 설정
+#    container_name: kafka
+#    # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
+#    ports:
+#      - "9092:9092"
+#    # 환경 변수 설정
+#    environment:
+#      KAFKA_ADVERTISED_HOST_NAME: 172.18.0.101
+#      KAFKA_CREATE_TOPICS: "Topic:1:1"
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://172.18.0.101:9092
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#    # 볼륨 설정
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    # 의존 관계 설정
+#    depends_on:
+#      - zookeeper
+#    networks:
+#      ecommerce-network:
+#        ipv4_address: 172.18.0.101
+#  connect:
+#    image: confluentinc/cp-kafka-connect:7.0.1
+#    ports:
+#      - "8083:8083"
+#    container_name: connect
+#    environment:
+#      CONNECT_BOOTSTRAP_SERVERS: 172.18.0.101:9092
+#      CONNECT_REST_PORT: 8083
+#      CONNECT_GROUP_ID: "quickstart-avro"
+#      CONNECT_CONFIG_STORAGE_TOPIC: "quickstart-avro-config"
+#      CONNECT_OFFSET_STORAGE_TOPIC: "quickstart-avro-offsets"
+#      CONNECT_STATUS_STORAGE_TOPIC: "quickstart-avro-status"
+#      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+#      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+#      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+#      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+#      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+#      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+#      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+#      CONNECT_REST_ADVERTISED_HOST_NAME: 172.18.0.102
+#      CONNECT_LOG4J_ROOT_LOGLEVEL: DEBUG
+#      CONNECT_PLUGIN_PATH: "/usr/share/java,/etc/kafka-connect/jars"
+#    volumes:
+#      - /Users/imin-u/study/kafka/confluentinc-kafka-connect-jdbc-10.6.3/lib:/etc/kafka-connect/jars
+#    networks:
+#      ecommerce-network:
+#        ipv4_address: 172.18.0.102
+#
+#networks:
+#  ecommerce-network:
+#    external: true
 version: '3'
 services:
   # 서비스 명
@@ -30,3 +100,8 @@ services:
     # 의존 관계 설정
     depends_on:
       - zookeeper
+
+
+
+
+

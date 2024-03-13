@@ -48,6 +48,23 @@ public class ChatRepositoryImpl implements CustomChatRepository {
                 .fetch()
                 .isEmpty();
     }
+
+
+    public List<Integer> deleteChatRoomAndReturnChatNo(Integer tradeBoardNo) {
+        // 삭제 전에 삭제할 데이터의 chatNo를 조회하여 가져옴
+        List<Integer> deletedChatNos = jpaQueryFactory.select(chat.chatNo)
+                .from(chat)
+                .where(chat.tradeBoardNo.eq(tradeBoardNo))
+                .fetch();
+
+        // 실제 삭제 작업 실행
+        jpaQueryFactory.delete(chat)
+                .where(chat.tradeBoardNo.eq(tradeBoardNo))
+                .execute();
+
+        // 삭제된 chatNo 목록 반환
+        return deletedChatNos;
+    }
     public Chat findByTradeBoardNoAndChatNo(Integer tradeBoardNo, Integer createMemberNo) {
         return jpaQueryFactory.selectFrom(chat)
                 .where(chat.tradeBoardNo.eq(tradeBoardNo).and(chat.createMember.eq(createMemberNo)))

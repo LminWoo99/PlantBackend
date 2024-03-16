@@ -73,6 +73,7 @@ public class ChatController {
     @PostMapping("/chatroom/{chatroomNo}")
     public ResponseEntity<HttpStatus> disconnectChat(@PathVariable("chatroomNo") Integer chatroomNo,
                                                      @RequestParam(value = "nickname", required = false) String nickname) {
+
         chatRoomService.disconnectChatRoom(chatroomNo, nickname);
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }

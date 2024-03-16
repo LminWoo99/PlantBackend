@@ -33,9 +33,9 @@ public class StompHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         // StompCommand에 따라서 로직을 분기해서 처리하는 메서드를 호출한다.
-        String username = verifyAccessToken(getAccessToken(accessor));
+        String nickname = verifyAccessToken(getAccessToken(accessor));
         log.info("StompAccessor = {}", accessor);
-        handleMessage(accessor.getCommand(), accessor, username);
+        handleMessage(accessor.getCommand(), accessor, nickname);
         return message;
     }
 

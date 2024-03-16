@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 //단순 crud용이므로 CrudRepository사용
 @Repository
-public interface ChatRoomRepository extends CrudRepository<ChatRoom, Long> {
+public interface ChatRoomRepository extends CrudRepository<ChatRoom, String> {
 
     Optional<ChatRoom> findByChatroomNoAndUsername(Integer chatRoomNo, String username);
 

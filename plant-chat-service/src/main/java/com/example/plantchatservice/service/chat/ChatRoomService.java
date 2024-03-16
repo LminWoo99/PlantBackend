@@ -20,12 +20,12 @@ public class ChatRoomService {
 
     /**
      * 채팅방 연결 메서드
-     * @param : Long chatRoomNo , String nickname
+     * @param : Long chatRoomNo , String username
      */
     @Transactional
-    public void connectChatRoom(Integer chatRoomNo, String nickname) {
+    public void connectChatRoom(Integer chatRoomNo, String username) {
         ChatRoom chatRoom = ChatRoom.builder()
-                .nickname(nickname)
+                .username(username)
                 .chatroomNo(chatRoomNo)
                 .build();
 
@@ -33,17 +33,17 @@ public class ChatRoomService {
     }
     /**
      * 채팅방 연결 끊기
-     * @param : Long chatRoomNo , String nickname
+     * @param : Integer chatRoomNo , String username
      */
     @Transactional
-    public void disconnectChatRoom(Integer chatRoomNo, String nickname) {
-        ChatRoom chatRoom = chatRoomRepository.findByChatroomNoAndUsername(chatRoomNo, nickname)
+    public void disconnectChatRoom(Integer chatRoomNo, String username) {
+        ChatRoom chatRoom = chatRoomRepository.findByChatroomNoAndUsername(chatRoomNo, username)
                 .orElseThrow(IllegalStateException::new);
         chatRoomRepository.delete(chatRoom);
     }
     /**
      * 채팅방 정원 2명 찼는지 확인 메서드
-     * @param : Long chatRoomNo
+     * @param : Integer chatRoomNo
      */
     public boolean isAllConnected(Integer chatRoomNo) {
         List<ChatRoom> connectedList = chatRoomRepository.findByChatroomNo(chatRoomNo);
@@ -51,7 +51,7 @@ public class ChatRoomService {
     }
     /**
      * 채팅방에 1명 연결됐는지 확인 메서드
-     * @param : Long chatRoomNo
+     * @param : Integer chatRoomNo
      */
     public boolean isConnected(Integer chatRoomNo) {
         List<ChatRoom> connectedList = chatRoomRepository.findByChatroomNo(chatRoomNo);

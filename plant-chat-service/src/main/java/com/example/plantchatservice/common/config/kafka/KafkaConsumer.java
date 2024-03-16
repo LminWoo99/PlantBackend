@@ -34,12 +34,20 @@ public class KafkaConsumer {
         try {
             map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {
             });
+            //TradeBoard id값 가져오기
+            Integer tradeBoardNo = (Integer) map.get("id");
+            if (tradeBoardNo == null) {
+                throw new IllegalArgumentException("TradeBoard ID is missing in the Kafka message");
+            }
+            chatService.deleteChatRoom(tradeBoardNo);
 
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.error("Error parsing Kafka message: {}", kafkaMessage, e);
+        } catch (IllegalArgumentException e) {
+            log.error("Validation error for Kafka message: {}", kafkaMessage, e);
+        } catch (Exception e) {
+            log.error("Error processing Kafka message: {}", kafkaMessage, e);
         }
-        //TradeBoard id값 가져오기
-        Integer tradeBoardNo = (Integer) map.get("id");
-        chatService.deleteChatRoom(tradeBoardNo);
+
     }
 }

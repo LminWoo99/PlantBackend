@@ -33,9 +33,9 @@ public class StompHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         // StompCommand에 따라서 로직을 분기해서 처리하는 메서드를 호출한다.
-        String nickname = verifyAccessToken(getAccessToken(accessor));
+        String username = verifyAccessToken(getAccessToken(accessor));
         log.info("StompAccessor = {}", accessor);
-        handleMessage(accessor.getCommand(), accessor, nickname);
+        handleMessage(accessor.getCommand(), accessor, username);
         return message;
     }
 
@@ -48,7 +48,7 @@ public class StompHandler implements ChannelInterceptor {
                 break;
             case SUBSCRIBE:
             case SEND:
-                verifyAccessToken(getAccessToken(accessor));
+                tokenHandler.getUid(getAccessToken(accessor));
                 break;
         }
     }
@@ -56,9 +56,6 @@ public class StompHandler implements ChannelInterceptor {
         return accessor.getFirstNativeHeader("Authorization");
     }
     private String verifyAccessToken(String accessToken) {
-        if (!tokenHandler.verifyToken(accessToken)) {
-            throw new IllegalStateException("토큰이 만료되었습니다.");
-        }
 
         return tokenHandler.getUid(accessToken);
     }

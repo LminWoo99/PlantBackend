@@ -206,7 +206,7 @@ public class ChatService {
         ResponseEntity<MemberDto> memberDto = circuitBreaker.run(() -> plantServiceClient.findById(message.getSenderNo().longValue()),
                 throwable -> ResponseEntity.ok(null));
         // 상대방이 읽지 않은 경우에만 알림 전송
-        if (message.getReadCount().equals(1)) {
+        if (!chatRoomService.isAllConnected(message.getChatNo())) {
             // 알람 전송을 위해 메시지를 받는 사람을 조회한다.
             Integer memberNo = chatRepository.getReceiverMember(message.getChatNo(), message.getSenderNo());
             ResponseEntity<MemberDto> receiveMember = circuitBreaker.run(() -> plantServiceClient.findById(memberNo.longValue()),

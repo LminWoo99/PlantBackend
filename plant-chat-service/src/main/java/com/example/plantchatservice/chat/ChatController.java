@@ -1,4 +1,4 @@
-package com.example.plantchatservice.controller;
+package com.example.plantchatservice.chat;
 
 import com.example.plantchatservice.domain.Chat;
 import com.example.plantchatservice.dto.chat.Message;
@@ -72,9 +72,9 @@ public class ChatController {
     // 채팅방 접속 끊기
     @PostMapping("/chatroom/{chatroomNo}")
     public ResponseEntity<HttpStatus> disconnectChat(@PathVariable("chatroomNo") Integer chatroomNo,
-                                                     @RequestParam(value = "nickname", required = false) String nickname) {
+                                                     @RequestParam(value = "username", required = false) String username) {
 
-        chatRoomService.disconnectChatRoom(chatroomNo, nickname);
+        chatRoomService.disconnectChatRoom(chatroomNo, username);
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }
 

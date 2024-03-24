@@ -1,4 +1,4 @@
-package com.example.plantchatservice.common.exception;
+package com.example.plantpayservice.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

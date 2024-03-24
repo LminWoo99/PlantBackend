@@ -41,7 +41,6 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ChatService {
 
@@ -189,6 +188,7 @@ public class ChatService {
         Integer readCount = isConnectedAll ? 0 : 1;
         // message 객체에 보낸시간, 보낸사람 memberNo, 닉네임을 셋팅해준다.
         message.setSendTimeAndSender(LocalDateTime.now(), memberDto.getBody().getId().intValue(), memberDto.getBody().getNickname(), readCount);
+
         // 메시지를 전송한다.
         sender.send(KafkaUtil.KAFKA_TOPIC, message);
     }
@@ -206,7 +206,7 @@ public class ChatService {
         ResponseEntity<MemberDto> memberDto = circuitBreaker.run(() -> plantServiceClient.findById(message.getSenderNo().longValue()),
                 throwable -> ResponseEntity.ok(null));
         // 상대방이 읽지 않은 경우에만 알림 전송
-        if (message.getReadCount().equals(1)) {
+        if (!chatRoomService.isAllConnected(message.getChatNo())) {
             // 알람 전송을 위해 메시지를 받는 사람을 조회한다.
             Integer memberNo = chatRepository.getReceiverMember(message.getChatNo(), message.getSenderNo());
             ResponseEntity<MemberDto> receiveMember = circuitBreaker.run(() -> plantServiceClient.findById(memberNo.longValue()),
@@ -302,7 +302,7 @@ public class ChatService {
     }
     @Transactional
     public void deleteChatting(List<Integer> chatRoomNoList) {
-        // 중복된 chatNo 제거
+        // Set 자료구조를 활용하여 중복된 chatNo 제거
         Set<Integer> uniqueChatNoSet = new HashSet<>(chatRoomNoList);
 
         // 중복 제거 후의 chatNo에 해당하는 채팅 데이터 삭제

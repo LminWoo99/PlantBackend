@@ -1,6 +1,5 @@
-package com.example.plantchatservice.controller;
+package com.example.plantchatservice.chat;
 
-import com.example.plantchatservice.domain.Notification;
 import com.example.plantchatservice.dto.notification.NotificationDeleteRequest;
 import com.example.plantchatservice.dto.notification.NotificationResponse;
 import com.example.plantchatservice.dto.vo.StatusResponseDto;
@@ -9,11 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController

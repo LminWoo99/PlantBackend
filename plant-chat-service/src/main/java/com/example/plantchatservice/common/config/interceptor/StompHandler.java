@@ -48,7 +48,7 @@ public class StompHandler implements ChannelInterceptor {
                 break;
             case SUBSCRIBE:
             case SEND:
-                verifyAccessToken(getAccessToken(accessor));
+                tokenHandler.getUid(getAccessToken(accessor));
                 break;
         }
     }
@@ -56,9 +56,6 @@ public class StompHandler implements ChannelInterceptor {
         return accessor.getFirstNativeHeader("Authorization");
     }
     private String verifyAccessToken(String accessToken) {
-        if (!tokenHandler.verifyToken(accessToken)) {
-            throw new IllegalStateException("토큰이 만료되었습니다.");
-        }
 
         return tokenHandler.getUid(accessToken);
     }

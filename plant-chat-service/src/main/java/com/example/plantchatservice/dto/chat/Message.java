@@ -36,7 +36,6 @@ public class Message implements Serializable {
     public void setSendTimeAndSender(LocalDateTime sendTime, Integer senderNo, String senderName, Integer readCount) {
         this.senderName = senderName;
         this.sendTime = sendTime.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
-//        this.sendTime=sendTime.toInstant(ZoneOffset.UTC).toEpochMilli();
         this.senderNo = senderNo;
         this.readCount = readCount;
 
@@ -56,17 +55,4 @@ public class Message implements Serializable {
                 .readCount(readCount)
                 .build();
     }
-//    @Builder
-//    public Message(String id, @NotNull Integer chatNo, @NotNull String contentType, @NotNull String content, String senderName, Long senderNo, @NotNull Long tradeBoardNo, long sendTime, Integer readCount, String senderEmail) {
-//        this.id = id;
-//        this.chatNo = chatNo;
-//        this.contentType = contentType;
-//        this.content = content;
-//        this.senderName = senderName;
-//        this.senderNo = senderNo;
-//        this.tradeBoardNo = tradeBoardNo;
-//        this.sendTime = sendTime;
-//        this.readCount = readCount;
-//        this.senderEmail = senderEmail;
-//    }
 }

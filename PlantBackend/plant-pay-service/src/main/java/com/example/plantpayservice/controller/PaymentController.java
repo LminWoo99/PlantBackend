@@ -3,7 +3,6 @@ package com.example.plantpayservice.controller;
 
 import com.example.plantpayservice.service.PaymentService;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
-import com.example.plantpayservice.vo.request.UpdatePaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -40,7 +39,7 @@ public class PaymentController {
 
     }
     //식구페이 머니 조회
-    @GetMapping("/payMoney/{id}")
+    @GetMapping("/payMoney/{memberNo}")
     public ResponseEntity<PaymentResponseDto> getPayMoney(@PathVariable("memberNo") Integer memberNo) {
         PaymentResponseDto paymentResponseDto = paymentService.getPayMoney(memberNo);
         return ResponseEntity.ok().body(paymentResponseDto);
@@ -61,8 +60,8 @@ public class PaymentController {
     }
     //식구페이 머니 환불
     @PatchMapping("/payMoney/refund")
-    public void refundPayMoney(@RequestBody UpdatePaymentRequestDto updatePaymentRequestDto) {
-        paymentService.refundPayMoney(updatePaymentRequestDto);
+    public void refundPayMoney(@RequestBody PaymentRequestDto paymentRequestDto) {
+        paymentService.refundPayMoney(paymentRequestDto);
     }
 
 

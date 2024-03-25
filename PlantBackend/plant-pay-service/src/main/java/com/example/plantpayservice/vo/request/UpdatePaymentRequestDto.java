@@ -9,8 +9,7 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdatePaymentRequestDto {
-    @NotNull
-    private Integer payMoney;
+
 
     @NotNull
     private Integer refundPayMoney;

@@ -5,7 +5,6 @@ import com.example.plantpayservice.exception.CustomException;
 import com.example.plantpayservice.exception.ErrorCode;
 import com.example.plantpayservice.repository.PaymentRepository;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
-import com.example.plantpayservice.vo.request.UpdatePaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,26 +24,39 @@ public class PaymentService {
      */
     @Transactional
     public void chargePayMoney(PaymentRequestDto paymentRequestDto) {
-        Payment payment=Payment.builder()
-                .payMoney(paymentRequestDto.getPayMoney())
-                .memberNo(paymentRequestDto.getMemberNo())
-                .build();
-        paymentRepository.save(payment);
+        if (!paymentRepository.existsByMemberNo(paymentRequestDto.getMemberNo())) {
+            Payment payment=Payment.builder()
+                    .payMoney(paymentRequestDto.getPayMoney())
+                    .memberNo(paymentRequestDto.getMemberNo())
+                    .build();
+
+            paymentRepository.save(payment);
+        }
+        else{
+            paymentRepository.existsByMemberNoUpdatePayMoney(paymentRequestDto);
+
+        }
+
     }
     /**
      * 식구페이 머니 환불 메서드
      * 원하는 금액 환불후 계좌 송금(실제로 계좌로 이체되진 않음)
      * 환불할 금액이 없을 경우 예외 처리
-     * 사용자가 모르고 환불요청을 두번 연속 했을 경우를 대비해 synchronized를 통해 동시성 제어!
-     * @param : UpdatePaymentRequestDto updatePaymentRequestDto
+     * 사용자가 모르고 환불요청을 두번 연속 했을 경우를 대비해 페이머니가 음수가 될수있음에도 paymentRepository.updatePayMoney(paymentRequestDto);
+     * 2번다 호출될수있으므로
+     * synchronized를 통해 동시성 제어!
+     * @param : UpdatePaymentRequestDto paymentRequestDto
      */
-    public synchronized void refundPayMoney(UpdatePaymentRequestDto updatePaymentRequestDto) {
+    @Transactional
+    public synchronized void refundPayMoney(PaymentRequestDto paymentRequestDto) {
+        // memberNo로 보유 페이머니 조회
+        Payment payment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
+
         //보유 페이 머니보다 입력한 환불할 금액이 많으면 예외 처리
-        if (updatePaymentRequestDto.getPayMoney()- updatePaymentRequestDto.getRefundPayMoney() <= 0) {
+        if (payment.getPayMoney()- paymentRequestDto.getPayMoney() <= 0) {
             throw new CustomException(ErrorCode.PAYMONEY_NOT_FOUND);
         }
-        updatePaymentRequestDto.setPayMoney(updatePaymentRequestDto.getPayMoney()- updatePaymentRequestDto.getRefundPayMoney());
-        paymentRepository.updatePayMoney(updatePaymentRequestDto);
+        paymentRepository.updatePayMoney(paymentRequestDto);
     }
     /**
      * 식구페이 머니 조회 메서드
@@ -62,7 +74,7 @@ public class PaymentService {
 
     }
     /**
-     * 수정 필요! (쿼리문 재사용성이 좀 부족한 듯)
+     *
      * 식구페이 거래 메서드
      * 판매자 상대 멤버 번호를 통해 해당 조회 후
      * 판매자 paymoney += 거래할 금액
@@ -77,9 +89,6 @@ public class PaymentService {
         if (buyerPayment.getPayMoney()< paymentRequestDto.getPayMoney()) {
             throw new CustomException(ErrorCode.PAYMONEY_NOT_FOUND);
         }
-        sellerPayment.setPayMoney(sellerPayment.getPayMoney() + paymentRequestDto.getPayMoney());
-        buyerPayment.setPayMoney(buyerPayment.getPayMoney() - paymentRequestDto.getPayMoney());
-
-        paymentRepository.tradePayMoney(sellerPayment, buyerPayment);
+        paymentRepository.tradePayMoney(sellerPayment.getMemberNo(), buyerPayment.getMemberNo(), paymentRequestDto);
     }
 }

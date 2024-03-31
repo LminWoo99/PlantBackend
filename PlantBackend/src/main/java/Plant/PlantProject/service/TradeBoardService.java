@@ -143,21 +143,20 @@ public class TradeBoardService {
         ResponseTradeBoardDto responseTradeBoardDto = ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
         return responseTradeBoardDto;
     }
-    @Transactional
-    public void increaseGoodCount(Long tradeBoardId) {
+    public synchronized void increaseGoodCount(Long tradeBoardId) {
         TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId)
                 .orElseThrow(() -> new TradeBoardNotFoundException("TradeBoard not found"));
 
         tradeBoard.increaseGoodsCount(); // TradeBoard 엔티티의 메서드를 호출하여 찜 개수 증가
-        tradeBoardRepository.saveGoodsCount(tradeBoardId, tradeBoard.getGoodCount()); // 찜 개수만 업데이트
+        tradeBoardRepository.save(tradeBoard);
     }
     @Transactional
-    public void decreaseGoodCount(Long tradeBoardId) {
+    public synchronized void decreaseGoodCount(Long tradeBoardId) {
         TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId)
                 .orElseThrow(() -> new TradeBoardNotFoundException("TradeBoard not found"));
 
         tradeBoard.decreaseGoodsCount(); // TradeBoard 엔티티의 메서드를 호출하여 찜 개수 증가
-        tradeBoardRepository.saveGoodsCount(tradeBoardId, tradeBoard.getGoodCount()); // 찜 개수만 업데이트
+        tradeBoardRepository.save(tradeBoard);
     }
 
 
@@ -168,7 +167,9 @@ public class TradeBoardService {
         kafkaProducer.send("deletePost", tradeBoardDto);
     }
 
-    public TradeBoard findTradeBoardById(Long tradeBoardId) {
-        return tradeBoardRepository.findTradeBoardById(tradeBoardId);
+    public ResponseTradeBoardDto findTradeBoardById(Long tradeBoardId) {
+        TradeBoard tradeBoard = tradeBoardRepository.findTradeBoardById(tradeBoardId);
+        ResponseTradeBoardDto tradeBoardDto = ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
+        return tradeBoardDto;
     }
 }

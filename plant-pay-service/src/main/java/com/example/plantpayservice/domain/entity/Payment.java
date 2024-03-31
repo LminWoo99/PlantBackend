@@ -28,7 +28,10 @@ public class Payment {
         this.payMoney = payMoney;
         this.memberNo= memberNo;
     }
-    public void setPayMoney(Integer payMoney) {
-        this.payMoney = payMoney;
+    public void decreasePayMoney(Integer payMoney) {
+        this.payMoney -= payMoney;
+    }
+    public void increasePayMoney(Integer payMoney) {
+        this.payMoney += payMoney;
     }
 }

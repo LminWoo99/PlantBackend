@@ -5,14 +5,9 @@ import com.example.plantpayservice.exception.CustomException;
 import com.example.plantpayservice.repository.PaymentRepository;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
-import org.aspectj.lang.annotation.RequiredTypes;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.concurrent.CountDownLatch;
@@ -49,14 +44,14 @@ class PaymentServiceTest {
     @DisplayName("식구페이 머니 환불 메서드 동시성 제어 테스트")
     void refundPayMoneyConcurrencyTest() throws InterruptedException {
         //given
-        PaymentRequestDto paymentRequestDto = new PaymentRequestDto(12000, 1);
+        PaymentRequestDto paymentRequestDto = new PaymentRequestDto(12000, 10);
 
 
         paymentService.chargePayMoney(paymentRequestDto);
-        PaymentRequestDto paymentRequestDto1 = new PaymentRequestDto(6001, 1);
-        int threadCount = 2;
+        PaymentRequestDto paymentRequestDto1 = new PaymentRequestDto(1, 10);
+        int threadCount = 80;
         //비동기로 실행되는 작업을 단순화해서 사용하게 도와주는 자바의 api
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
 
         //카운트다운래치는 다른 스래드에서 수행중인 작업을 완료될때까지 대기하도록 도와주는 클래스
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -71,12 +66,10 @@ class PaymentServiceTest {
             });
         }
         latch.await();
-
-
         //then
-        PaymentResponseDto paymentResponseDto = paymentService.getPayMoney(1);
+        PaymentResponseDto paymentResponseDto = paymentService.getPayMoney(10);
         //-2면 안되고 5999이여함
-        assertThat(paymentResponseDto.getPayMoney()).isEqualTo(5999);
+        assertThat(paymentResponseDto.getPayMoney()).isEqualTo(11920);
 
 
     }

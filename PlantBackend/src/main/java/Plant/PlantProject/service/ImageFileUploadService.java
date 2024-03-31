@@ -2,7 +2,9 @@ package Plant.PlantProject.service;
 
 import Plant.PlantProject.Entity.Image;
 import Plant.PlantProject.Entity.TradeBoard;
+import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
 import Plant.PlantProject.repository.ImageRepository;
+import Plant.PlantProject.repository.TradeBoardRepository;
 import Plant.PlantProject.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +23,13 @@ public class ImageFileUploadService {
 
     private final AwsS3Service awsS3Service;
     private final TradeBoardService tradeBoardService;
+    private final TradeBoardRepository tradeBoardRepository;
     private final ImageRepository imageRepository;
 
     @Transactional
     public List<Image> upload(Long tradeBoardId, List<MultipartFile> files) throws IOException {
         log.info("1차 upload 통과");
-        TradeBoard tradeBoard = tradeBoardService.findTradeBoardById(tradeBoardId);
+        TradeBoard tradeBoard = tradeBoardRepository.findTradeBoardById(tradeBoardId);
         List<Image> upload = upload(files, tradeBoard);
         return upload;
     }

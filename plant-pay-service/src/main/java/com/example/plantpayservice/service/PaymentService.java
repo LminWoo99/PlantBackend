@@ -42,21 +42,19 @@ public class PaymentService {
      * 식구페이 머니 환불 메서드
      * 원하는 금액 환불후 계좌 송금(실제로 계좌로 이체되진 않음)
      * 환불할 금액이 없을 경우 예외 처리
-     * 사용자가 모르고 환불요청을 두번 연속 했을 경우를 대비해 페이머니가 음수가 될수있음에도 paymentRepository.updatePayMoney(paymentRequestDto);
-     * 2번다 호출될수있으므로
+     * 사용자가 모르고 환불요청을 두번 이상 연속 했을 경우를 대비해(적절한 ui/ux설계가 없으므로)
      * synchronized를 통해 동시성 제어!
      * @param : UpdatePaymentRequestDto paymentRequestDto
      */
-    @Transactional
     public synchronized void refundPayMoney(PaymentRequestDto paymentRequestDto) {
         // memberNo로 보유 페이머니 조회
         Payment payment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
-
         //보유 페이 머니보다 입력한 환불할 금액이 많으면 예외 처리
-        if (payment.getPayMoney()- paymentRequestDto.getPayMoney() <= 0) {
-            throw new CustomException(ErrorCode.PAYMONEY_NOT_FOUND);
+        if (payment.getPayMoney()- paymentRequestDto.getPayMoney() < 0) {
+            throw new CustomException(ErrorCode.INSUFFICIENT_PAYMONEY);
         }
-        paymentRepository.updatePayMoney(paymentRequestDto);
+        payment.decreasePayMoney(paymentRequestDto.getPayMoney());
+        paymentRepository.saveAndFlush(payment);
     }
     /**
      * 식구페이 머니 조회 메서드
@@ -83,12 +81,11 @@ public class PaymentService {
      */
     @Transactional
     public void tradePayMoney(PaymentRequestDto paymentRequestDto, Integer sellerNo) {
-        Payment sellerPayment = paymentRepository.findByMemberNo(sellerNo);
         Payment buyerPayment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
         //거레할 금액보다 구매자 보유 payMoney가 적으면 예외 처리
         if (buyerPayment.getPayMoney()< paymentRequestDto.getPayMoney()) {
-            throw new CustomException(ErrorCode.PAYMONEY_NOT_FOUND);
+            throw new CustomException(ErrorCode.INSUFFICIENT_PAYMONEY);
         }
-        paymentRepository.tradePayMoney(sellerPayment.getMemberNo(), buyerPayment.getMemberNo(), paymentRequestDto);
+        paymentRepository.tradePayMoney(sellerNo, buyerPayment.getMemberNo(), paymentRequestDto);
     }
 }

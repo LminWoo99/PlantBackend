@@ -39,8 +39,7 @@ public class GoodsController {
         List<GoodsDto> goodsDtos = goodsService.searchGoods(memberId);
         List<ResponseTradeBoardDto> tradeBoards = new ArrayList<>();
         for (GoodsDto goodsDto : goodsDtos) {
-            TradeBoard tradeBoard = tradeBoardService.findTradeBoardById(goodsDto.getTradeBoardId());
-            ResponseTradeBoardDto responseTradeBoardDto = ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
+            ResponseTradeBoardDto responseTradeBoardDto = tradeBoardService.findTradeBoardById(goodsDto.getTradeBoardId());
             tradeBoards.add(responseTradeBoardDto);
         }
         return ResponseEntity.ok().body(tradeBoards);

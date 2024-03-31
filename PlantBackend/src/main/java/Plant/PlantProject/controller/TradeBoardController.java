@@ -2,6 +2,7 @@ package Plant.PlantProject.controller;
 
 import Plant.PlantProject.Entity.Member;
 
+import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.*;
 import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
 import Plant.PlantProject.dto.vo.TradeBoardRequestDto;
@@ -38,6 +39,14 @@ public class TradeBoardController {
 
         return ResponseEntity.ok().body(responseTradeBoardDto);
     }
+
+    //거래게시글 단건 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseTradeBoardDto> getTradeBoard(@PathVariable Long id) {
+        ResponseTradeBoardDto tradeBoardDto = tradeBoardService.findTradeBoardById(id);
+        return ResponseEntity.ok().body(tradeBoardDto);
+
+    }
 // 글리스트 페이징
     @GetMapping("/write")
     public ResponseEntity<Page<ResponseTradeBoardDto>> boardList(@RequestParam(required = false, defaultValue = "") String search, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
@@ -53,7 +62,7 @@ public class TradeBoardController {
     }
     //글 수정
     @PutMapping("/list/{id}")
-    public ResponseEntity<TradeBoardDto> update( @PathVariable("id") Long id, @RequestBody TradeBoardDto tradeBoardDto){
+    public ResponseEntity<TradeBoardDto> updateTradeBoard( @PathVariable("id") Long id, @RequestBody TradeBoardDto tradeBoardDto){
 
 
         TradeBoardDto byId = tradeBoardService.findById(id);
@@ -65,7 +74,7 @@ public class TradeBoardController {
     }
     //글 삭제
     @DeleteMapping("/list/{id}")
-    public ResponseEntity<TradeBoardDto> delete(@PathVariable("id") Long id){
+    public ResponseEntity<TradeBoardDto> deleteTradeBoard(@PathVariable("id") Long id){
         TradeBoardDto tradeBoardDto= tradeBoardService.findById(id);
         System.out.println(tradeBoardDto.getId());
         tradeBoardService.deletePost(tradeBoardDto);
@@ -73,7 +82,7 @@ public class TradeBoardController {
     }
     //조회수 증가
     @GetMapping("/read/{id}")
-    public ResponseEntity<Integer> read(@PathVariable Long id) {
+    public ResponseEntity<Integer> updateReadCount(@PathVariable Long id) {
         TradeBoardDto tradeBoardDto = tradeBoardService.findById(id);
         int view=tradeBoardService.updateView(id); // views ++
 

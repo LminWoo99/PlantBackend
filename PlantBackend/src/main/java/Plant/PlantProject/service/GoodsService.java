@@ -11,6 +11,7 @@ import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,7 @@ public class GoodsService {
     private final TradeBoardRepository tradeBoardRepository;
     private final GoodsRepository goodsRepository;
     private final TradeBoardService tradeBoardService;
+    @Transactional
     public GoodsDto saveGoods(GoodsRequestDto goodsDto){
         // 해당 유저와 게시글에 대한 Goods 객체가 이미 존재하는지 확인
         Optional<Goods> existingGoods = goodsRepository.findByMemberIdAndTradeBoardId(
@@ -50,6 +52,7 @@ public class GoodsService {
             return convertGoodsToDto(goods);
         }
     }
+
     public List<GoodsDto> searchGoods(Long memberId){
         List<Goods> goods = goodsRepository.findByMemberId(memberId);
         List<GoodsDto> goodsDtos = goods.stream()

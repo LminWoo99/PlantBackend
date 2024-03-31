@@ -1,7 +1,9 @@
 package com.example.plantcouponservice.service;
 
 import com.example.plantcouponservice.common.exception.CouponNotFoundException;
+import com.example.plantcouponservice.common.producer.CouponCreateProducer;
 import com.example.plantcouponservice.domain.Coupon;
+import com.example.plantcouponservice.repository.AppliedUserRepository;
 import com.example.plantcouponservice.repository.CouponCountRepository;
 import com.example.plantcouponservice.repository.CouponRepository;
 import com.example.plantcouponservice.vo.CouponRequestDto;
@@ -22,6 +24,8 @@ import java.util.Optional;
 public class CouponService {
     private final CouponRepository couponRepository;
     private final CouponCountRepository couponCountRepository;
+    private final CouponCreateProducer couponCreateProducer;
+    private final AppliedUserRepository appliedUserRepository;
 
     /**
      * 쿠폰 발급
@@ -31,19 +35,18 @@ public class CouponService {
      * @param : CouponRequestDto couponRequestDto
      */
     public void applyCoupon(CouponRequestDto couponRequestDto) {
+        // coupon 발급 전에 redis 싱글스레드 1증가
+        Long add = appliedUserRepository.add(couponRequestDto.getMemberNo());
+        if (add != 1) {
+            return;
+        }
         Long count = couponCountRepository.increment();
         //오늘 날짜 기준으로 100개보다 많으면 return
         if (count > 100) {
             return;
         }
-        Coupon coupon=Coupon.builder()
-                        .memberNo(couponRequestDto.getMemberNo())
-                        .tradeBoardNo(couponRequestDto.getTradeBoardNo())
-                        .discountPrice(couponRequestDto.getDiscountPrice())
-                        .regDate(LocalDateTime.now())
-                        .build();
 
-        couponRepository.save(coupon);
+        couponCreateProducer.create(couponRequestDto);
     }
 
     /**

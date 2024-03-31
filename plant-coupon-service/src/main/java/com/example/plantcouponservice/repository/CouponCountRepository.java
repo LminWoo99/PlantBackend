@@ -17,4 +17,8 @@ public class CouponCountRepository {
                 .increment("coupon_count");
     }
 
+    public Long resetCouponCount() {
+        redisTemplate.delete("coupon_count");
+        return 0L;
+    }
 }

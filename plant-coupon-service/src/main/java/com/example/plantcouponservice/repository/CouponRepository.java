@@ -1,2 +1,4 @@
-package com.example.plantcouponservice.repository;public class CouponRepository {
+package com.example.plantcouponservice.repository;
+
+public class CouponRepository {
 }

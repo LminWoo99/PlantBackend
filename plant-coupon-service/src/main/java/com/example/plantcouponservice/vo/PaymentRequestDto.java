@@ -1,7 +1,6 @@
-package com.example.plantpayservice.vo.response;
+package com.example.plantcouponservice.vo;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -9,14 +8,10 @@ import org.jetbrains.annotations.NotNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class PaymentResponseDto {
-
-
+public class PaymentRequestDto {
     @NotNull
     private Integer payMoney;
 
     @NotNull
     private Integer memberNo;
-
 }

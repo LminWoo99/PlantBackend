@@ -33,7 +33,6 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
         };
     }
     @Data
-
     public static class Config {
         // Config 클래스 구현이 필요하다면 여기에 추가
         private String baseMessage;

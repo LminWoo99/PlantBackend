@@ -4,19 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class PaymentResponseDto {
-
-
-    @NotNull
-    private Integer payMoney;
-
-    @NotNull
+public class CouponResponseDto {
     private Integer memberNo;
+    private Integer discountPrice;
 
 }

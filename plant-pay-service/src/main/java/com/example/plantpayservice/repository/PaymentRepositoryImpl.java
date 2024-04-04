@@ -23,9 +23,9 @@ public class PaymentRepositoryImpl implements CustomPaymentRepository{
         em.flush();
 
     }
-    public void tradePayMoney(Integer sellerNo, Integer buyerNo, PaymentRequestDto paymentRequestDto) {
+    public void tradePayMoney(Integer sellerNo, Integer buyerNo, PaymentRequestDto paymentRequestDto, Integer buyerPayMoney) {
         jpaQueryFactory.update(payment)
-                .set(payment.payMoney, payment.payMoney.add(paymentRequestDto.getPayMoney()))
+                .set(payment.payMoney, payment.payMoney.add(buyerPayMoney))
                 .where(payment.memberNo.eq(sellerNo))
                 .execute();
         jpaQueryFactory.update(payment)

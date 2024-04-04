@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,7 +35,7 @@ class CouponServiceTest {
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
         //when
         for (int i = 0; i<threadCount; i++) {
-            CouponRequestDto couponRequestDto = new CouponRequestDto(i, 1L, 2000);
+            CouponRequestDto couponRequestDto = new CouponRequestDto(i, 2000);
             executorService.submit(() -> {
                 try{
                     couponService.applyCoupon(couponRequestDto);
@@ -59,7 +60,7 @@ class CouponServiceTest {
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
         //when
         for (int i = 0; i<threadCount; i++) {
-            CouponRequestDto couponRequestDto = new CouponRequestDto(1, 1L, 2000);
+            CouponRequestDto couponRequestDto = new CouponRequestDto(1, 2000);
             executorService.submit(() -> {
                 try{
                     couponService.applyCoupon(couponRequestDto);
@@ -80,29 +81,14 @@ class CouponServiceTest {
 
     }
     @Test
-    @DisplayName("쿠폰조회 테스트")
-    void getCouponTest() {
-        //given
-        CouponRequestDto couponRequestDto = new CouponRequestDto(3, 1L, 2000);
-        couponService.applyCoupon(couponRequestDto);
-
-        //when
-        CouponResponseDto couponResponseDto = couponService.getCoupon(3);
-        //then
-        Assertions.assertThat(couponResponseDto.getDiscountPrice()).isEqualTo(2000);
-
-
-    }
-
-    @Test
     @DisplayName("쿠폰 사용 테스트")
     void useCouponTest() {
         //given
-        CouponRequestDto couponRequestDto = new CouponRequestDto(4, 1L, 2000);
+        CouponRequestDto couponRequestDto = new CouponRequestDto(4, 2000);
         couponService.applyCoupon(couponRequestDto);
         //when
-        couponService.useCoupon(3);
-        Coupon coupon = couponRepository.findByMemberNo(3);
+        couponService.useCoupon(4, 1325L);
+        Coupon coupon = couponRepository.findByMemberNoAndCouponNo(4, 1325L);
         //then
 
         assertThat(coupon.getType()).isEqualTo(CouponStatusEnum.사용완료);

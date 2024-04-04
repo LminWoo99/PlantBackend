@@ -12,7 +12,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class CouponRequestDto implements Serializable {
     private Integer memberNo;
-    private Long tradeBoardNo;
     private Integer discountPrice;
 
 }

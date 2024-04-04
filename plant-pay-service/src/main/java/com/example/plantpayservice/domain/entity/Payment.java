@@ -31,7 +31,4 @@ public class Payment {
     public void decreasePayMoney(Integer payMoney) {
         this.payMoney -= payMoney;
     }
-    public void increasePayMoney(Integer payMoney) {
-        this.payMoney += payMoney;
-    }
 }

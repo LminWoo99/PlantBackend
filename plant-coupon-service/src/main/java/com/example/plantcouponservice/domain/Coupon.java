@@ -16,8 +16,6 @@ public class Coupon {
     private Long couponNo;
     @Column(name = "member_no")
     private Integer memberNo;
-    @Column(name = "trade_board_no")
-    private Long tradeBoardNo;
     @Column(name = "discount_price")
     private Integer discountPrice;
     private LocalDateTime regDate;
@@ -26,9 +24,8 @@ public class Coupon {
     private CouponStatusEnum type;
 
     @Builder
-    public Coupon(Integer memberNo, Long tradeBoardNo, Integer discountPrice, LocalDateTime regDate) {
+    public Coupon(Integer memberNo, Integer discountPrice, LocalDateTime regDate) {
         this.memberNo = memberNo;
-        this.tradeBoardNo = tradeBoardNo;
         this.discountPrice = discountPrice;
         this.regDate = regDate;
         this.type = CouponStatusEnum.사용가능;

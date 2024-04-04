@@ -5,7 +5,7 @@ import com.example.plantpayservice.vo.request.PaymentRequestDto;
 
 public interface CustomPaymentRepository {
 
-    void tradePayMoney(Integer sellerNo, Integer buyerNo, PaymentRequestDto paymentRequestDto);
+    void tradePayMoney(Integer sellerNo, Integer buyerNo, PaymentRequestDto paymentRequestDto, Integer buyerPayMoney);
 
     void existsByMemberNoUpdatePayMoney(PaymentRequestDto paymentRequestDto);
 }

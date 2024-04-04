@@ -29,7 +29,6 @@ public class CouponCreatedConsumer {
         try{
             Coupon coupon=Coupon.builder()
                     .memberNo(couponRequestDto.getMemberNo())
-                    .tradeBoardNo(couponRequestDto.getTradeBoardNo())
                     .discountPrice(couponRequestDto.getDiscountPrice())
                     .regDate(LocalDateTime.now())
                     .build();

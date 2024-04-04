@@ -10,6 +10,7 @@ import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,8 +55,9 @@ public class PaymentController {
 
     //식구페이로 거래하기
     @PostMapping("/payMoney/trade")
-    public void tradePayMoney(@RequestBody PaymentRequestDto paymentRequestDto, @RequestParam(value = "sellerNo", required = false) Integer sellerNo) {
+    public ResponseEntity<HttpStatus> tradePayMoney(@RequestBody PaymentRequestDto paymentRequestDto, @RequestParam(value = "sellerNo", required = false) Integer sellerNo) {
         paymentService.tradePayMoney(paymentRequestDto, sellerNo);
+        return ResponseEntity.ok().body(HttpStatus.ACCEPTED);
 
     }
     //식구페이 머니 환불

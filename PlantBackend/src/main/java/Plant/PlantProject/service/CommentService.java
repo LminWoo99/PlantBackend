@@ -31,7 +31,6 @@ public class CommentService {
     private final TradeBoardRepository tradeBoardRepository;
 
     public List<CommentDto> findCommentsByTradeBoardId(Long tradeBoardId) {
-        tradeBoardRepository.findById(tradeBoardId);
         return convertNestedStructure(commentRepository.findCommentByTradeBoardId(tradeBoardId));
     }
     public Page<CommentDto> pageList(TradeBoard tradeBoardId, Pageable pageable) {

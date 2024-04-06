@@ -9,8 +9,6 @@ import com.example.plantchatservice.common.util.TokenHandler;
 import com.example.plantchatservice.domain.Chat;
 import com.example.plantchatservice.domain.NotifiTypeEnum;
 import com.example.plantchatservice.domain.mongo.Chatting;
-import com.example.plantchatservice.dto.aggregation.AggregationDto;
-import com.example.plantchatservice.dto.aggregation.AggregationTarget;
 import com.example.plantchatservice.dto.chat.Message;
 import com.example.plantchatservice.dto.member.MemberDto;
 import com.example.plantchatservice.dto.vo.*;
@@ -53,8 +51,6 @@ import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

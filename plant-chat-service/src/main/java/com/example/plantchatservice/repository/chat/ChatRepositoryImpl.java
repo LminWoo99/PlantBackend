@@ -82,8 +82,7 @@ public class ChatRepositoryImpl implements CustomChatRepository {
                         chat.regDate))
                 .from(chat)
                 .where(chat.createMember.eq(memberNo).or(chat.joinMember.eq(memberNo)), tradeBoardNoEq(tradeBoardNo))
-                .fetch()
-                ;
+                .fetch();
     }
     // 채팅방 한건 조회
     public Chat getChatting(Integer chatNo, Integer senderNo) {

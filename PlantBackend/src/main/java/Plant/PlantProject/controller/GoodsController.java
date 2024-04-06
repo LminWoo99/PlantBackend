@@ -30,7 +30,6 @@ public class GoodsController {
     @PostMapping("/goods/{memberId}")
     public ResponseEntity<GoodsDto> saveGoods(@PathVariable Long memberId, @RequestBody GoodsRequestDto goodsRequestDto){
 
-
         log.info("찜 저장");
         return ResponseEntity.ok().body(goodsService.saveGoods(goodsRequestDto));
     }

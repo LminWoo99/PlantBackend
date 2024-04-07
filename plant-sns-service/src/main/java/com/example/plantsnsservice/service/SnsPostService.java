@@ -5,6 +5,7 @@ import com.example.plantsnsservice.domain.SnsPost;
 import com.example.plantsnsservice.repository.HashTagRepository;
 import com.example.plantsnsservice.repository.ImageRepository;
 import com.example.plantsnsservice.repository.SnsPostRepository;
+import com.example.plantsnsservice.repository.querydsl.SnsCommentRepository;
 import com.example.plantsnsservice.vo.request.SnsPostRequestDto;
 import com.example.plantsnsservice.vo.response.SnsPostResponseDto;
 import lombok.RequiredArgsConstructor;

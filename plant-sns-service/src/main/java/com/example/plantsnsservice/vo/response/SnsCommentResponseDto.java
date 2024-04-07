@@ -3,15 +3,18 @@ package com.example.plantsnsservice.vo.response;
 import com.example.plantsnsservice.domain.SnsComment;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class SnsCommentResponseDto {
     private Long id;
     private Long snsPostId;

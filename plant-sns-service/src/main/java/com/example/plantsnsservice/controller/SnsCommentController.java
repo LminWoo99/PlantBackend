@@ -5,7 +5,6 @@ import com.example.plantsnsservice.vo.request.SnsCommentRequestDto;
 import com.example.plantsnsservice.vo.response.SnsCommentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

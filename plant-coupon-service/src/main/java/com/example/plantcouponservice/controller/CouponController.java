@@ -4,6 +4,7 @@ import com.example.plantcouponservice.service.CouponService;
 import com.example.plantcouponservice.vo.CouponRequestDto;
 import com.example.plantcouponservice.vo.CouponResponseDto;
 import com.example.plantcouponservice.vo.StatusResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 public class CouponController {
     private final CouponService couponService;
     @PostMapping("/coupon")
+    @Operation(summary = "쿠폰 발급", description = "쿠폰 발급할 수 있는 API, 발급시 한 계정당 쿠폰 하나 및 선착순 100명만 발급 가능")
     public ResponseEntity<?> applyCoupon(@RequestBody CouponRequestDto couponRequestDto) {
         try {
             StatusResponseDto statusResponseDto = couponService.applyCoupon(couponRequestDto);
@@ -32,15 +34,15 @@ public class CouponController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 처리 중 오류가 발생했습니다.");
         }
     }
-    //본인 쿠폰 조회
     @GetMapping("/coupon/{memberNo}")
+    @Operation(summary = "본인 쿠폰 조회", description = "본인 쿠폰 조회할 수 있는 API")
     public ResponseEntity<List<CouponResponseDto>> getCoupon(@PathVariable Integer memberNo) {
         List<CouponResponseDto> couponResponseDtoList = couponService.getCoupon(memberNo);
         return ResponseEntity.ok().body(couponResponseDtoList);
     }
 
-    //쿠폰 사용
     @PostMapping("/coupon/used")
+    @Operation(summary = "쿠폰 사용", description = "쿠폰 사용할 수 있는 API")
     public ResponseEntity<CouponResponseDto> useCoupon(@RequestParam Integer memberNo, @RequestParam Long couponNo) {
         CouponResponseDto couponResponseDto = couponService.useCoupon(memberNo, couponNo);
         return ResponseEntity.ok().body(couponResponseDto);

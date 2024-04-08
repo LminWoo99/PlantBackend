@@ -2,6 +2,7 @@ package Plant.PlantProject.controller;
 
 import Plant.PlantProject.dto.PlantDto;
 import Plant.PlantProject.service.PlantService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import java.io.IOException;
 public class PlantController {
     private final PlantService plantService;
     @GetMapping("plantList")
+    @Operation(summary = "식구 도감- 식물 조회", description = "식물 전체 정보를 조회 할 수 있는 API")
     private ResponseEntity<Page<PlantDto>> plantList(@RequestParam(required = false, defaultValue = "") String search, @PageableDefault(size = 15, sort = "id", direction = Sort.Direction.DESC)
     Pageable pageable) {
         Page<PlantDto> plantDtos = plantService.plantList(search, pageable);
@@ -25,12 +27,13 @@ public class PlantController {
     }
 
     @GetMapping("/plantList/{id}")
+    @Operation(summary = "식구 도감- 식물 자세한 정보 조회", description = "식물에 관한 자세한 정보를 조회 할 수 있는 API")
     private ResponseEntity<PlantDto> plantDetail(@PathVariable("id") Long id) {
         System.out.println("plant 호출");
         return ResponseEntity.ok().body(plantService.plantDetail(id));
     }
-    @GetMapping("/plant")
-    private void start() throws IOException {
-        plantService.start();
-    }
+//    @GetMapping("/plant")
+//    private void start() throws IOException {
+//        plantService.start();
+//    }
 }

@@ -2,6 +2,7 @@ package Plant.PlantProject.controller;
 
 import Plant.PlantProject.Entity.Image;
 import Plant.PlantProject.service.ImageFileUploadService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ public class ImageController {
     private final ImageFileUploadService imageFileUploadService;
 
     @PostMapping("/{tradeBoardId}/images")
+    @Operation(summary = "이미지 업로드", description = "Amazon S3를 이용해 이미지를 업로드 할 수 있는 API")
     private ResponseEntity<List<Image>> uploadImages(@PathVariable Long tradeBoardId,
                                                @RequestParam("file")List<MultipartFile> files) throws IOException{
         log.info("image 호출");
@@ -28,6 +30,7 @@ public class ImageController {
         return ResponseEntity.ok().body(upload);
     }
     @GetMapping("/{tradeBoardId}/images")
+    @Operation(summary = "이미지 조회", description = "이미지 조회 할 수 있는 API")
     private ResponseEntity<List<Image>> images(@PathVariable Long tradeBoardId){
         return ResponseEntity.ok().body(imageFileUploadService.findImageByTradeBoardId(tradeBoardId));
 

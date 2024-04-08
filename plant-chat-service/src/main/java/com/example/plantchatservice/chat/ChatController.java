@@ -8,6 +8,7 @@ import com.example.plantchatservice.dto.vo.ChattingHistoryResponseDto;
 import com.example.plantchatservice.dto.vo.StatusResponseDto;
 import com.example.plantchatservice.service.chat.ChatRoomService;
 import com.example.plantchatservice.service.chat.ChatService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping("/chatroom")
+    @Operation(summary = "채팅방 생성", description = "채팅방 생성 할 수 있는 API")
     public ResponseEntity<StatusResponseDto> createChatRoom(@RequestBody @Valid final ChatRequestDto requestDto, @RequestParam(required = false) Integer memberNo,
                                                             BindingResult bindingResult) {
 
@@ -42,15 +44,15 @@ public class ChatController {
         return ResponseEntity.ok(StatusResponseDto.addStatus(200, chat));
     }
 
-    // 채팅내역 조회
     @GetMapping("/chatroom/{roomNo}")
+    @Operation(summary = "채팅 내역 조회", description = "채팅방 no 기준 모든 채팅 내역 조회할 수 있는 API")
     public ResponseEntity<ChattingHistoryResponseDto> chattingList(@PathVariable("roomNo") Integer roomNo, @RequestParam(required = false) Integer memberNo) {
         ChattingHistoryResponseDto chattingList = chatService.getChattingList(roomNo, memberNo);
         return ResponseEntity.ok().body(chattingList);
     }
 
-    // 채팅방 리스트 조회
     @GetMapping("/chatroom")
+    @Operation(summary = "채팅방 리스트 조회", description = "채팅방 리스트 조회할 수 있는 API")
     public ResponseEntity<List<ChatRoomResponseDto>> chatRoomList(@RequestParam(value = "tradeBoardNo", required = false) Integer tradeBoardNo,
                                                                   @RequestParam(value = "memberNo", required = false) Integer memberNo) {
         List<ChatRoomResponseDto> chatList = chatService.getChatList(memberNo, tradeBoardNo);
@@ -69,8 +71,8 @@ public class ChatController {
         return "WebSocket 메시지 핸들러에서 예외가 발생했습니다: " + e;
     }
 
-    // 채팅방 접속 끊기
     @PostMapping("/chatroom/{chatroomNo}")
+    @Operation(summary = "채팅방 접속 끊기", description = "채팅방 접속 끊을수 있는 API, 채팅방 접속 끊은 시 redis 채팅방 인원 제거")
     public ResponseEntity<HttpStatus> disconnectChat(@PathVariable("chatroomNo") Integer chatroomNo,
                                                      @RequestParam(value = "username", required = false) String username) {
 
@@ -79,12 +81,13 @@ public class ChatController {
     }
 
     @PostMapping("/chatroom/notification")
+    @Operation(summary = "알림 전송", description = "SSE 알림 전송할 수 있는 API")
     public ResponseEntity<Message> sendNotification(@Valid @RequestBody Message message) {
         Message savedMessage = chatService.sendNotificationAndSaveMessage(message);
         return ResponseEntity.ok(savedMessage);
     }
-    // 판매자가 참가한 채팅방 존재하는지 조회
     @GetMapping("/chatroom/exist/seller")
+    @Operation(summary = "판매자 채팅방 조회", description = "판매자가 참가한 채팅방 존재하는지 조회할 수 있는 API")
     public Boolean existChatRoomBySeller(@RequestParam Integer tradeBoardNo, @RequestParam Integer memberNo) {
         return chatService.existChatRoomBySeller(tradeBoardNo, memberNo);
     }

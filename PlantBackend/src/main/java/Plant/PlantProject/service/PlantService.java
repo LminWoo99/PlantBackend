@@ -100,32 +100,32 @@ public class PlantService {
         }
     }
 
-    public void start() throws IOException {
-        for (int i = 1; i < 23; i++) {
-            String pageURL = LIST_URL + i;
-            URL url = new URL(pageURL);
-            try (BufferedReader bf = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
-                StringBuilder rs = new StringBuilder();
-                String line;
-                while ((line = bf.readLine()) != null) {
-                    rs.append(line);
-                }
-                JSONObject jObject = XML.toJSONObject(rs.toString());
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                Object json = mapper.readValue(jObject.toString(), Object.class);
-                String output = mapper.writeValueAsString(json);
-                JSONObject jsonObject = new JSONObject(output);
-                JSONObject response = jsonObject.getJSONObject("response");
-                JSONObject body = response.getJSONObject("body");
-                JSONObject items = body.getJSONObject("items");
-                JSONArray item = items.getJSONArray("item");
-
-                getPlantNumbers(item, "cntntsNo");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
+////    public void start() throws IOException {
+////        for (int i = 1; i < 23; i++) {
+////            String pageURL = LIST_URL + i;
+////            URL url = new URL(pageURL);
+////            try (BufferedReader bf = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
+////                StringBuilder rs = new StringBuilder();
+////                String line;
+////                while ((line = bf.readLine()) != null) {
+////                    rs.append(line);
+////                }
+////                JSONObject jObject = XML.toJSONObject(rs.toString());
+////                ObjectMapper mapper = new ObjectMapper();
+////                mapper.enable(SerializationFeature.INDENT_OUTPUT);
+////                Object json = mapper.readValue(jObject.toString(), Object.class);
+////                String output = mapper.writeValueAsString(json);
+////                JSONObject jsonObject = new JSONObject(output);
+////                JSONObject response = jsonObject.getJSONObject("response");
+////                JSONObject body = response.getJSONObject("body");
+////                JSONObject items = body.getJSONObject("items");
+////                JSONArray item = items.getJSONArray("item");
+////
+////                getPlantNumbers(item, "cntntsNo");
+////            } catch (Exception e) {
+////                e.printStackTrace();
+////            }
+////        }
+//
+//    }
     }

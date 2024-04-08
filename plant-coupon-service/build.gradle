@@ -37,6 +37,8 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'

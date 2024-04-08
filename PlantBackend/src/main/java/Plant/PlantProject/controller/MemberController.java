@@ -13,6 +13,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 
@@ -40,7 +41,10 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
-
+/*
+* 리팩토링 매우 필요!
+*
+*/
 
 @RestController
 @RequestMapping("/api")
@@ -51,21 +55,25 @@ public class MemberController {
     private final JwtTokenUtil jwtTokenUtil;
 
     @GetMapping("/tradeInfo/{id}")
+    @Operation(summary = "유저 기능 -거래 정보 조회", description = "유저 기능중 개인이 거래한 내역을 확인 할 수 있는 API")
     public ResponseEntity<List<ResponseTradeBoardDto>> showTradeInfo(@PathVariable Long id){
         List<ResponseTradeBoardDto> responseTradeBoardDtos = memberService.showTradeInfo(id);
         return ResponseEntity.ok().body(responseTradeBoardDtos);
     }
     @GetMapping("/buyInfo/{id}")
+    @Operation(summary = "유저 기능 -구매 정보 조회", description = "유저 기능중 개인이 구매한 내역을 확인 할 수 있는 API")
     public ResponseEntity<List<ResponseTradeBoardDto>> showBuyInfo(@PathVariable Long id){
         List<ResponseTradeBoardDto> responseTradeBoardDtos = memberService.showBuyInfo(id);
         return ResponseEntity.ok().body(responseTradeBoardDtos);
     }
     @GetMapping("/users")
+    @Operation(summary = "유저 전체 조회", description = "유저 전체 조회를 할 수 있는 API")
     public ResponseEntity<List<MemberDto>> findAll() {
         return ResponseEntity.ok().body(memberService.findAll());
     }
 
     @PostMapping("/user/save")
+    @Operation(summary = "회원 가입", description = "회원가입을 할 수 있는 API")
     public ResponseEntity<Member> saveUser(@RequestBody MemberDto memberDto) {
         URI uri = URI.create(
                 ServletUriComponentsBuilder
@@ -138,23 +146,27 @@ public class MemberController {
     }
 
     @GetMapping("/duplicate")
+    @Operation(summary = "회원 가입시 중복 검사", description = "회원 가입시 유저 이름을 기준을 가입한 이름이 있는지 확인할 수 있는 API")
     public ResponseEntity<?> duplicateMember(@RequestParam String username){
         HttpStatus httpStatus = memberService.duplicateMember(username);
 
         return new ResponseEntity<>(httpStatus);
     }
     @GetMapping("/duplicate/nickname")
+    @Operation(summary = "회원 가입시 중복 검사", description = "회원 가입시 닉네임 이름을 기준을 중복검사를 할 수 있는 API")
     public ResponseEntity<?> duplicateMemberNickname(@RequestParam String nickname){
         HttpStatus httpStatus = memberService.duplicateMemberNickname(nickname);
 
         return new ResponseEntity<>(httpStatus);
     }
     @GetMapping("findEmail")
+    @Operation(summary = "아이디 찾기", description = "아이디 분실시 email 기준으로 아이디 찾기 할 수 있는 API")
     public ResponseEntity<MemberDto> findIdByEmail(@RequestParam String email){
         MemberDto memberDto = memberService.findIdByEmail(email);
         return ResponseEntity.ok().body(memberDto);
     }
     @GetMapping("findPassword")
+    @Operation(summary = "비밀번호 찾기", description = "유저 패스워드 분실시 id 기준으로 비밀번호 찾기 할 수 있는 API")
     public ResponseEntity<MemberDto> findPasswordById(@RequestParam String userId){
         MemberDto passwordById = memberService.findPasswordById(userId);
         return ResponseEntity.ok().body(passwordById);
@@ -166,11 +178,13 @@ public class MemberController {
     }
 
     @GetMapping("/findUsername")
+    @Operation(summary = "회원 찾기- 회원 이름 기준", description = "회원 이름 기준 회원 찾기 할 수 있는 API")
     public ResponseEntity<MemberDto> findByUsername(@RequestParam String username) {
         MemberDto memberDto = memberService.findByUsername(username);
         return ResponseEntity.ok().body(memberDto);
     }
     @GetMapping("/findId")
+    @Operation(summary = "회원 찾기- 회원 id 기준", description = "회원 id 기준 회원 찾기 할 수 있는 API")
     public ResponseEntity<MemberDto> findById(@RequestParam Long id) {
         MemberDto memberDto = memberService.findById(id);
         return ResponseEntity.ok().body(memberDto);

@@ -7,6 +7,7 @@ import com.example.plantpayservice.vo.response.PaymentResponseDto;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,22 +33,22 @@ public class PaymentController {
         this.iamportClient = new IamportClient(restApiKey, restApiSecret);
 
     }
-    //iamport api 연동
     @PostMapping("/verifyIamport/{imp_uid}")
+    @Operation(summary = "iamport api 연동")
     public IamportResponse<Payment> paymentByImpUid(@PathVariable("imp_uid") String imp_uid) throws IOException {
         log.info("info : " + iamportClient.getAuth());
         return iamportClient.paymentByImpUid(imp_uid);
 
     }
-    //식구페이 머니 조회
     @GetMapping("/payMoney/{memberNo}")
+    @Operation(summary = "식구페이 머니 조회", description = "식구 페이 머니 조회할 수 있는 API")
     public ResponseEntity<PaymentResponseDto> getPayMoney(@PathVariable("memberNo") Integer memberNo) {
         PaymentResponseDto paymentResponseDto = paymentService.getPayMoney(memberNo);
         return ResponseEntity.ok().body(paymentResponseDto);
 
     }
-    //식구페이 머니 충전
     @PostMapping("/payMoney/charge")
+    @Operation(summary = "식구페이 머니 충전", description = "구매자는 보유 금액-거래 금액, 판매자는 보유 금액+거래 금액 ")
     public void chargePayMoney(@RequestBody PaymentRequestDto paymentRequestDto) {
         paymentService.chargePayMoney(paymentRequestDto);
 

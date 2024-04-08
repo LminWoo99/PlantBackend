@@ -1,5 +1,7 @@
 package com.example.plantgatewayservice;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
@@ -13,6 +15,7 @@ import org.springframework.web.reactive.socket.server.RequestUpgradeStrategy;
 import org.springframework.web.reactive.socket.server.upgrade.TomcatRequestUpgradeStrategy;
 
 @SpringBootApplication
+@OpenAPIDefinition(info = @Info(title = "식구하자 MSA API", version = "1.0", description = "Documentation API SikGuHaza v1.0"))
 @Slf4j
 public class PlantGatewayServiceApplication {
 

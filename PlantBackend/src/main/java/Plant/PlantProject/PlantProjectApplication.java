@@ -12,8 +12,10 @@ import org.springframework.context.annotation.Bean;
 
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication
+@EnableWebMvc
 @EnableEurekaClient
 public class PlantProjectApplication {
 //	public static final String APPLICATION_LOCATIONS = "spring.config.location="

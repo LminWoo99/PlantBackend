@@ -57,7 +57,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(GET, "/api/users/**").hasAnyAuthority("ROLE_USER")
                 .antMatchers("/api/joinMember").permitAll()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .authorizeRequests().antMatchers("/actuator/**").permitAll()
+                .and().authorizeRequests().antMatchers("/swagger-ui/**").permitAll()
+                .and().authorizeRequests().antMatchers("/v3/api-docs/**").permitAll()
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilter(customAuthenticationFilter);
 
     }

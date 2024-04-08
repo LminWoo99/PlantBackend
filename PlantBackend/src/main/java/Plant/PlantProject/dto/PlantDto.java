@@ -4,9 +4,8 @@ import Plant.PlantProject.Entity.Plant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Comment;
 
-import javax.persistence.Column;
+
 
 @Data
 @AllArgsConstructor

@@ -4,6 +4,7 @@ import com.example.plantchatservice.dto.notification.NotificationDeleteRequest;
 import com.example.plantchatservice.dto.notification.NotificationResponse;
 import com.example.plantchatservice.dto.vo.StatusResponseDto;
 import com.example.plantchatservice.service.notification.NotificationService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -21,11 +22,8 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    /**
-     * @title 로그인 한 유저 SSE 연결
-     * @param : String lastEventId,String jwtToken
-     **/
     @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "SSE 연결", description = "로그인 한 유저 SSE 연결할 수 있는 API")
     public ResponseEntity<SseEmitter> connect(
             @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
             @RequestHeader("Authorization") String jwtToken) {
@@ -33,31 +31,20 @@ public class NotificationController {
 
         return ResponseEntity.ok(emitter);
     }
-
-    /**
-     * @title 로그인 한 유저의 모든 알림 조회
-     * @param : Long memberNo(현재 접속한 멤버)
-     **/
     @GetMapping("/all")
+    @Operation(summary = "모든 알림 조회", description = "로그인 한 유저의 모든 알림 조회할 수 있는 API")
     public ResponseEntity<List<NotificationResponse>> notifications(Long memberNo) {
         return ResponseEntity.ok(notificationService.findAllById(memberNo));
     }
 
-    /**
-     * @title 알림 읽음 상태만 변경
-     * @param : Long id(알림 id)
-     **/
     @PatchMapping("/checked/{id}")
+    @Operation(summary = "알림 읽음", description = "알림 읽음 상태만 변경할 수 있는 API")
     public ResponseEntity<StatusResponseDto> readNotification(@PathVariable("id") Long id) {
         notificationService.readNotification(id);
         return ResponseEntity.ok(StatusResponseDto.success());
     }
-
-    /**
-     * @title 알림 삭제
-     * @param : NotificationDeleteRequest request
-     **/
     @DeleteMapping
+    @Operation(summary = "알림 삭제")
     public ResponseEntity<StatusResponseDto> deleteNotification(@RequestBody NotificationDeleteRequest request) {
         notificationService.deleteNotification(request.getIdList());
         return ResponseEntity.ok(StatusResponseDto.success());

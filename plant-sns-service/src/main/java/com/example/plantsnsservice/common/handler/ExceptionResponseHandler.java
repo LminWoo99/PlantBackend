@@ -26,11 +26,13 @@ public class ExceptionResponseHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResponse> handleCustomException(CustomException e) {
-        if (e.getErrorCode() == ErrorCode.SNS_POST_NOT_FOUND) {
-            return ResponseEntity
-                    .status(e.getErrorCode().getHttpStatus())
-                    .body(ApiResponse.error(e.getErrorCode().getDetail()));
-        }
-        return ResponseEntity.internalServerError().body(ApiResponse.error(e.getMessage()));
+        ErrorCode errorCode = e.getErrorCode();
+        HttpStatus status = errorCode.getHttpStatus();
+        String detail = errorCode.getDetail();
+
+        return ResponseEntity
+                .status(status)
+                .body(ApiResponse.error(detail));
+
     }
 }

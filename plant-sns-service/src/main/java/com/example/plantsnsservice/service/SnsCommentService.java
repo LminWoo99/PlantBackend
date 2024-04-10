@@ -1,9 +1,9 @@
 package com.example.plantsnsservice.service;
 
 import com.example.plantsnsservice.common.exception.ErrorCode;
-import com.example.plantsnsservice.domain.SnsComment;
-import com.example.plantsnsservice.domain.SnsPost;
-import com.example.plantsnsservice.repository.SnsPostRepository;
+import com.example.plantsnsservice.domain.entity.SnsComment;
+import com.example.plantsnsservice.domain.entity.SnsPost;
+import com.example.plantsnsservice.repository.querydsl.SnsPostRepository;
 import com.example.plantsnsservice.repository.querydsl.SnsCommentRepository;
 import com.example.plantsnsservice.vo.request.SnsCommentRequestDto;
 import com.example.plantsnsservice.vo.response.SnsCommentResponseDto;

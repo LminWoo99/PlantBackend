@@ -84,11 +84,47 @@ class SnsPostControllerTest {
         String expectedJson = "[{\"id\":1,\"snsPostTitle\":\"sns 게시글 테스트\",\"snsPostContent\":\"테스트\",\"memberNo\":1,\"createdAt\":null,\"snsLikesCount\":null,\"snsViewsCount\":null},{\"id\":2,\"snsPostTitle\":\"sns 게시글 테스트2\",\"snsPostContent\":\"테스트\",\"memberNo\":2,\"createdAt\":null,\"snsLikesCount\":null,\"snsViewsCount\":null}]";
 
         //then
-        mvc.perform(get("/"))
+        mvc.perform(get("/snsPosts"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson))
                 .andDo(print());
 
+    }
+    @Test
+    @DisplayName("SNS 게시글 해시 태그 기준으로 조회")
+    void getSnsPostsByHashTagTest() throws Exception{
+        //given
+        String hashTagName = "#LeeMinWoo";
+        List hashTagNameList = new ArrayList<>();
+
+        hashTagNameList.add(hashTagName);
+
+        SnsPostResponseDto snsPostRequestDto=SnsPostResponseDto.builder()
+                .id(1L)
+                .snsPostTitle("sns 게시글 테스트")
+                .snsPostContent("테스트")
+                .hashTags(hashTagNameList)
+                .memberNo(1L)
+                .build();
+        SnsPostResponseDto snsPostRequestDto1=SnsPostResponseDto.builder()
+                .id(2L)
+                .snsPostTitle("sns 게시글 테스트2")
+                .snsPostContent("테스트")
+                .hashTags(hashTagNameList)
+                .memberNo(2L)
+                .build();
+        List<SnsPostResponseDto> expectedList = new ArrayList<>();
+
+        expectedList.add(snsPostRequestDto);
+        expectedList.add(snsPostRequestDto1);
+        String stringJson = createStringJson(expectedList);
+        given(snsPostService.findAllByHashTag(hashTagName)).willReturn(expectedList);
+
+        //when&then
+        mvc.perform(get("/snsPosts/{hashTagName}", hashTagName))
+                .andExpect(status().isOk())
+                .andExpect(content().json(stringJson))
+                .andDo(print());
     }
     @Test
     @DisplayName("SNS 게시글 업데이트 실패 - 게시글을 찾을 수 없음")

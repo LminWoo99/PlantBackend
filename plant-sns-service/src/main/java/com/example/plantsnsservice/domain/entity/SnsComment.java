@@ -1,4 +1,4 @@
-package com.example.plantsnsservice.domain;
+package com.example.plantsnsservice.domain.entity;
 
 import lombok.AccessLevel;
 import lombok.Builder;

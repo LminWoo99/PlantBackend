@@ -1,4 +1,4 @@
-package com.example.plantsnsservice.domain;
+package com.example.plantsnsservice.domain.entity;
 
 import com.example.plantsnsservice.vo.request.SnsPostRequestDto;
 import lombok.AccessLevel;
@@ -26,9 +26,9 @@ public class SnsPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="sns_post_id")
     private Long id;
-    @Column(name="sns_post_title")
+    @Column(name="sns_post_title", nullable = false)
     private String snsPostTitle;
-    @Column(name="sns_post_content")
+    @Column(name="sns_post_content", nullable = false)
     private String snsPostContent;
     @Column(name="member_no")
     private Long memberNo;

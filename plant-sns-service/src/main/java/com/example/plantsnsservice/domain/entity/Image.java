@@ -1,4 +1,4 @@
-package com.example.plantsnsservice.domain;
+package com.example.plantsnsservice.domain.entity;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -28,6 +28,8 @@ public class Image {
     private String name;
     @Column(name = "image_url")
     private String url;
+
+
     @Builder
     public Image(SnsPost snsPost, String name, String url) {
         this.snsPost = snsPost;

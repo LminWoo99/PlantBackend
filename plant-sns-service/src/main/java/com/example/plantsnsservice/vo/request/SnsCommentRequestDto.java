@@ -1,6 +1,6 @@
 package com.example.plantsnsservice.vo.request;
 
-import com.example.plantsnsservice.domain.SnsComment;
+import com.example.plantsnsservice.domain.entity.SnsComment;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,11 +1,10 @@
 package com.example.plantsnsservice.service;
 
 import com.example.plantsnsservice.common.exception.CustomException;
-import com.example.plantsnsservice.domain.SnsPost;
-import com.example.plantsnsservice.repository.SnsPostRepository;
+import com.example.plantsnsservice.domain.entity.SnsPost;
+import com.example.plantsnsservice.repository.querydsl.SnsPostRepository;
 import com.example.plantsnsservice.vo.request.SnsPostRequestDto;
 import com.example.plantsnsservice.vo.response.SnsPostResponseDto;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +26,8 @@ import java.util.Optional;
 class SnsPostServiceTest {
     @Mock
     SnsPostRepository snsPostRepository;
+    @Mock
+    SnsHashTagMapService snsHashTagMapService;
     @InjectMocks
     SnsPostService snsPostService;
     @Test
@@ -107,11 +108,46 @@ class SnsPostServiceTest {
         snsPostList.add(snsPost);
         snsPostList.add(snsPost2);
         when(snsPostRepository.findAllByOrderByCreatedAtDesc()).thenReturn(snsPostList);
-
+        when(snsHashTagMapService.findHashTagListBySnsPost(snsPost)).thenReturn(null);
         //when
         List<SnsPostResponseDto> expectedList = snsPostService.getSnsPostList();
+
         assertThat(expectedList.get(0).getSnsPostTitle()).isEqualTo("sns 게시글 테스트");
         assertThat(expectedList.size()).isEqualTo(2);
     }
+    @Test
+    @DisplayName("해시태그 기준으로 sns 게시글 조회 단위 테스트")
+    void findAllByHashTagTest() throws Exception{
+        //given
+        String hashTagName = "#LeeMinWoo";
+        List hashTagNameList = new ArrayList<>();
 
+        hashTagNameList.add(hashTagName);
+
+        SnsPostResponseDto snsPostRequestDto=SnsPostResponseDto.builder()
+                .id(1L)
+                .snsPostTitle("sns 게시글 테스트")
+                .snsPostContent("테스트")
+                .hashTags(hashTagNameList)
+                .memberNo(1L)
+                .build();
+        SnsPostResponseDto snsPostRequestDto1=SnsPostResponseDto.builder()
+                .id(2L)
+                .snsPostTitle("sns 게시글 테스트2")
+                .snsPostContent("테스트")
+                .hashTags(hashTagNameList)
+                .memberNo(2L)
+                .build();
+        List<SnsPostResponseDto> expectedList = new ArrayList<>();
+        expectedList.add(snsPostRequestDto);
+        expectedList.add(snsPostRequestDto1);
+
+        when(snsPostRepository.findAllByHashTag(hashTagName)).thenReturn(expectedList);
+        //when
+        List<SnsPostResponseDto> resultList = snsPostService.findAllByHashTag(hashTagName);
+
+        //then
+        assertThat(resultList.size()).isEqualTo(2);
+        assertThat(resultList.get(0).getHashTags().get(0)).isEqualTo("#LeeMinWoo");
+    }
 }

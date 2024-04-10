@@ -4,4 +4,4 @@ spring:
   cloud:
     config:
       uri: http://43.202.205.242:8888
-      name: plant-chat-service
+      name: plant-sns-service

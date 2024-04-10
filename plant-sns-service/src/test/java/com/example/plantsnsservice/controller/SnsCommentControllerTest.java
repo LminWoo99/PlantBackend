@@ -2,8 +2,6 @@ package com.example.plantsnsservice.controller;
 
 import com.example.plantsnsservice.common.exception.CustomException;
 import com.example.plantsnsservice.common.exception.ErrorCode;
-import com.example.plantsnsservice.domain.SnsComment;
-import com.example.plantsnsservice.domain.SnsPost;
 import com.example.plantsnsservice.service.SnsCommentService;
 import com.example.plantsnsservice.vo.request.SnsCommentRequestDto;
 import com.example.plantsnsservice.vo.response.SnsCommentResponseDto;
@@ -17,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.BDDMockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+
 @WebMvcTest(SnsCommentController.class)
 @MockBean(JpaMetamodelMappingContext.class)
 class SnsCommentControllerTest {

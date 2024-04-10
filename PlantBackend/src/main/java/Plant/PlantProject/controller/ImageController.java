@@ -26,13 +26,13 @@ public class ImageController {
     private ResponseEntity<List<Image>> uploadImages(@PathVariable Long tradeBoardId,
                                                @RequestParam("file")List<MultipartFile> files) throws IOException{
         log.info("image 호출");
-        List<Image> upload = imageFileUploadService.upload(tradeBoardId, files);
+        List<Image> upload = imageFileUploadService.uploadImagesToTradeBoard(tradeBoardId, files);
         return ResponseEntity.ok().body(upload);
     }
     @GetMapping("/{tradeBoardId}/images")
     @Operation(summary = "이미지 조회", description = "이미지 조회 할 수 있는 API")
     private ResponseEntity<List<Image>> images(@PathVariable Long tradeBoardId){
-        return ResponseEntity.ok().body(imageFileUploadService.findImageByTradeBoardId(tradeBoardId));
+        return ResponseEntity.ok().body(imageFileUploadService.findImagesByTradeBoardId(tradeBoardId));
 
     }
 

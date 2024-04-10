@@ -1,15 +1,12 @@
 package com.example.plantsnsservice.repository.querydsl;
 
-import com.example.plantsnsservice.domain.QSnsComment;
-import com.example.plantsnsservice.domain.SnsComment;
+import com.example.plantsnsservice.domain.entity.SnsComment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import javax.persistence.EntityManager;
-
 import java.util.List;
 
-import static com.example.plantsnsservice.domain.QSnsComment.snsComment;
+import static com.example.plantsnsservice.domain.entity.QSnsComment.snsComment;
 
 
 @RequiredArgsConstructor
@@ -28,5 +25,7 @@ public class SnsCommentRepositoryImpl implements CustomSnsCommentRepository {
                         snsComment.parent.id.asc().nullsFirst()
                 ).fetch();
     }
+
+
 
 }

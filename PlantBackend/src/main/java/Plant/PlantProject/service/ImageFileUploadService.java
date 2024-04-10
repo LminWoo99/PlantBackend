@@ -27,39 +27,35 @@ public class ImageFileUploadService {
     private final ImageRepository imageRepository;
 
     @Transactional
-    public List<Image> upload(Long tradeBoardId, List<MultipartFile> files) throws IOException {
-        log.info("1차 upload 통과");
+    public List<Image> uploadImagesToTradeBoard(Long tradeBoardId, List<MultipartFile> files) throws IOException {
+        log.info("Uploading images for TradeBoard ID: {}", tradeBoardId);
         TradeBoard tradeBoard = tradeBoardRepository.findTradeBoardById(tradeBoardId);
-        List<Image> upload = upload(files, tradeBoard);
-        return upload;
+        List<Image> uploadedImages = saveImages(files, tradeBoard);
+        return uploadedImages;
     }
 
-    private List<Image> upload(List<MultipartFile> files, TradeBoard tradeBoard) throws IOException {
-        log.info("2차 upload 통과");
-        List<Image> images = uploadImageToStorageServer(files, tradeBoard);
+    private List<Image> saveImages(List<MultipartFile> files, TradeBoard tradeBoard) throws IOException {
+        List<Image> images = new ArrayList<>();
+        for (MultipartFile file : files) {
+            images.add(uploadImage(file, tradeBoard));
+        }
         imageRepository.saveAll(images);
         return images;
     }
 
-    private List<Image> uploadImageToStorageServer(List<MultipartFile> files, TradeBoard tradeBoard) throws IOException {
-        log.info("4차 upload 통과");
-        List<Image> images = new ArrayList<>();
-
-        for (MultipartFile file : files) {
-            String filename = FileUtils.getRandomFilename();
-            String filepath = awsS3Service.upload(file, filename);
-            images.add(Image.builder()
-                    .name(filename)
-                    .url(filepath)
-                    .tradeBoard(tradeBoard)
-                    .build());
-        }
-
-        return images;
+    private Image uploadImage(MultipartFile file, TradeBoard tradeBoard) throws IOException {
+        log.info("Uploading image to storage server for file: {}", file.getOriginalFilename());
+        String filename = FileUtils.getRandomFilename();
+        String filepath = awsS3Service.upload(file, filename);
+        return Image.builder()
+                .name(filename)
+                .url(filepath)
+                .tradeBoard(tradeBoard)
+                .build();
     }
-    public List<Image> findImageByTradeBoardId(Long id){
-        List<Image> images = imageRepository.findImageByTradeBoardId(id);
-        return images;
+    @Transactional(readOnly = true)
+    public List<Image> findImagesByTradeBoardId(Long id) {
+        return imageRepository.findImageByTradeBoardId(id);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.example.plantsnsservice.repository.querydsl;
 
-import com.example.plantsnsservice.domain.SnsComment;
+import com.example.plantsnsservice.domain.entity.SnsComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

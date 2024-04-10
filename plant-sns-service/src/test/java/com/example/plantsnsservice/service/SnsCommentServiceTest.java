@@ -1,12 +1,11 @@
 package com.example.plantsnsservice.service;
 
 import com.example.plantsnsservice.common.exception.CustomException;
-import com.example.plantsnsservice.domain.SnsComment;
-import com.example.plantsnsservice.domain.SnsPost;
-import com.example.plantsnsservice.repository.SnsPostRepository;
+import com.example.plantsnsservice.domain.entity.SnsComment;
+import com.example.plantsnsservice.domain.entity.SnsPost;
+import com.example.plantsnsservice.repository.querydsl.SnsPostRepository;
 import com.example.plantsnsservice.repository.querydsl.SnsCommentRepository;
 import com.example.plantsnsservice.vo.request.SnsCommentRequestDto;
-import com.example.plantsnsservice.vo.request.SnsPostRequestDto;
 import com.example.plantsnsservice.vo.response.SnsCommentResponseDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

@@ -1,13 +1,12 @@
 package com.example.plantsnsservice.vo.response;
 
-import com.example.plantsnsservice.domain.SnsComment;
+import com.example.plantsnsservice.domain.entity.SnsComment;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

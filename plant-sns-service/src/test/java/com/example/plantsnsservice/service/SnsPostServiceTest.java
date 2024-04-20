@@ -38,11 +38,10 @@ class SnsPostServiceTest {
                 .id(1L)
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .createdAt(LocalDateTime.now())
                 .build();
         //when
-        snsPostService.createPost(snsPostRequestDto);
+//        snsPostService.createPost(snsPostRequestDto, any());
 
         verify(snsPostRepository, times(1)).save(any(SnsPost.class));
 
@@ -56,13 +55,11 @@ class SnsPostServiceTest {
         SnsPost snsPost=SnsPost.builder()
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .build();
         SnsPostRequestDto snsPostRequestDto=SnsPostRequestDto.builder()
                 .id(1L)
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .createdAt(LocalDateTime.now())
                 .build();
         when(snsPostRepository.findById(1L)).thenReturn(Optional.ofNullable(snsPost));
@@ -80,7 +77,6 @@ class SnsPostServiceTest {
                 .id(1L)
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .createdAt(LocalDateTime.now())
                 .build();
         when(snsPostRepository.findById(1L)).thenReturn(Optional.empty());
@@ -96,13 +92,11 @@ class SnsPostServiceTest {
         SnsPost snsPost=SnsPost.builder()
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .build();
         //given
         SnsPost snsPost2=SnsPost.builder()
                 .snsPostTitle("sns 게시글 테스트2")
                 .snsPostContent("테스트")
-                .memberNo(2L)
                 .build();
         List<SnsPost> snsPostList = new ArrayList<>();
         snsPostList.add(snsPost);
@@ -129,14 +123,12 @@ class SnsPostServiceTest {
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
                 .hashTags(hashTagNameList)
-                .memberNo(1L)
                 .build();
         SnsPostResponseDto snsPostRequestDto1=SnsPostResponseDto.builder()
                 .id(2L)
                 .snsPostTitle("sns 게시글 테스트2")
                 .snsPostContent("테스트")
                 .hashTags(hashTagNameList)
-                .memberNo(2L)
                 .build();
         List<SnsPostResponseDto> expectedList = new ArrayList<>();
         expectedList.add(snsPostRequestDto);

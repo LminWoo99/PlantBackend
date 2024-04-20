@@ -1,5 +1,6 @@
 package com.example.plantsnsservice.vo.response;
 
+import com.example.plantsnsservice.domain.entity.Image;
 import com.example.plantsnsservice.domain.entity.SnsPost;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,11 +18,18 @@ public class SnsPostResponseDto {
     private Long id;
     private String snsPostTitle;
     private String snsPostContent;
-    private Long memberNo;
+    private String createdBy;
     private LocalDateTime createdAt;
     private Integer snsLikesCount;
     private Integer snsViewsCount;
     //이미 입력 요청에서 set로 중복 방지하므로 List 사용
     private List<String> hashTags;
+    private List<String> imageUrls;
+    private Long commentCount;
 
+    public void imageUrls(SnsPost snsPost) {
+        this.imageUrls = snsPost.getImageList().stream()
+                .map(image -> image.getUrl())
+                .collect(Collectors.toList());
+    }
 }

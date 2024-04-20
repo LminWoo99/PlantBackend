@@ -33,7 +33,6 @@ class SnsHashTagMapServiceTest {
         SnsPost snsPost=SnsPost.builder()
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .build();
         HashTag hashTag= HashTag.builder()
                 .name("test")
@@ -56,7 +55,6 @@ class SnsHashTagMapServiceTest {
         SnsPost snsPost=SnsPost.builder()
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .build();
         HashTag hashTag= HashTag.builder()
                 .name("test")
@@ -81,7 +79,6 @@ class SnsHashTagMapServiceTest {
         SnsPost snsPost=SnsPost.builder()
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .build();
 
         HashTag hashTag= HashTag.builder()

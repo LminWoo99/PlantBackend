@@ -17,6 +17,7 @@ public class HashTagService {
     public Optional<HashTag> findByName(String hashTagName) {
         return hashTagRepository.findByName(hashTagName);
     }
+
     /**
      * sns 게시글 생성시 해시 태그 생성 메서드
      * @param : String hashTagName(해시태그명)
@@ -27,4 +28,5 @@ public class HashTagService {
                 .build();
         return hashTagRepository.save(hashTag);
     }
+
 }

@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface SnsPostRepository extends JpaRepository<SnsPost, Long>, CustomSnsPostRepository {
     List<SnsPost> findAllByOrderByCreatedAtDesc();
+
 }

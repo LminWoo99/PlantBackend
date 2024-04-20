@@ -46,5 +46,8 @@ public class SnsHashTagMapService {
             snsHashTagMap.getHashTag().getName())
                         .collect(Collectors.toList());
     }
-
+    @Transactional
+    public void deleteSnsHashTagMap(SnsPost snsPost) {
+        snsHashTagMapRepository.deleteBySnsPost(snsPost);
+    }
 }

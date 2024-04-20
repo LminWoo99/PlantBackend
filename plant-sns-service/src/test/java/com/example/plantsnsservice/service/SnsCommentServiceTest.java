@@ -47,7 +47,6 @@ class SnsCommentServiceTest {
         SnsPost snsPost= SnsPost.builder()
                 .snsPostTitle("test")
                 .snsPostContent("댓글 작성 테스트")
-                .memberNo(1L)
                 .build();
 
         when(snsPostRepository.findById(1L)).thenReturn(Optional.ofNullable(snsPost));
@@ -83,7 +82,6 @@ class SnsCommentServiceTest {
         SnsPost snsPost= SnsPost.builder()
                 .snsPostTitle("test")
                 .snsPostContent("댓글 작성 테스트")
-                .memberNo(1L)
                 .build();
         SnsComment parentComment= SnsComment.builder()
                 .snsPost(snsPost)

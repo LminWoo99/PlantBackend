@@ -46,7 +46,6 @@ class SnsPostControllerTest {
                 .id(1L)
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -67,21 +66,19 @@ class SnsPostControllerTest {
                 .id(1L)
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .build();
         //given
         SnsPostResponseDto snsPostRequestDto1=SnsPostResponseDto.builder()
                 .id(2L)
                 .snsPostTitle("sns 게시글 테스트2")
                 .snsPostContent("테스트")
-                .memberNo(2L)
                 .build();
         List<SnsPostResponseDto> snsPostResponseDtoList = new ArrayList<>();
         snsPostResponseDtoList.add(snsPostRequestDto);
         snsPostResponseDtoList.add(snsPostRequestDto1);
 
         given(snsPostService.getSnsPostList()).willReturn(snsPostResponseDtoList);
-        String expectedJson = "[{\"id\":1,\"snsPostTitle\":\"sns 게시글 테스트\",\"snsPostContent\":\"테스트\",\"memberNo\":1,\"createdAt\":null,\"snsLikesCount\":null,\"snsViewsCount\":null},{\"id\":2,\"snsPostTitle\":\"sns 게시글 테스트2\",\"snsPostContent\":\"테스트\",\"memberNo\":2,\"createdAt\":null,\"snsLikesCount\":null,\"snsViewsCount\":null}]";
+        String expectedJson = "[{\"id\":1,\"snsPostTitle\":\"sns 게시글 테스트\",\"snsPostContent\":\"테스트\",\"createdAt\":null,\"snsLikesCount\":null,\"snsViewsCount\":null},{\"id\":2,\"snsPostTitle\":\"sns 게시글 테스트2\",\"snsPostContent\":\"테스트\",\"createdAt\":null,\"snsLikesCount\":null,\"snsViewsCount\":null}]";
 
         //then
         mvc.perform(get("/snsPosts"))
@@ -104,14 +101,12 @@ class SnsPostControllerTest {
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
                 .hashTags(hashTagNameList)
-                .memberNo(1L)
                 .build();
         SnsPostResponseDto snsPostRequestDto1=SnsPostResponseDto.builder()
                 .id(2L)
                 .snsPostTitle("sns 게시글 테스트2")
                 .snsPostContent("테스트")
                 .hashTags(hashTagNameList)
-                .memberNo(2L)
                 .build();
         List<SnsPostResponseDto> expectedList = new ArrayList<>();
 
@@ -134,7 +129,6 @@ class SnsPostControllerTest {
                 .id(1L)
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
-                .memberNo(1L)
                 .createdAt(LocalDateTime.now())
                 .build();
         String snsPostJson = createStringJson(snsPostRequestDto);
@@ -154,7 +148,6 @@ class SnsPostControllerTest {
                         .id(1L)
                         .snsPostTitle("sns 게시글 테스트")
                         .snsPostContent("테스트")
-                        .memberNo(1L)
                         .createdAt(LocalDateTime.now())
                         .build();
         String snsPostJson = createStringJson(snsPostRequestDto);

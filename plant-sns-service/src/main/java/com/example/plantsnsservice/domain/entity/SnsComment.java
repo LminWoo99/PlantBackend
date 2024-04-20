@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +39,14 @@ public class SnsComment {
 
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
     private List<SnsComment> children = new ArrayList<>();
+
+    private LocalDateTime createdAt;
     @Builder
     public SnsComment(SnsPost snsPost, String content, String createdBy, SnsComment parent) {
         this.snsPost = snsPost;
         this.content = content;
         this.createdBy = createdBy;
         this.parent = parent;
+        this.createdAt = LocalDateTime.now();
     }
 }

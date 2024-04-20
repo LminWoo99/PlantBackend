@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,19 +22,22 @@ public class SnsCommentResponseDto {
     private String content;
     @NotNull
     private String createdBy;
-    private SnsComment parent;
+    private Long parentId;
 
     private List<SnsCommentResponseDto> children = new ArrayList<>();
 
-    public SnsCommentResponseDto(Long id, Long snsPostId, String content, String createdBy, SnsComment parent) {
+    private LocalDateTime createdAt;
+
+    public SnsCommentResponseDto(Long id, Long snsPostId, String content, String createdBy, Long parentId, LocalDateTime createdAt) {
         this.id = id;
         this.snsPostId = snsPostId;
         this.content = content;
         this.createdBy = createdBy;
-        this.parent = parent;
+        this.parentId = parentId;
+        this.createdAt = createdAt;
     }
 
     public static SnsCommentResponseDto convertCommentToDto(SnsComment snsComment) {
-        return new SnsCommentResponseDto(snsComment.getId(), snsComment.getSnsPost().getId(), snsComment.getContent(), snsComment.getCreatedBy(), snsComment.getParent());
+        return new SnsCommentResponseDto(snsComment.getId(), snsComment.getSnsPost().getId(), snsComment.getContent(), snsComment.getCreatedBy(), (snsComment.getParent() == null ? null : snsComment.getParent().getId()), snsComment.getCreatedAt());
     }
 }

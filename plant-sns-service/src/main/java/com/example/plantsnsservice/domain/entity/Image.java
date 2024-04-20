@@ -36,4 +36,8 @@ public class Image {
         this.name = name;
         this.url = url;
     }
+
+    public void add(SnsPost snsPost) {
+        this.snsPost = snsPost;
+    }
 }

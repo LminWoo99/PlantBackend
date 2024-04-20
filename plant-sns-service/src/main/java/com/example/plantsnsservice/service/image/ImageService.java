@@ -21,34 +21,32 @@ import java.util.List;
 @Slf4j
 public class ImageService {
     private final ImageRepository imageRepository;
-    private final SnsPostService snsPostService;
     private final AwsS3Service awsS3Service;
     @Transactional
-    public void uploadImagesToSnsPost(Long snsPostId, List<MultipartFile> files) throws IOException {
-        log.info("Uploading images for SnsPostId ID: {}", snsPostId);
-        SnsPostResponseDto snsPostResponseDto = snsPostService.findById(snsPostId);
-        saveImages(files, snsPostResponseDto);
+    public void uploadImagesToSnsPost(SnsPost snsPost, List<MultipartFile> files) throws IOException {
+        log.info("Uploading images for SnsPostId ID: {}", snsPost.getId());
+        saveImages(files, snsPost);
     }
-
-    private List<Image> saveImages(List<MultipartFile> files, SnsPostResponseDto snsPostResponseDto) throws IOException {
+    @Transactional
+    public List<Image> saveImages(List<MultipartFile> files, SnsPost snsPost) throws IOException {
         List<Image> images = new ArrayList<>();
+
+
         for (MultipartFile file : files) {
-            images.add(uploadImage(file, snsPostResponseDto));
+            Image image = uploadImage(file, snsPost);
+            //양방향 연관관계 메서드 사용
+            snsPost.addImageList(image);
+            images.add(image);
         }
         imageRepository.saveAll(images);
         return images;
     }
 
-    private Image uploadImage(MultipartFile file, SnsPostResponseDto snsPostResponseDto) throws IOException {
+    private Image uploadImage(MultipartFile file, SnsPost snsPost) throws IOException {
         log.info("Uploading image to storage server for file: {}", file.getOriginalFilename());
         String filename = FileUtils.getRandomFilename();
         String filepath = awsS3Service.upload(file, filename);
 
-        SnsPost snsPost = SnsPost.builder()
-                .snsPostTitle(snsPostResponseDto.getSnsPostTitle())
-                .snsPostContent(snsPostResponseDto.getSnsPostContent())
-                .memberNo(snsPostResponseDto.getMemberNo())
-                .build();
 
         return Image.builder()
                 .name(filename)

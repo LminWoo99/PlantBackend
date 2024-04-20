@@ -79,8 +79,8 @@ public class SnsCommentService {
 
         snsCommentResponseDtoList.stream().forEach(c -> {
             map.put(c.getId(), c);
-            if(c.getParent() != null) {
-                map.get(c.getParent().getId()).getChildren().add(c);
+            if(c.getParentId() != null) {
+                map.get(c.getParentId()).getChildren().add(c);
             }
             else {
                 result.add(c);
@@ -88,5 +88,6 @@ public class SnsCommentService {
         });
         return result;
     }
+
 
 }

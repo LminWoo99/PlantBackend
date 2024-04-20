@@ -90,14 +90,12 @@ class SnsCommentControllerTest {
                 .snsPostId(1L)
                 .content("댓글 작성 테스트")
                 .createdBy("Lee")
-                .parent(null)
                 .build();
         SnsCommentResponseDto childComment= SnsCommentResponseDto.builder()
                 .id(2L)
                 .snsPostId(1L)
                 .content("댓글 작성 테스트2")
                 .createdBy("Lee")
-                .parent(null)
                 .build();
         List<SnsCommentResponseDto> snsCommentList = new ArrayList<>();
 

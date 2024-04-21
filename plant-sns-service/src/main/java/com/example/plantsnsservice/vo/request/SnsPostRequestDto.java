@@ -6,10 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -20,6 +17,7 @@ public class SnsPostRequestDto {
     private Long id;
     private String snsPostTitle;
     private String snsPostContent;
+    private Integer memberNo;
     private String createdBy;
     //중복 방지
     private Set<String> hashTags;

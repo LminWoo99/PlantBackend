@@ -48,7 +48,7 @@ class SnsPostServiceTest2 {
 
             executorService.submit(() -> {
                 try{
-                    snsPostServiceFacade.updateSnsLikesCountLock(1L);
+                    snsPostServiceFacade.updateSnsLikesCountLock(1L,1);
 
                 }
                 finally {

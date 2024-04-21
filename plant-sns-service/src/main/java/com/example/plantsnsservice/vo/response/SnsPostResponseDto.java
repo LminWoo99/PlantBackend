@@ -27,6 +27,8 @@ public class SnsPostResponseDto {
     private List<String> imageUrls;
     private Long commentCount;
 
+    private boolean snsLikesStatus;
+
     public void imageUrls(SnsPost snsPost) {
         this.imageUrls = snsPost.getImageList().stream()
                 .map(image -> image.getUrl())

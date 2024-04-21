@@ -26,6 +26,11 @@ public class SnsCommentRepositoryImpl implements CustomSnsCommentRepository {
                 ).fetch();
     }
 
-
+    @Override
+    public void deleteBySnsPostId(Long postId) {
+        jpaQueryFactory.delete(snsComment)
+                .where(snsComment.snsPost.id.eq(postId))
+                .execute();
+    }
 
 }

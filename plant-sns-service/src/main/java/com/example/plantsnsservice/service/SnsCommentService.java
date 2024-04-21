@@ -67,6 +67,15 @@ public class SnsCommentService {
         snsCommentRepository.deleteById(snsCommentId);
 
     }
+    /**
+     * 게시글 삭제시 게시글에 있는 댓글  전체삭제 메서드
+     * @param : Long Long snsPostId
+     */
+    @Transactional
+    public void deleteSnsCommentBySnsPost(Long snsPostId) {
+        snsCommentRepository.deleteBySnsPostId(snsPostId);
+
+    }
 
     /**
      * sns 댓글 <==> 대댓글 대댓글의 중첩구조 변환 메서드

@@ -18,16 +18,16 @@ public class SnsPostServiceFacade {
      * redis의 분산락을 통한 동시성 제어
      * 실제락을 거는 시점은 퍼사드 패턴으로 분리하여
      * @Transactional 바깥에서 락을 걸어줌
-     * @param : Long id(게시글 번호)
+     * @param : Long id(게시글 번호),Integer memberNo
      */
-    public void updateSnsLikesCountLock(Long id) {
+    public void updateSnsLikesCountLock(Long snsPostId, Integer memberNo) {
         final String lockName = "likes:lock";
         final RLock lock = redissonClient.getLock(lockName);
 
         try {
             if (!lock.tryLock(10, 1, TimeUnit.SECONDS))
                 return;
-            snsPostService.updateSnsLikesCountUseRedisson(id);
+            snsPostService.updateSnsLikesCount(snsPostId, memberNo);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

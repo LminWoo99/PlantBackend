@@ -47,7 +47,7 @@ public class SnsHashTagMapService {
                         .collect(Collectors.toList());
     }
     @Transactional
-    public void deleteSnsHashTagMap(SnsPost snsPost) {
-        snsHashTagMapRepository.deleteBySnsPost(snsPost);
+    public void deleteSnsHashTagMap(Long snsPostId) {
+        snsHashTagMapRepository.deleteBySnsPostId(snsPostId);
     }
 }

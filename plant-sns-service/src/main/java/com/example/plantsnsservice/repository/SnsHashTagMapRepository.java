@@ -11,7 +11,5 @@ import java.util.List;
 @Repository
 public interface SnsHashTagMapRepository extends JpaRepository<SnsHashTagMap, Long> {
     List<SnsHashTagMap> findAllBySnsPost(SnsPost snsPost);
-
-    void deleteBySnsPost(SnsPost snsPost);
-
+    void deleteBySnsPostId(Long snsPostId);
 }

@@ -34,12 +34,13 @@ public class SnsPost {
     private String snsPostTitle;
     @Column(name="sns_post_content", nullable = false)
     private String snsPostContent;
+    @Column(name="memebr_no")
+    private Integer memberNo;
     @Column(name="created_by")
     private String createdBy;
     //image와 양방향 관계로 변경
     @OneToMany(mappedBy = "snsPost", cascade = CascadeType.REMOVE)
     private List<Image> imageList = new ArrayList<>();
-
 
     @Column(name="sns_likes_count", columnDefinition = "integer default 0", nullable = false)
     private Integer snsLikesCount;
@@ -49,9 +50,10 @@ public class SnsPost {
     private LocalDateTime createdAt;
 
     @Builder
-    public SnsPost(String snsPostTitle, String snsPostContent, String createdBy, Integer snsLikesCount, Integer snsViewsCount) {
+    public SnsPost(String snsPostTitle, String snsPostContent, Integer memberNo, String createdBy, Integer snsLikesCount, Integer snsViewsCount) {
         this.snsPostTitle = snsPostTitle;
         this.snsPostContent = snsPostContent;
+        this.memberNo = memberNo;
         this.createdBy = createdBy;
         this.createdAt = LocalDateTime.now();
         this.snsLikesCount = snsLikesCount;
@@ -69,11 +71,17 @@ public class SnsPost {
         this.imageList.add(image);
         image.add(this);
     }
+    public void viewsCountUp() {
+        this.snsViewsCount++;
+
+    }
     public void likesCountUp() {
         this.snsLikesCount++;
 
     }
     public void likesCountDown() {
-        this.snsViewsCount--;
+        if (this.snsLikesCount>0){
+            this.snsLikesCount--;
+        }
     }
 }

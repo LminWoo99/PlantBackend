@@ -214,7 +214,7 @@ public class ChatService {
             String content = message.getContentType().equals("image")
                                     ? "image" : message.getContent();
             // 알람을 보낼 URL을 생성한다.
-            String sendUrl = getNotificationUrl(message.getTradeBoardNo(), message.getChatNo());
+            String sendUrl = getNotificationUrl(message.getTradeBoardNo(), message.getChatNo(), memberDto.getBody().getNickname());
 
             //알림 전송
             notificationService.send(memberDto.getBody(), receiveMember.getBody(), NotifiTypeEnum.CHAT, sendUrl, content);
@@ -271,10 +271,11 @@ public class ChatService {
         return mongoTemplate.count(query, Chatting.class);
     }
 
-    private String getNotificationUrl(Integer tradeBoardNo, Integer chatNo) {
+    private String getNotificationUrl(Integer tradeBoardNo, Integer chatNo, String nickname) {
         return chatNo +
                 "/" +
-                tradeBoardNo;
+                tradeBoardNo+
+        "/" +nickname;
     }
 
 

@@ -1,9 +1,7 @@
 package Plant.PlantProject.kakao;
 
 import Plant.PlantProject.Entity.Member;
-import Plant.PlantProject.Entity.Role;
-import Plant.PlantProject.config.JwtTokenUtil;
-import Plant.PlantProject.exception.MemberNotFoundException;
+import Plant.PlantProject.exception.ErrorCode;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.RoleRepository;
 import com.nimbusds.jose.shaded.json.JSONObject;
@@ -22,8 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -143,7 +139,7 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
                 result.put("id", member.getId());
             } else {
                 // 이미 존재하는 회원이면 그냥 넘어가거나 다른 로직 수행 (예: 로그 작성 등)
-                Member byUsername = memberRepository.findByUsername(username).orElseThrow(MemberNotFoundException::new);
+                Member byUsername = memberRepository.findByUsername(username).orElseThrow(ErrorCode::throwMemberNotFound);
                 result.put("id", byUsername.getId());
                 log.info("Existing member detected with email: {}", email);
             }
@@ -158,7 +154,7 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
     }
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Member user = memberRepository.findByUsername(userName).orElseThrow(MemberNotFoundException::new);
+        Member user = memberRepository.findByUsername(userName).orElseThrow(ErrorCode::throwMemberNotFound);
         if(user == null) {
             log.error("User not found in the database {}", userName);
             throw new UsernameNotFoundException("User not found in the database");

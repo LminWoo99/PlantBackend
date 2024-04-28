@@ -1,14 +1,21 @@
 package com.example.plantsnsservice.service;
 
+import com.example.plantsnsservice.common.exception.CustomException;
+import com.example.plantsnsservice.common.exception.ErrorCode;
 import com.example.plantsnsservice.domain.entity.HashTag;
 import com.example.plantsnsservice.domain.entity.SnsHashTagMap;
 import com.example.plantsnsservice.domain.entity.SnsPost;
 import com.example.plantsnsservice.repository.SnsHashTagMapRepository;
+import com.example.plantsnsservice.vo.response.SnsHashResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.redisson.misc.Hash;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +49,10 @@ public class SnsHashTagMapService {
     @Transactional(readOnly = true)
     public List<String> findHashTagListBySnsPost(SnsPost snsPost) {
         List<SnsHashTagMap> allBySnsPost = snsHashTagMapRepository.findAllBySnsPost(snsPost);
+
+        if (allBySnsPost.isEmpty()) {
+            throw new CustomException(ErrorCode.HASH_TAG_NOT_FOUND);
+        }
         return allBySnsPost.stream().map(snsHashTagMap ->
             snsHashTagMap.getHashTag().getName())
                         .collect(Collectors.toList());
@@ -49,5 +60,21 @@ public class SnsHashTagMapService {
     @Transactional
     public void deleteSnsHashTagMap(Long snsPostId) {
         snsHashTagMapRepository.deleteBySnsPostId(snsPostId);
+    }
+    /**
+     * sns 게시글에 가장 많이 사용된 해시태그 10개조회
+     */
+    @Transactional(readOnly = true)
+    public List<SnsHashResponseDto> findTop10SnsHashTag() {
+        //가장 많이 사용된 해시태그 10개 정렬
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Slice<HashTag> hashTagSlice = snsHashTagMapRepository.findTop10SnsHashTag(pageRequest);
+
+        return hashTagSlice.getContent().stream().map(hashTag -> SnsHashResponseDto.builder()
+                .id(hashTag.getId())
+                .name(hashTag.getName())
+                .build()).collect(Collectors.toList());
+
+
     }
 }

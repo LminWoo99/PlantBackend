@@ -31,7 +31,6 @@ public class SnsPostService {
     /**
      * sns 게시글 생성
      * 게시글 형식은 게시글 문구, 해시태그, 게시글 내용
-     *
      * @param : SnsPostRequestDto snsPostRequestDto
      */
     @Transactional
@@ -44,8 +43,8 @@ public class SnsPostService {
                 .snsLikesCount(snsPostRequestDto.getSnsLikesCount())
                 .snsViewsCount(snsPostRequestDto.getSnsViewsCount())
                 .build();
-
-
+        //고민할 부분
+        //snsHashTagMapRepository(save
         Long id = snsPostRepository.save(snsPost).getId();
         //게시글 저장후 해시태그 저장 메서드 호출
         snsHashTagMapService.createHashTag(snsPost, snsPostRequestDto.getHashTags());
@@ -59,6 +58,7 @@ public class SnsPostService {
     /**
      * sns 게시글 단건 조회
      * 조회용이지만 조회수증가를 위해 readonly 제거
+     * 테스트 해본 결과 조인이 너무 많은 땐, 여러개 쿼리가 더 빨랐음
      * @param : Long snsPostId(게시글 번호)
      */
     @Transactional
@@ -84,21 +84,20 @@ public class SnsPostService {
 
         return snsPostResponseDto;
     }
+
     /**
      * sns 게시글 조건에 따라 검섹(querydsl 동적 쿼리 사용)
      * 사용자는 Optional(해시태그(완전일치), 글 본문 내용(포함), 글 제목(포힘), 닉네임(완전 일치))으로 검색 가능
      * @param : Map<String, String> searchCondition(검색 조건)
      */
     public List<SnsPostResponseDto> getSnsPostListByCondition(Map<String, String> searchCondition) {
-        List<SnsPost> snsPostList = snsPostRepository.search(searchCondition);
-        return getCollect(snsPostList);
+        return snsPostRepository.search(searchCondition);
 
     }
 
     /**
      * sns 게시글 수정
      * 게시글 수정은  내용, 해시태그 가능(게시글 내용은 직접 update 쿼리 대신 변경 감지로)
-     *
      * @param : SnsPostRequestDto snsPostRequestDto
      */
     @Transactional
@@ -126,24 +125,8 @@ public class SnsPostService {
         List<SnsPost> snsPostList = snsPostRepository.findAllByOrderByCreatedAtDesc();
         return getCollect(snsPostList);
     }
-
-    /**
-     * 해시태그 기준으로 sns 게시글 조회
-     * 해시태그 없을 경우 예외 처리
-     *
-     * @param : String hashTagName(해시 태그 이름)
-     */
-    public List<SnsPostResponseDto> findAllByHashTag(String hashTagName) {
-        List<SnsPostResponseDto> snsPosts = snsPostRepository.findAllByHashTag(hashTagName);
-        if (snsPosts.isEmpty()) {
-            throw new CustomException(ErrorCode.HASH_TAG_NOT_FOUND);
-        }
-        return snsPosts;
-    }
-
     /**
      * sns 게시글 삭제
-     *
      * @param : Long snsPostId(게시글 번호)
      */
     @Transactional
@@ -154,7 +137,24 @@ public class SnsPostService {
         snsHashTagMapService.deleteSnsHashTagMap(snsPostId);
         snsPostRepository.deleteById(snsPostId);
     }
-
+    /**
+     * 이주의 인기 게시글 조회 메서드
+     * 10개의 게시글 정렬
+     * Option: 조회수기준이고 조회수가 같을 시 좋아요순으로 정렬
+     */
+    @Transactional(readOnly = true)
+    public List<SnsPostResponseDto> findTop10PostsByWeek() {
+        return snsPostRepository.findTopPostsByWeek();
+    }
+    /**
+     * 이달의 인기 게시글 조회 메서드
+     * 20개의 게시글 정렬
+     * Option: 조회수기준이고 조회수가 같을 시 좋아요순으로 정렬
+     */
+    @Transactional(readOnly = true)
+    public List<SnsPostResponseDto> findTop20PostsByMonth() {
+        return snsPostRepository.findTopPostsByMonth();
+    }
     /**
      * 닉네임으로 sns 게시글 조회
      * 프로필에서 자기가 게시한 모든 게시글 확인
@@ -211,6 +211,7 @@ public class SnsPostService {
 
         snsPostRepository.save(snsPost);
     }
+
     private List<SnsPostResponseDto> getCollect(List<SnsPost> snsPostList) {
         return snsPostList.stream().map(snsPost -> {
             String key = "sns_likes:" + snsPost.getId();

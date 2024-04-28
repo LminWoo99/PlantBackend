@@ -1,4 +1,4 @@
-package com.example.plantsnsservice.common.handler;
+package com.example.plantpayservice.exception.handler;
 public record ApiResponse(
         ApiStatus status,
         String message,

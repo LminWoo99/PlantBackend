@@ -1,9 +1,7 @@
-package com.example.plantsnsservice.common.handler;
+package com.example.plantchatservice.common.exception.handler;
 
-
-
-import com.example.plantsnsservice.common.exception.CustomException;
-import com.example.plantsnsservice.common.exception.ErrorCode;
+import com.example.plantchatservice.common.exception.CustomException;
+import com.example.plantchatservice.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +22,6 @@ public class ExceptionResponseHandler {
         return ResponseEntity.internalServerError().body(ApiResponse.error(e.getMessage(), "002"));
     }
 
-
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResponse> handleCustomException(CustomException e) {
         ErrorCode errorCode = e.getErrorCode();
@@ -34,7 +31,7 @@ public class ExceptionResponseHandler {
 
         return ResponseEntity
                 .status(status)
-                .body(ApiResponse.error(detail,errorCodeName));
+                .body(ApiResponse.error(detail, errorCodeName));
 
     }
 }

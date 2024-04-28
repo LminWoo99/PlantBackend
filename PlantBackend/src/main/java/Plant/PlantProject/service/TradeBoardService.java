@@ -2,16 +2,14 @@ package Plant.PlantProject.service;
 
 import Plant.PlantProject.Entity.Status;
 import Plant.PlantProject.Entity.TradeBoard;
-import Plant.PlantProject.exception.TradeBoardNotFoundException;
-import Plant.PlantProject.exception.UserNotFoundException;
 import Plant.PlantProject.dto.TradeBoardDto;
 import Plant.PlantProject.dto.vo.TradeBoardRequestDto;
 import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.exception.ErrorCode;
 import Plant.PlantProject.messagequeue.KafkaProducer;
 import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,7 +42,7 @@ public class TradeBoardService {
     @Transactional
     public ResponseTradeBoardDto saveTradePost(TradeBoardRequestDto tradeBoardDto){
         TradeBoard tradeBoard=tradeBoardRepository.save(
-                TradeBoard.createTradeBoard(memberRepository.findById(tradeBoardDto.getMemberId()).orElseThrow(UserNotFoundException::new),
+                TradeBoard.createTradeBoard(memberRepository.findById(tradeBoardDto.getMemberId()).orElseThrow(ErrorCode::throwMemberNotFound),
                         tradeBoardDto.getTitle(),
                         tradeBoardDto.getContent(),
                         tradeBoardDto.getCreateBy(),
@@ -80,7 +78,7 @@ public class TradeBoardService {
             return updatedTradeBoardDto;
         } else {
             // 해당 id에 해당하는 게시글이 없는 경우 처리
-            throw new EntityNotFoundException("TradeBoard not found with id: " + tradeBoardDto.getId());
+            throw ErrorCode.throwTradeBoardNotFound();
         }
     }
     @Transactional
@@ -102,7 +100,7 @@ public class TradeBoardService {
             return updatedTradeBoardDto;
         } else {
             // 해당 id에 해당하는 게시글이 없는 경우 처리
-            throw new EntityNotFoundException("TradeBoard not found with id: " + id);
+            throw ErrorCode.throwTradeBoardNotFound();
         }
     }
     @Transactional
@@ -139,13 +137,13 @@ public class TradeBoardService {
                 tradeBoard.getContent(),tradeBoard.getStatus(), tradeBoard.getCreatedAt(),tradeBoard.getUpdatedAt(), tradeBoard.getView())).get();
     }
     public ResponseTradeBoardDto findByIdx(Long id){
-        TradeBoard tradeBoard = tradeBoardRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        TradeBoard tradeBoard = tradeBoardRepository.findById(id).orElseThrow(ErrorCode::throwMemberNotFound);
         ResponseTradeBoardDto responseTradeBoardDto = ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
         return responseTradeBoardDto;
     }
     public synchronized void increaseGoodCount(Long tradeBoardId) {
         TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId)
-                .orElseThrow(() -> new TradeBoardNotFoundException("TradeBoard not found"));
+                .orElseThrow(ErrorCode::throwTradeBoardNotFound);
 
         tradeBoard.increaseGoodsCount(); // TradeBoard 엔티티의 메서드를 호출하여 찜 개수 증가
         tradeBoardRepository.save(tradeBoard);
@@ -153,7 +151,7 @@ public class TradeBoardService {
     @Transactional
     public synchronized void decreaseGoodCount(Long tradeBoardId) {
         TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId)
-                .orElseThrow(() -> new TradeBoardNotFoundException("TradeBoard not found"));
+                .orElseThrow(ErrorCode::throwTradeBoardNotFound);
 
         tradeBoard.decreaseGoodsCount(); // TradeBoard 엔티티의 메서드를 호출하여 찜 개수 증가
         tradeBoardRepository.save(tradeBoard);

@@ -2,7 +2,6 @@ package com.example.plantsnsservice.controller;
 
 import com.example.plantsnsservice.service.SnsPostService;
 import com.example.plantsnsservice.service.SnsPostServiceFacade;
-import com.example.plantsnsservice.vo.request.ImageRequestDto;
 import com.example.plantsnsservice.vo.request.SnsPostRequestDto;
 import com.example.plantsnsservice.vo.response.SnsPostResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,23 +20,32 @@ import java.util.Map;
 public class SnsPostController {
     private final SnsPostService snsPostService;
     private final SnsPostServiceFacade snsPostServiceFacade;
+
     @PostMapping("/snsPosts")
     @Operation(summary = "SNS 게시글 작성", description = "게시글 작성할 수 있는 API")
-    public ResponseEntity<Long> createSnsPost(@RequestPart SnsPostRequestDto snsPostRequestDto, @RequestPart ("file")List<MultipartFile> files) throws IOException {
+    public ResponseEntity<Long> createSnsPost(@RequestPart SnsPostRequestDto snsPostRequestDto, @RequestPart("file") List<MultipartFile> files) throws IOException {
         return ResponseEntity.ok().body(snsPostService.createPost(snsPostRequestDto, files));
     }
+
     @GetMapping("/snsPosts")
     @Operation(summary = "SNS 게시글 전체 조회", description = "전체 게시글 조회할 수 있는 API")
     public ResponseEntity<List<SnsPostResponseDto>> getSnsPostList() {
         List<SnsPostResponseDto> snsPostList = snsPostService.getSnsPostList();
         return ResponseEntity.ok().body(snsPostList);
     }
+
     @GetMapping("/snsPost/{snsPostId}")
     @Operation(summary = "SNS 게시글 단건 조회", description = "하나의 게시글 조회할 수 있는 API")
     public ResponseEntity<SnsPostResponseDto> getSnsPost(@PathVariable Long snsPostId) {
         SnsPostResponseDto snsPostResponseDto = snsPostService.findById(snsPostId);
         return ResponseEntity.ok().body(snsPostResponseDto);
     }
+//    @GetMapping("/snsPost2/{snsPostId}")
+//    @Operation(summary = "SNS 게시글 단건 조회", description = "하나의 게시글 조회할 수 있는 API")
+//    public ResponseEntity<SnsPostResponseDto> getSnsPost2(@PathVariable Long snsPostId) {
+//        SnsPostResponseDto snsPostResponseDto = snsPostService.findById2(snsPostId);
+//        return ResponseEntity.ok().body(snsPostResponseDto);
+//    }
 
     @GetMapping("snsPosts/search")
     @Operation(summary = "SNS 게시글 동적 검색", description = "해시태그, 글 본문, 글 제목, 닉네임을 이용한 검색 가능한 API")
@@ -52,13 +60,14 @@ public class SnsPostController {
         List<SnsPostResponseDto> snsPostByCreated = snsPostService.getSnsPostByCreated(createdBy);
         return ResponseEntity.ok().body(snsPostByCreated);
     }
-    @GetMapping("/snsPosts/{hashTagName}")
-    @Operation(summary = "SNS 게시글 해시 태그 기준으로 조회", description = "해시 태그 기준으로 게시글 조회할 수 있는 API")
-    public ResponseEntity<List<SnsPostResponseDto>> getSnsPostsByHashTag(@PathVariable String hashTagName) {
-        List<SnsPostResponseDto> snsPostResponseDtoList = snsPostService.findAllByHashTag(hashTagName);
-        return ResponseEntity.ok().body(snsPostResponseDtoList);
 
-    }
+    //    @GetMapping("/snsPosts/{hashTagName}")
+//    @Operation(summary = "SNS 게시글 해시 태그 기준으로 조회", description = "해시 태그 기준으로 게시글 조회할 수 있는 API")
+//    public ResponseEntity<List<SnsPostResponseDto>> getSnsPostsByHashTag(@PathVariable String hashTagName) {
+//        List<SnsPostResponseDto> snsPostResponseDtoList = snsHashTagMapService.findHashTagListBySnsPost(hashTagName);
+//        return ResponseEntity.ok().body(snsPostResponseDtoList);
+//
+//    }
     @PatchMapping("/snsPost")
     @Operation(summary = "SNS 게시글 수정", description = "SNS 게시글 수정할 수 있는 API")
     public ResponseEntity<HttpStatus> updateSnsPost(@RequestBody SnsPostRequestDto snsPostRequestDto) {
@@ -80,5 +89,18 @@ public class SnsPostController {
         snsPostServiceFacade.updateSnsLikesCountLock(id, memberNo);
 
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/snsPost/week/top-ten")
+    @Operation(summary = "이주의 인기 게시글 조회", description = "조회수 기준으로 1주일 사이 인기 게시글 조회")
+    public ResponseEntity<List<SnsPostResponseDto>> findTop10PostsByWeek() {
+        List<SnsPostResponseDto> top10PostsByWeek = snsPostService.findTop10PostsByWeek();
+        return ResponseEntity.ok().body(top10PostsByWeek);
+    }
+    @GetMapping("/snsPost/month/top-twenty")
+    @Operation(summary = "이달의 인기 게시글 조회", description = "조회수 기준으로 1달 사이 인기 게시글 조회")
+    public ResponseEntity<List<SnsPostResponseDto>> findTop20PostsByMonth() {
+        List<SnsPostResponseDto> top20PostsByMonth = snsPostService.findTop20PostsByMonth();
+        return ResponseEntity.ok().body(top20PostsByMonth);
     }
 }

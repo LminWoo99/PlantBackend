@@ -23,7 +23,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
                 break;
             case 404:
                 if (methodKey.contains("useCoupon")) {
-                    return ErrorCode.couponNotFound();
+                    throw ErrorCode.couponNotFound();
                 }
 
                 break;

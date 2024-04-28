@@ -1,17 +1,14 @@
 package Plant.PlantProject.security;
 
 import Plant.PlantProject.Entity.Member;
-import Plant.PlantProject.exception.MemberNotFoundException;
+import Plant.PlantProject.exception.ErrorCode;
 import Plant.PlantProject.repository.MemberRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -31,7 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Component;
 
 @Slf4j
 @AllArgsConstructor
@@ -112,7 +108,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(algorithm);
 
         Map<String, Object> tokens = new HashMap<>();
-        Member byUsername = memberRepository.findByUsername(username).orElseThrow(MemberNotFoundException::new);
+        Member byUsername = memberRepository.findByUsername(username).orElseThrow(ErrorCode::throwMemberNotFound);
         byUsername.setRefreshToken(refreshToken);
         memberRepository.save(byUsername);
 

@@ -40,7 +40,6 @@ public class StompHandler implements ChannelInterceptor {
     }
 
     private void handleMessage(StompCommand stompCommand, StompHeaderAccessor accessor, String username) {
-        log.info(stompCommand.toString());
         switch (stompCommand) {
 
             case CONNECT:

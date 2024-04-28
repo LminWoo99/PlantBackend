@@ -3,8 +3,7 @@ package Plant.PlantProject.service;
 import Plant.PlantProject.Entity.Goods;
 import Plant.PlantProject.dto.GoodsDto;
 import Plant.PlantProject.dto.vo.GoodsRequestDto;
-import Plant.PlantProject.exception.TradeBoardNotFoundException;
-import Plant.PlantProject.exception.UserNotFoundException;
+import Plant.PlantProject.exception.ErrorCode;
 import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
@@ -44,9 +43,9 @@ public class GoodsService {
             Goods goods = goodsRepository.save(
                     Goods.createGoods(
                             memberRepository.findById(goodsDto.getMemberId())
-                                    .orElseThrow(UserNotFoundException::new),
+                                    .orElseThrow(ErrorCode::throwMemberNotFound),
                             tradeBoardRepository.findById(goodsDto.getTradeBoardId())
-                                    .orElseThrow(TradeBoardNotFoundException::new)
+                                    .orElseThrow(ErrorCode::throwTradeBoardNotFound)
                     ));
             tradeBoardService.increaseGoodCount(goodsDto.getTradeBoardId());
             return convertGoodsToDto(goods);

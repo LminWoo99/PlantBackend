@@ -1,5 +1,6 @@
 package com.example.plantsnsservice.service.image;
 
+import com.example.plantsnsservice.common.exception.ErrorCode;
 import com.example.plantsnsservice.domain.FileUtils;
 import com.example.plantsnsservice.domain.entity.Image;
 import com.example.plantsnsservice.domain.entity.SnsPost;
@@ -31,8 +32,10 @@ public class ImageService {
     public List<Image> saveImages(List<MultipartFile> files, SnsPost snsPost) throws IOException {
         List<Image> images = new ArrayList<>();
 
-
         for (MultipartFile file : files) {
+            if (file.getSize() > 1048576) {
+                throw ErrorCode.throwMaxFileSizeExceeded();
+            }
             Image image = uploadImage(file, snsPost);
             //양방향 연관관계 메서드 사용
             snsPost.addImageList(image);
@@ -53,9 +56,5 @@ public class ImageService {
                 .url(filepath)
                 .snsPost(snsPost)
                 .build();
-    }
-    @Transactional(readOnly = true)
-    public List<Image> findImagesBySnsPost(Long snsPostId) {
-        return imageRepository.findImageBySnsPostId(snsPostId);
     }
 }

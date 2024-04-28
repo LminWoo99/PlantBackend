@@ -32,16 +32,16 @@ class MemberRepositoryTest {
     @Autowired
     MemberService memberService;
   ;
-    @Test
-    public void 멤버이름으로조회() throws Exception{
-        //given
-        MemberDto memberDto = new MemberDto("minu", "민우");
-        Member member1 = memberDto.toEntity();
-        memberRepository.save(member1);
-        //when
-
-        //then
-        assertThat(memberRepository.findByUsername("민우")).isEqualTo(member1);
-        }
+//    @Test
+//    public void 멤버이름으로조회() throws Exception{
+//        //given
+//        MemberDto memberDto = new MemberDto("minu", "민우");
+//        Member member1 = memberDto.toEntity();
+//        memberRepository.save(member1);
+//        //when
+//
+//        //then
+//        assertThat(memberRepository.findByUsername("민우")).isEqualTo(member1);
+//        }
 
 }

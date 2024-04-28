@@ -26,7 +26,7 @@ public class SnsHashTagMap {
     @JoinColumn(name = "sns_post_id")
     private SnsPost snsPost;
 
-    @ManyToOne(fetch = FetchType.LAZY )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hash_tag_id")
     private HashTag hashTag;
     @Builder

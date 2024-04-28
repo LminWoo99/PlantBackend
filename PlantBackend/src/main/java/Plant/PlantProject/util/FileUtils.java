@@ -1,6 +1,6 @@
 package Plant.PlantProject.util;
 
-import Plant.PlantProject.exception.UnSupportedFileTypeException;
+import Plant.PlantProject.exception.ErrorCode;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +20,7 @@ public class FileUtils {
         String extension = StringUtils.getFilenameExtension(Objects.requireNonNull(file.getOriginalFilename()));
 
         if(!isValidFileType(extension)) {
-            throw new UnSupportedFileTypeException(extension + "은 지원하는 파일 형식이 아닙니다.");
+            throw ErrorCode.throwUnSupportedFile();
         }
         return  BASE_DIRECTORY + "/" + filename + "." + extension;
     }

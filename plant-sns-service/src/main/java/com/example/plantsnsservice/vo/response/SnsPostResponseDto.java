@@ -29,6 +29,18 @@ public class SnsPostResponseDto {
 
     private boolean snsLikesStatus;
 
+    public SnsPostResponseDto(Long id, String snsPostTitle, String snsPostContent, String createdBy, LocalDateTime createdAt, Integer snsLikesCount, Integer snsViewsCount, List<String> hashTags, List<String> imageUrls) {
+        this.id = id;
+        this.snsPostTitle = snsPostTitle;
+        this.snsPostContent = snsPostContent;
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
+        this.snsLikesCount = snsLikesCount;
+        this.snsViewsCount = snsViewsCount;
+        this.hashTags = hashTags;
+        this.imageUrls = imageUrls;
+    }
+
     public void imageUrls(SnsPost snsPost) {
         this.imageUrls = snsPost.getImageList().stream()
                 .map(image -> image.getUrl())

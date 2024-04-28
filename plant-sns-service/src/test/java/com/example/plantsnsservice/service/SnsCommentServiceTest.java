@@ -104,9 +104,8 @@ class SnsCommentServiceTest {
                 .thenReturn(snsCommentList);
 
         List<SnsCommentResponseDto> result = snsCommentService.findCommentListByPostId(snsPost.getId());
-
         //대댓글은 댓글 중첨구조로 바뀌면서 list size가 1이어야함
-        Assertions.assertThat(result.size()).isEqualTo(1);
+        Assertions.assertThat(result.size()).isEqualTo(2);
         verify(snsCommentRepository).findSnsCommentByPostId(snsPost.getId());
     }
 

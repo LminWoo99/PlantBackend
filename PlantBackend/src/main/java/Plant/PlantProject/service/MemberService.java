@@ -6,13 +6,12 @@ import Plant.PlantProject.Entity.SocialLogin;
 import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
-import Plant.PlantProject.exception.MemberNotFoundException;
+import Plant.PlantProject.exception.ErrorCode;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.RoleRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.security.SecurityUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -49,7 +48,6 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
             MemberDto memberDto = MemberDto.builder()
                     .id(member.getId())
                     .nickname(member.getNickname())
-                    .userId(member.getUserId())
                     .username(member.getUsername())
                     .password(member.getPassword())
                     .email(member.getEmail())
@@ -71,7 +69,7 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         System.out.println("userName = " + userName);
-        Member user = memberRepository.findByUsername(userName).orElseThrow(MemberNotFoundException::new);
+        Member user = memberRepository.findByUsername(userName).orElseThrow(ErrorCode::throwMemberNotFound);
         if(user == null) {
             log.error("User not found in the database {}", userName);
             throw new UsernameNotFoundException("User not found in the database");
@@ -88,32 +86,39 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
 
 
     public Member getUserById(Long id) {
-        return memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
+        return memberRepository.findById(id).orElseThrow(ErrorCode::throwMemberNotFound);
     }
 
-    public HttpStatus duplicateMember(String username){
-
+    public HttpStatus duplicateMemberUsername(String username){
         Optional<Member> member = memberRepository.findByUsername(username);
         if(member.isEmpty()){
             return HttpStatus.OK;
         }
         else{
-            return HttpStatus.BAD_REQUEST;
+            throw ErrorCode.throwUserDuplicatedId();
         }
 
     }
     public HttpStatus duplicateMemberNickname(String nickname){
-
         Member member = memberRepository.findByNickname(nickname);
         if(member == null){
             return HttpStatus.OK;
         }
         else{
-            return HttpStatus.BAD_REQUEST;
+            throw ErrorCode.throwUserDuplicatedNickname();
         }
 
     }
+    public HttpStatus duplicateMemberEmail(String email){
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if(member.isEmpty()){
+            return HttpStatus.OK;
+        }
+        else{
+            throw ErrorCode.throwUserDuplicatedEmail();
+        }
 
+    }
 
     public Role saveRole(Role role) {
         log.info("Saving new role {} to the db", role.getName());
@@ -122,7 +127,7 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
 
     public void grantRoleToUser(String username, String roleName) {
         log.info("Grant new role {} to {}", roleName, username);
-        Member member = memberRepository.findByUsername(username).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByUsername(username).orElseThrow(ErrorCode::throwMemberNotFound);
         Role role = roleRepository.findByName(roleName);
 
         member.getRole().add(role);
@@ -134,7 +139,7 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
                 .collect(Collectors.toList());
         return responseTradeBoardDtos;
     }public List<ResponseTradeBoardDto> showBuyInfo(Long id){
-        Member member=memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
+        Member member=memberRepository.findById(id).orElseThrow(ErrorCode::throwMemberNotFound);
         List<TradeBoard> tradeBoards = tradeBoardRepository.findTradeBoardByBuyer(member.getNickname());
         List<ResponseTradeBoardDto> responseTradeBoardDtos = tradeBoards.stream()
                 .map(tradeBoard -> convertTradeBoardToDto(tradeBoard))
@@ -143,20 +148,20 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
     }
     public MemberDto findIdByEmail(String email){
         MemberDto memberDto = memberRepository.findByEmail(email).map(member -> new MemberDto(member.getId(), member.getNickname(),
-                member.getUserId(), member.getUsername(), member.getPassword(), member.getEmail()
-        )).orElseThrow(MemberNotFoundException::new);
+                 member.getUsername(), member.getPassword(), member.getEmail()
+        )).orElseThrow(ErrorCode::throwUnRegisteredEmail);
         return memberDto;
 
     }
-    public MemberDto findPasswordById(String username){
+    public MemberDto findPasswordByUsername(String username){
         MemberDto memberDto = memberRepository.findByUsername(username).map(member -> new MemberDto(member.getId(), member.getNickname(),
-                member.getUserId(), member.getUsername(), member.getPassword(), member.getEmail()
-        )).orElseThrow(MemberNotFoundException::new);
+                member.getUsername(), member.getPassword(), member.getEmail()
+        )).orElseThrow(ErrorCode::throwUnRegisteredId);
         return memberDto;
 
     }
     public Member find(MemberDto memberDto){
-        Member member = memberRepository.findById(memberDto.getId()).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findById(memberDto.getId()).orElseThrow(ErrorCode::throwMemberNotFound);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         memberRepository.updatePassword(member.getId(), member.getPassword());
@@ -165,20 +170,20 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
     }
 
     public Member findByRefreshToken(String username) {
-        Member member = memberRepository.findByUsername(username).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByUsername(username).orElseThrow(ErrorCode::throwMemberNotFound);
 
         return member;
     }
     public MemberDto findById(Long id) {
         MemberDto memberDto = memberRepository.findById(id).map(member -> new MemberDto(member.getId(), member.getNickname(),
-                member.getUserId(), member.getUsername(), member.getPassword(), member.getEmail()
-        )).orElseThrow(MemberNotFoundException::new);
+                member.getUsername(), member.getPassword(), member.getEmail()
+        )).orElseThrow(ErrorCode::throwMemberNotFound);
         return memberDto;
     }
     public MemberDto findByUsername(String username) {
         MemberDto memberDto = memberRepository.findByUsername(username).map(member -> new MemberDto(member.getId(), member.getNickname(),
-                member.getUserId(), member.getUsername(), member.getPassword(), member.getEmail()
-        )).orElseThrow(MemberNotFoundException::new);
+                member.getUsername(), member.getPassword(), member.getEmail()
+        )).orElseThrow(ErrorCode::throwUnRegisteredId);
         return memberDto;
     }
 

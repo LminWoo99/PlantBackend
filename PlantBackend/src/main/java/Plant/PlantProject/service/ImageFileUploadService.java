@@ -3,6 +3,7 @@ package Plant.PlantProject.service;
 import Plant.PlantProject.Entity.Image;
 import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.exception.ErrorCode;
 import Plant.PlantProject.repository.ImageRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import Plant.PlantProject.util.FileUtils;
@@ -37,6 +38,9 @@ public class ImageFileUploadService {
     private List<Image> saveImages(List<MultipartFile> files, TradeBoard tradeBoard) throws IOException {
         List<Image> images = new ArrayList<>();
         for (MultipartFile file : files) {
+            if (file.getSize() > 1048576) {
+                throw ErrorCode.throwMaxFileSizeExceeded();
+            }
             images.add(uploadImage(file, tradeBoard));
         }
         imageRepository.saveAll(images);

@@ -3,7 +3,7 @@ package Plant.PlantProject.service;
 
 import Plant.PlantProject.Entity.Plant;
 import Plant.PlantProject.dto.PlantDto;
-import Plant.PlantProject.exception.PlantNotFoundException;
+import Plant.PlantProject.exception.ErrorCode;
 import Plant.PlantProject.repository.PlantRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +42,7 @@ public class PlantService {
     }
 
     public PlantDto plantDetail(Long id) {
-        Plant plant = plantRepository.findById(id).orElseThrow(PlantNotFoundException::new);
+        Plant plant = plantRepository.findById(id).orElseThrow(ErrorCode::throwPlantNotFound);
         return PlantDto.convertPlantToDto(plant);
 
     }

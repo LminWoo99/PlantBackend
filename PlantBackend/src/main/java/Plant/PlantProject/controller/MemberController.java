@@ -17,13 +17,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 
-import org.apache.catalina.security.SecurityUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -146,9 +141,9 @@ public class MemberController {
     }
 
     @GetMapping("/duplicate")
-    @Operation(summary = "회원 가입시 중복 검사", description = "회원 가입시 유저 이름을 기준을 가입한 이름이 있는지 확인할 수 있는 API")
+    @Operation(summary = "회원 가입시 중복 검사", description = "회원 가입시 유저 아이디를 기준을 가입한 이름이 있는지 확인할 수 있는 API")
     public ResponseEntity<?> duplicateMember(@RequestParam String username){
-        HttpStatus httpStatus = memberService.duplicateMember(username);
+        HttpStatus httpStatus = memberService.duplicateMemberUsername(username);
 
         return new ResponseEntity<>(httpStatus);
     }
@@ -159,6 +154,13 @@ public class MemberController {
 
         return new ResponseEntity<>(httpStatus);
     }
+    @GetMapping("/duplicate/email")
+    @Operation(summary = "회원 가입시 중복 검사", description = "회원 가입시 이메일 이름을 기준을 중복검사를 할 수 있는 API")
+    public ResponseEntity<?> duplicateMemberEmail(@RequestParam String email){
+        HttpStatus httpStatus = memberService.duplicateMemberEmail(email);
+
+        return new ResponseEntity<>(httpStatus);
+    }
     @GetMapping("findEmail")
     @Operation(summary = "아이디 찾기", description = "아이디 분실시 email 기준으로 아이디 찾기 할 수 있는 API")
     public ResponseEntity<MemberDto> findIdByEmail(@RequestParam String email){
@@ -166,9 +168,9 @@ public class MemberController {
         return ResponseEntity.ok().body(memberDto);
     }
     @GetMapping("findPassword")
-    @Operation(summary = "비밀번호 찾기", description = "유저 패스워드 분실시 id 기준으로 비밀번호 찾기 할 수 있는 API")
-    public ResponseEntity<MemberDto> findPasswordById(@RequestParam String userId){
-        MemberDto passwordById = memberService.findPasswordById(userId);
+    @Operation(summary = "비밀번호 찾기", description = "유저 패스워드 분실시 아이디 기준으로 비밀번호 찾기 할 수 있는 API")
+    public ResponseEntity<MemberDto> findPasswordById(@RequestParam String username){
+        MemberDto passwordById = memberService.findPasswordByUsername(username);
         return ResponseEntity.ok().body(passwordById);
     }
     @PostMapping("findPassword")
@@ -178,13 +180,13 @@ public class MemberController {
     }
 
     @GetMapping("/findUsername")
-    @Operation(summary = "회원 찾기- 회원 이름 기준", description = "회원 이름 기준 회원 찾기 할 수 있는 API")
+    @Operation(summary = "회원 찾기- 회원 이름 기준", description = "회원 아이디 기준 회원 찾기 할 수 있는 API")
     public ResponseEntity<MemberDto> findByUsername(@RequestParam String username) {
         MemberDto memberDto = memberService.findByUsername(username);
         return ResponseEntity.ok().body(memberDto);
     }
     @GetMapping("/findId")
-    @Operation(summary = "회원 찾기- 회원 id 기준", description = "회원 id 기준 회원 찾기 할 수 있는 API")
+    @Operation(summary = "회원 찾기- 회원 id 기준", description = "회원 기본키 기준 회원 찾기 할 수 있는 API")
     public ResponseEntity<MemberDto> findById(@RequestParam Long id) {
         MemberDto memberDto = memberService.findById(id);
         return ResponseEntity.ok().body(memberDto);

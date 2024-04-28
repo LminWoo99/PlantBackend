@@ -25,10 +25,10 @@ public class FeignErrorDecoder implements ErrorDecoder {
                 break;
             case 404:
                 if (methodKey.contains("findBy")) {
-                    return ErrorCode.throwMemberNotFound();
+                    throw ErrorCode.throwMemberNotFound();
                 }
                 if (methodKey.contains("boardContent")) {
-                    return ErrorCode.throwTradeBoardNotFound();
+                    throw ErrorCode.throwTradeBoardNotFound();
                 }
                 break;
             default:

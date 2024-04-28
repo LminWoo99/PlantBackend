@@ -1,6 +1,5 @@
 package com.example.plantcouponservice.service;
 
-import com.example.plantcouponservice.common.exception.CouponNotFoundException;
 import com.example.plantcouponservice.common.producer.CouponCreateProducer;
 import com.example.plantcouponservice.domain.Coupon;
 import com.example.plantcouponservice.domain.CouponStatusEnum;
@@ -65,10 +64,6 @@ public class CouponService {
         LocalDateTime thirtyOneDaysBefore = now.minusDays(31); // 31일 전
 
         List<Coupon> couponList = couponRepository.findByRegDateBetween(memberNo, thirtyOneDaysBefore, now, CouponStatusEnum.사용가능);
-        if (couponList.isEmpty()) {
-            log.info("쿠폰이 존재하지 않습니다");
-            throw new CouponNotFoundException("쿠폰이 존재하지 않습니다");
-        }
         return couponList.stream().map(coupon -> CouponResponseDto.builder()
                 .couponNo(coupon.getCouponNo())
                 .memberNo(memberNo)

@@ -9,8 +9,12 @@ import java.util.Map;
 public interface CustomSnsPostRepository {
     List<SnsPostResponseDto> findAllByHashTag(String hashTagName);
 
-
     List<SnsPost> findAllByCreatedBy(String createdBy);
 
-    List<SnsPost> search(final Map<String, String> searchCondition);
+    List<SnsPostResponseDto> search(final Map<String, String> searchCondition);
+
+
+    public List<SnsPostResponseDto> findTopPostsByWeek();
+
+    List<SnsPostResponseDto> findTopPostsByMonth();
 }

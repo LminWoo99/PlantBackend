@@ -1,11 +1,10 @@
 package Plant.PlantProject.controller;
 
 import Plant.PlantProject.Entity.Goods;
-import Plant.PlantProject.Entity.TradeBoard;
 import Plant.PlantProject.dto.GoodsDto;
 import Plant.PlantProject.dto.vo.GoodsRequestDto;
 import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
-import Plant.PlantProject.exception.GoodsNotFoundException;
+import Plant.PlantProject.exception.ErrorCode;
 import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.service.GoodsService;
 import Plant.PlantProject.service.TradeBoardService;
@@ -50,7 +49,7 @@ public class GoodsController {
     @GetMapping("/goods/status")
     @Operation(summary = "찜 상태 조회", description = "찜 상태 조회 할 수 있는 API")
     public ResponseEntity<GoodsDto> infoGoodsStatus(@RequestParam Long memberId, @RequestParam Long tradeBoardId) {
-        Goods goods = goodsRepository.findByMemberIdAndTradeBoardId(memberId, tradeBoardId).orElseThrow(GoodsNotFoundException::new);
+        Goods goods = goodsRepository.findByMemberIdAndTradeBoardId(memberId, tradeBoardId).orElseThrow(ErrorCode::throwGoodsNotFound);
         GoodsDto goodsDto = GoodsDto.convertGoodsToDto(goods);
         return ResponseEntity.ok().body(goodsDto);
     }

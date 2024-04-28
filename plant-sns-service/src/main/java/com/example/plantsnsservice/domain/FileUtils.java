@@ -1,7 +1,6 @@
 package com.example.plantsnsservice.domain;
 
 
-import com.example.plantsnsservice.common.exception.CustomException;
 import com.example.plantsnsservice.common.exception.ErrorCode;
 import com.example.plantsnsservice.common.properties.FileType;
 import org.springframework.util.StringUtils;
@@ -23,7 +22,7 @@ public class FileUtils {
         String extension = StringUtils.getFilenameExtension(Objects.requireNonNull(file.getOriginalFilename()));
 
         if(!isValidFileType(extension)) {
-            throw new CustomException(ErrorCode.FILE_TYPE_UNSUPPORTED);
+            throw ErrorCode.throwFileTypeUnsupported();
         }
 
         return  BASE_DIRECTORY + "/" + filename + "." + extension;

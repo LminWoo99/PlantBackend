@@ -3,11 +3,9 @@ package Plant.PlantProject.service;
 import Plant.PlantProject.Entity.Comment;
 import Plant.PlantProject.Entity.DeleteStatus;
 import Plant.PlantProject.Entity.TradeBoard;
-import Plant.PlantProject.exception.PlantNotFoundException;
-import Plant.PlantProject.exception.TradeBoardNotFoundException;
-import Plant.PlantProject.exception.UserNotFoundException;
 import Plant.PlantProject.dto.vo.CommentCreateRequestDto;
 import Plant.PlantProject.dto.CommentDto;
+import Plant.PlantProject.exception.ErrorCode;
 import Plant.PlantProject.repository.CommentRepository;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
@@ -44,12 +42,12 @@ public class CommentService {
         System.out.println("requestDto.getTradeBoardId() = " + requestDto.getTradeBoardId());
         Comment comment = commentRepository.save(
                 Comment.createComment(
-                        memberRepository.findById(requestDto.getMemberId()).orElseThrow(UserNotFoundException::new),
+                        memberRepository.findById(requestDto.getMemberId()).orElseThrow(ErrorCode::throwMemberNotFound),
                         requestDto.getContent(),
-                        tradeBoardRepository.findById(requestDto.getTradeBoardId()).orElseThrow(TradeBoardNotFoundException::new)
+                        tradeBoardRepository.findById(requestDto.getTradeBoardId()).orElseThrow(ErrorCode::throwTradeBoardNotFound)
                          ,
                         requestDto.getParentId() != null ?
-                                commentRepository.findById(requestDto.getParentId()).orElseThrow(PlantNotFoundException::new) : null
+                                commentRepository.findById(requestDto.getParentId()).orElseThrow(ErrorCode::throwCommentNotFound) : null
                         ,requestDto.getSecret()
                 )
 

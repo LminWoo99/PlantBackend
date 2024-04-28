@@ -58,7 +58,7 @@ public class PaymentService {
         Payment payment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
         //보유 페이 머니보다 입력한 환불할 금액이 많으면 예외 처리
         if (payment.getPayMoney()- paymentRequestDto.getPayMoney() < 0) {
-            throw new CustomException(ErrorCode.INSUFFICIENT_PAYMONEY);
+            throw ErrorCode.throwInsufficientRefundPayMoney();
         }
         payment.decreasePayMoney(paymentRequestDto.getPayMoney());
         paymentRepository.saveAndFlush(payment);
@@ -102,7 +102,7 @@ public class PaymentService {
         }
         //거레할 금액보다 구매자 보유 payMoney가 적으면 예외 처리
         if (buyerPayment.getPayMoney()< paymentRequestDto.getPayMoney()) {
-            throw new CustomException(ErrorCode.INSUFFICIENT_PAYMONEY);
+            throw ErrorCode.throwInsufficientPayMoney();
         }
         paymentRepository.tradePayMoney(sellerNo, buyerPayment.getMemberNo(), paymentRequestDto, buyerPayMoney);
     }

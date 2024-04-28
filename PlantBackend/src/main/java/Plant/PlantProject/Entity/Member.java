@@ -11,11 +11,10 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Member{
-
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

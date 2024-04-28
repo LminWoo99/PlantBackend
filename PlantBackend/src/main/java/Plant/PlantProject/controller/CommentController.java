@@ -1,8 +1,8 @@
 package Plant.PlantProject.controller;
 
 import Plant.PlantProject.domain.Entity.TradeBoard;
-import Plant.PlantProject.domain.dto.vo.CommentCreateRequestDto;
-import Plant.PlantProject.domain.dto.CommentDto;
+import Plant.PlantProject.domain.vo.request.CommentCreateRequestDto;
+import Plant.PlantProject.domain.vo.response.CommentDto;
 import Plant.PlantProject.service.tradeboard.CommentService;
 import Plant.PlantProject.service.user.MemberService;
 import io.swagger.v3.oas.annotations.Operation;

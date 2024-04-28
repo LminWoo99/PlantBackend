@@ -1,4 +1,4 @@
-package Plant.PlantProject.domain.dto;
+package Plant.PlantProject.domain.vo.response;
 
 import Plant.PlantProject.domain.Entity.Goods;
 import lombok.AllArgsConstructor;
@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GoodsDto {
+public class GoodsResponseDto {
     private Long id;
     private Long memberId;
     private Long tradeBoardId;
 
-    public static GoodsDto convertGoodsToDto(Goods goods) {
+    public static GoodsResponseDto convertGoodsToDto(Goods goods) {
 
-        return new GoodsDto(goods.getId(), goods.getMember().getId(), goods.getTradeBoard().getId());
+        return new GoodsResponseDto(goods.getId(), goods.getMember().getId(), goods.getTradeBoard().getId());
 
     }
 }

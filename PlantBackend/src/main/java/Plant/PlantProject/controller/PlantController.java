@@ -1,6 +1,6 @@
 package Plant.PlantProject.controller;
 
-import Plant.PlantProject.domain.dto.PlantDto;
+import Plant.PlantProject.domain.vo.response.PlantDto;
 import Plant.PlantProject.service.plantinfo.PlantService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

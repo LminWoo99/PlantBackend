@@ -25,7 +25,6 @@ public class JwtTokenUtil {
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
-                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
     }
 
@@ -33,7 +32,6 @@ public class JwtTokenUtil {
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() +  14 * 24 * 60 * 60 * 1000))
-                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
     }
     public String getCurrentMember(String jwt) {
@@ -49,9 +47,7 @@ public class JwtTokenUtil {
             DecodedJWT decodedJWT = verifier.verify(jwt);
             username = decodedJWT.getSubject();
             String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
-//            username = Jwts.parser().setSigningKey(env.getProperty("token.secret"))
-//                    .parseClaimsJws(jwt).getBody()
-//                    .getSubject();
+
         } catch (Exception e) {
             return username;
         }

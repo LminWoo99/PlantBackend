@@ -3,6 +3,7 @@ package Plant.PlantProject.repository;
 import Plant.PlantProject.domain.Entity.Comment;
 
 import Plant.PlantProject.Entity.QComment;
+import Plant.PlantProject.domain.Entity.QComment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static Plant.PlantProject.Entity.QComment.comment;
+import static Plant.PlantProject.domain.Entity.QComment.comment;
 
 @RequiredArgsConstructor
 public class CommentRepositoryImpl implements CustomCommentRepository {
@@ -29,7 +31,7 @@ public class CommentRepositoryImpl implements CustomCommentRepository {
     }
     @Override
     public void updateComment(Comment comment) {
-        queryFactory.update(QComment.comment)
+        queryFactory.update(comment)
                 .where(QComment.comment.id.eq(comment.getId())) // 댓글 ID로 조건 설정
                 .set(QComment.comment.content, comment.getContent()) // 댓글 내용 업데이트
                 .execute();

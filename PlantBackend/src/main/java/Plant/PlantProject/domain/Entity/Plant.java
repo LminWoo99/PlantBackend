@@ -98,23 +98,11 @@ public class Plant {
         this.thumbFile = thumbFile;
     }
 
-    public void setHumidity(String humidity) {
+    public void addInfo(String image, String humidity, String light, String special) {
+        this.image = image;
         this.humidity = humidity;
-    }
-
-    public void setLight(String light) {
         this.light = light;
-    }
-
-    public void setSpecial(String special) {
         this.special = special;
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public void setThumbFile(String thumbFile) {
-        this.thumbFile = thumbFile;
-    }
 }

@@ -1,10 +1,10 @@
 package Plant.PlantProject.service.tradeboard;
 
+import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.domain.Entity.Status;
 import Plant.PlantProject.domain.Entity.TradeBoard;
-import Plant.PlantProject.domain.dto.TradeBoardDto;
-import Plant.PlantProject.domain.dto.vo.TradeBoardRequestDto;
-import Plant.PlantProject.domain.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.domain.vo.request.TradeBoardRequestDto;
+import Plant.PlantProject.domain.vo.response.TradeBoardResponseDto;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.common.messagequeue.KafkaProducer;
 import Plant.PlantProject.repository.GoodsRepository;
@@ -17,10 +17,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static Plant.PlantProject.domain.vo.response.TradeBoardResponseDto.convertTradeBoardToDto;
 
 @Service
-@Transactional
 @Slf4j
 @RequiredArgsConstructor
 public class TradeBoardService {
@@ -28,118 +31,120 @@ public class TradeBoardService {
     private final MemberRepository memberRepository;
     private final GoodsRepository goodsRepository;
     private final KafkaProducer kafkaProducer;
-    // 트랜잭션은 readOnly true 로 설정하면 데이터베이스의 상태를 변경하지 않는 읽기 전용 메서드에서 성능 향상을 기대할 수 있음
-    // 트랜잭션 설정을 하면 롤백 가능, 즉 DB에서 무언가 잘못되었을 경우 이전 상태로 되돌릴 수 있음
-    @Transactional
-    public TradeBoardDto saveTradePost(TradeBoardDto tradeBoardDto){
 
-        TradeBoard savedEntity=tradeBoardRepository.save(tradeBoardDto.toEntity());
-        System.out.println("service 통과");
-        tradeBoardDto.setId(savedEntity.getId());
-        return tradeBoardDto;
-    }
+    /**
+     * 거래게시글 저장
+     * username은 Security에서 Principal을 가져와서 전달
+     * @param : TradeBoardRequestDto tradeBoardRequestDto, String username
+     */
     @Transactional
-    public ResponseTradeBoardDto saveTradePost(TradeBoardRequestDto tradeBoardDto){
+    public Long saveTradePost(TradeBoardRequestDto tradeBoardRequestDto, String username){
+        Member member = memberRepository.findByUsername(username).orElseThrow(ErrorCode::throwMemberNotFound);
+
         TradeBoard tradeBoard=tradeBoardRepository.save(
-                TradeBoard.createTradeBoard(memberRepository.findById(tradeBoardDto.getMemberId()).orElseThrow(ErrorCode::throwMemberNotFound),
-                        tradeBoardDto.getTitle(),
-                        tradeBoardDto.getContent(),
-                        tradeBoardDto.getCreateBy(),
-                        tradeBoardDto.getView(),
-                        tradeBoardDto.getPrice(),
-                        tradeBoardDto.getGoodCount(),
-                        tradeBoardDto.getBuyer()
-                        )
+                TradeBoard.createTradeBoard(member,
+                        tradeBoardRequestDto.getTitle(),
+                        tradeBoardRequestDto.getContent(),
+                        member.getNickname(),
+                        tradeBoardRequestDto.getView(),
+                        tradeBoardRequestDto.getPrice(),
+                        tradeBoardRequestDto.getGoodCount(),
+                        tradeBoardRequestDto.getBuyer()
+                )
         );
 
-        return ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
+        return tradeBoardRepository.save(tradeBoard).getId();
     }
+    /**
+     * 거래게시글 수정
+     * 수정 사항 옵셥 : 제목, 내용, 가격
+     * 쿼리 대신 변경 감지
+     * @param : Long id, TradeBoardRequestDto tradeBoardRequestDto
+     */
     @Transactional
-    public TradeBoardDto updateTradePost(TradeBoardDto tradeBoardDto) {
-        Optional<TradeBoard> optionalTradeBoard = tradeBoardRepository.findById(tradeBoardDto.getId());
+    public Long updateTradePost(Long id, TradeBoardRequestDto tradeBoardRequestDto) {
+        Optional<TradeBoard> optionalTradeBoard = tradeBoardRepository.findById(id);
 
 
         if (optionalTradeBoard.isPresent()) {
             TradeBoard tradeBoard = optionalTradeBoard.get();
-            tradeBoard.setTitle(tradeBoardDto.getTitle());
-            tradeBoard.setContent(tradeBoardDto.getContent());
-            tradeBoard.setStatus(tradeBoardDto.getStatus());
-            tradeBoard.setPrice(tradeBoardDto.getPrice());
-            TradeBoard savedEntity = tradeBoardRepository.save(tradeBoard);
-
-            // 업데이트된 정보를 TradeBoardDto로 변환하여 반환
-            TradeBoardDto updatedTradeBoardDto = new TradeBoardDto();
-            updatedTradeBoardDto.setId(savedEntity.getId());
-            updatedTradeBoardDto.setTitle(savedEntity.getTitle());
-            updatedTradeBoardDto.setContent(savedEntity.getContent());
-            // 이 외에 필요한 필드들도 updatedTradeBoardDto에 추가
-
-            return updatedTradeBoardDto;
+            //변경감지
+            tradeBoard.updatePost(tradeBoardRequestDto.getTitle(), tradeBoardRequestDto.getContent(), tradeBoard.getPrice());
+            return tradeBoard.getId();
         } else {
             // 해당 id에 해당하는 게시글이 없는 경우 처리
             throw ErrorCode.throwTradeBoardNotFound();
         }
     }
+    /**
+     * 거래 완료 상태 변경 메서드
+     * 수정 사항 : Status status
+     * 쿼리 대신 변경 감지
+     * @param : Long id
+     */
     @Transactional
-    public TradeBoardDto updateStatus(Long id) {
+    public Long updateStatus(Long id) {
         Optional<TradeBoard> optionalTradeBoard = tradeBoardRepository.findById(id);
 
         if (optionalTradeBoard.isPresent()) {
             TradeBoard tradeBoard = optionalTradeBoard.get();
-            tradeBoard.setStatus(Status.거래완료);
-            TradeBoard savedEntity = tradeBoardRepository.save(tradeBoard);
+            tradeBoard.updateStatus(Status.거래완료);
 
             // 업데이트된 정보를 TradeBoardDto로 변환하여 반환
-            TradeBoardDto updatedTradeBoardDto = new TradeBoardDto();
-            updatedTradeBoardDto.setId(savedEntity.getId());
-            updatedTradeBoardDto.setTitle(savedEntity.getTitle());
-            updatedTradeBoardDto.setContent(savedEntity.getContent());
-            updatedTradeBoardDto.setStatus(savedEntity.getStatus());
-            // 이 외에 필요한 필드들도 updatedTradeBoardDto에 추가
-            return updatedTradeBoardDto;
+            return tradeBoard.getId();
         } else {
             // 해당 id에 해당하는 게시글이 없는 경우 처리
             throw ErrorCode.throwTradeBoardNotFound();
         }
     }
-    @Transactional
-    public int updateView(Long id) {
-        TradeBoardDto tradeBoardDto = new TradeBoardDto();
-        int view = tradeBoardRepository.updateView(id);
+    /**
+     * 조회수 증가
+     * @param : Long id
+     */
+    public synchronized Integer updateView(Long id) {
+        Integer view = tradeBoardRepository.updateView(id);
         return view;
-
     }
-
+    /**
+     * 거래 완료 상태 변경 메서드
+     * 수정 사항 : Status status
+     * 쿼리 대신 변경 감지
+     * @param : Long id
+     */
     @Transactional
-    public ResponseTradeBoardDto setBuyer(Long id, TradeBoardRequestDto tradeBoardRequestDto) {
+    public TradeBoardResponseDto setBuyer(Long id, TradeBoardRequestDto tradeBoardRequestDto) {
         TradeBoard tradeBoard = tradeBoardRepository.findTradeBoardById(id);
+        // 구매자 업데이트
         tradeBoardRepository.updateBuyer(tradeBoard.getId(), tradeBoardRequestDto.getBuyer());
-        return ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
+
+        return TradeBoardResponseDto.convertTradeBoardToDto(tradeBoard);
 
     }
-    @Transactional
-    public Page<ResponseTradeBoardDto> pageList(String search, Pageable pageable) {
-        Page<TradeBoard> tradeBoards;
+    /**
+     * 모든 거래 게시글 조회
+     * @param : String search, Pageable pageable
+     */
+    @Transactional(readOnly = true)
+    public Page<TradeBoardResponseDto> pageList(String search, Pageable pageable) {
+        Page<TradeBoard> tradeBoards = tradeBoardRepository.findByTitleContainingOrContentContaining(search, search, pageable);
 
-//        if (search != null && !search.trim().isEmpty()) {
-            tradeBoards = tradeBoardRepository.findByTitleContainingOrContentContaining(search, search, pageable);
-//        } else {
-//            tradeBoards = tradeBoardRepository.findAll(pageable);
-//        }
-        return tradeBoards.map(tradeBoard -> ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard));
-//
-//        return tradeBoards.map(tradeBoard -> new TradeBoardDto(tradeBoard.getId(), tradeBoard.getCreateBy(), tradeBoard.getMember(), tradeBoard.getTitle(),
-//                tradeBoard.getContent(), tradeBoard.getStatus(), tradeBoard.getCreatedAt(), tradeBoard.getUpdatedAt(), tradeBoard.getView()));
+        return tradeBoards.map(tradeBoard -> TradeBoardResponseDto.convertTradeBoardToDto(tradeBoard));
     }
-    public TradeBoardDto findById(Long id){
-        return tradeBoardRepository.findById(id).map(tradeBoard -> new TradeBoardDto(tradeBoard.getId(), tradeBoard.getCreateBy(),tradeBoard.getMember(),tradeBoard.getTitle(),
-                tradeBoard.getContent(),tradeBoard.getStatus(), tradeBoard.getCreatedAt(),tradeBoard.getUpdatedAt(), tradeBoard.getView())).get();
+    /**
+     * 단건 거래 게시글 조회
+     * @param : Long id
+     */
+    @Transactional(readOnly = true)
+    public TradeBoardResponseDto findById(Long id){
+        TradeBoard tradeBoard = tradeBoardRepository.findById(id).orElseThrow(ErrorCode::throwTradeBoardNotFound);
+
+        return TradeBoardResponseDto.convertTradeBoardToDto(tradeBoard);
+
     }
-    public ResponseTradeBoardDto findByIdx(Long id){
-        TradeBoard tradeBoard = tradeBoardRepository.findById(id).orElseThrow(ErrorCode::throwMemberNotFound);
-        ResponseTradeBoardDto responseTradeBoardDto = ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
-        return responseTradeBoardDto;
-    }
+    /**
+     * 찜 갯수 증가
+     * @param : Long tradeBoardId
+     */
     public synchronized void increaseGoodCount(Long tradeBoardId) {
         TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId)
                 .orElseThrow(ErrorCode::throwTradeBoardNotFound);
@@ -147,7 +152,10 @@ public class TradeBoardService {
         tradeBoard.increaseGoodsCount(); // TradeBoard 엔티티의 메서드를 호출하여 찜 개수 증가
         tradeBoardRepository.save(tradeBoard);
     }
-    @Transactional
+    /**
+     * 찜 갯수 감소
+     * @param : Long tradeBoardId
+     */
     public synchronized void decreaseGoodCount(Long tradeBoardId) {
         TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId)
                 .orElseThrow(ErrorCode::throwTradeBoardNotFound);
@@ -155,18 +163,48 @@ public class TradeBoardService {
         tradeBoard.decreaseGoodsCount(); // TradeBoard 엔티티의 메서드를 호출하여 찜 개수 증가
         tradeBoardRepository.save(tradeBoard);
     }
-
-
-    public void deletePost(TradeBoardDto tradeBoardDto) {
-
-        tradeBoardRepository.delete(tradeBoardDto.toEntity());
+    /**
+     * 게시글 삭제
+     * 삭제 시 채팅 마이크로 서비스의 채팅 데이터를 삭제해야하므로
+     * 카프카 이벤트를 통한 비동기 통신 및 느슨한 결합
+     * @param : Long id
+     */
+    @Transactional
+    public void deletePost(Long id) {
+        TradeBoard tradeBoard = tradeBoardRepository.findById(id).orElseThrow(ErrorCode::throwMemberNotFound);
+        TradeBoardRequestDto tradeBoardRequestDto=TradeBoardRequestDto.builder()
+                .id(tradeBoard.getId())
+                .memberNo(tradeBoard.getMember().getId())
+                .title(tradeBoard.getTitle())
+                .content(tradeBoard.getContent())
+                .build();
+        tradeBoardRepository.delete(tradeBoard);
         /*send this deletePost to the kafka*/
-        kafkaProducer.send("deletePost", tradeBoardDto);
+        kafkaProducer.send("deletePost", tradeBoardRequestDto);
     }
-
-    public ResponseTradeBoardDto findTradeBoardById(Long tradeBoardId) {
-        TradeBoard tradeBoard = tradeBoardRepository.findTradeBoardById(tradeBoardId);
-        ResponseTradeBoardDto tradeBoardDto = ResponseTradeBoardDto.convertTradeBoardToDto(tradeBoard);
-        return tradeBoardDto;
+    /**
+     * 유저가 올린 거래 게시글 조회
+     * @param : Long id
+     */
+    @Transactional(readOnly = true)
+    public List<TradeBoardResponseDto> showTradeInfo(Long id){
+        List<TradeBoard> tradeBoards = tradeBoardRepository.findTradeBoardByMemberId(id);
+        List<TradeBoardResponseDto> tradeBoardResponseDtos = tradeBoards.stream()
+                .map(tradeBoard -> convertTradeBoardToDto(tradeBoard)) // TradeDto로 변환
+                .collect(Collectors.toList());
+        return tradeBoardResponseDtos;
+    }
+    /**
+     * 구매한 거래 게시글 조회
+     * @param : Long id
+     */
+    @Transactional(readOnly = true)
+    public List<TradeBoardResponseDto> showBuyInfo(Long id){
+        Member member=memberRepository.findById(id).orElseThrow(ErrorCode::throwMemberNotFound);
+        List<TradeBoard> tradeBoards = tradeBoardRepository.findTradeBoardByBuyer(member.getNickname());
+        List<TradeBoardResponseDto> tradeBoardResponseDtos = tradeBoards.stream()
+                .map(tradeBoard -> convertTradeBoardToDto(tradeBoard))
+                .collect(Collectors.toList());
+        return tradeBoardResponseDtos;
     }
 }

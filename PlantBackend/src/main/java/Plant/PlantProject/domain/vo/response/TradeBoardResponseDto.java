@@ -1,4 +1,4 @@
-package Plant.PlantProject.domain.dto.vo;
+package Plant.PlantProject.domain.vo.response;
 
 import Plant.PlantProject.domain.Entity.TradeBoard;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseTradeBoardDto {
+public class TradeBoardResponseDto {
     private Long id;
     private String title;
     private String content;
@@ -23,8 +23,8 @@ public class ResponseTradeBoardDto {
     private int price;
     private int goodCount;
     private String buyer;
-    public static ResponseTradeBoardDto convertTradeBoardToDto(TradeBoard tradeBoard) {
-        return new ResponseTradeBoardDto(tradeBoard.getId(), tradeBoard.getTitle(),tradeBoard.getContent(),tradeBoard.getCreateBy(),
+    public static TradeBoardResponseDto convertTradeBoardToDto(TradeBoard tradeBoard) {
+        return new TradeBoardResponseDto(tradeBoard.getId(), tradeBoard.getTitle(),tradeBoard.getContent(),tradeBoard.getCreateBy(),
                 tradeBoard.getMember().getId(),  tradeBoard.getView(),tradeBoard.getStatus().name(),
                 tradeBoard.getCreatedAt(), tradeBoard.getUpdatedAt(), tradeBoard.getPrice(),
                 tradeBoard.getGoodCount(), tradeBoard.getBuyer()

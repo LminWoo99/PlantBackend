@@ -2,8 +2,8 @@ package Plant.PlantProject.service.kakao;
 
 import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.common.exception.ErrorCode;
+import Plant.PlantProject.domain.Entity.SocialLogin;
 import Plant.PlantProject.repository.MemberRepository;
-import Plant.PlantProject.repository.RoleRepository;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.parser.JSONParser;
 import com.nimbusds.jose.shaded.json.parser.ParseException;
@@ -33,7 +33,7 @@ import static Plant.PlantProject.domain.Entity.SocialLogin.KAKAO;
 @Slf4j
 public class KaKaoService extends DefaultOAuth2UserService implements UserDetailsService {
     private final MemberRepository memberRepository;
-    private final RoleRepository roleRepository;
+
     public Map<String, Object> getToken(String code) throws IOException {
         // 인가코드로 토큰받기
         String host = "https://kauth.kakao.com/oauth/token";
@@ -131,10 +131,17 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
 
             if (!memberRepository.existsByEmail(email)) {
                 // 존재하지 않는 회원인 경우 새로 생성
-                Member member = new Member(email,password, nickname,  KAKAO, username);
-                member.setPassword(passwordEncoder.encode(member.getPassword()));
+                Member member=Member.builder()
+                        .email(email)
+                        .username(username)
+                        .password(password)
+                        .nickname(nickname)
+                        .build();
+
+                member.encryptPassword(passwordEncoder.encode(member.getPassword(), KAKAO);
                 member.setRefreshToken(refresh_token.toString());
-                member.getRole().add(roleRepository.findByName("ROLE_USER"));
+
+
                 memberRepository.save(member);
                 result.put("id", member.getId());
             } else {
@@ -163,10 +170,7 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
         }
 
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        user.getRole().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        });
-        log.info(user.getUsername());
+
         return new User(user.getUsername(),user.getPassword(), authorities);
     }
 }

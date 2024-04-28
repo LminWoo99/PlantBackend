@@ -2,7 +2,7 @@ package Plant.PlantProject.service.plantinfo;
 
 
 import Plant.PlantProject.domain.Entity.Plant;
-import Plant.PlantProject.domain.dto.PlantDto;
+import Plant.PlantProject.domain.vo.response.PlantDto;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.repository.PlantRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,9 +73,8 @@ public class PlantService {
             Plant byContentNum = plantRepository.findByContentNum(cntntsNo);
             System.out.println("byContentNum = " + byContentNum);
             if(byContentNum !=null){
-                byContentNum.setHumidity(hdCodeNm);
-                byContentNum.setLight(lighttdemanddoCodeNm);
-                byContentNum.setSpecial(speclmanageInfo);
+                byContentNum.addInfo(hdCodeNm, lighttdemanddoCodeNm, speclmanageInfo, speclmanageInfo);
+
                 plantRepository.save(byContentNum);
             }
 

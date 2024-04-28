@@ -1,12 +1,9 @@
 package Plant.PlantProject.controller;
 
 import Plant.PlantProject.domain.Entity.Member;
-import Plant.PlantProject.domain.Entity.Role;
 import Plant.PlantProject.common.config.JwtTokenUtil;
-import Plant.PlantProject.domain.dto.MemberDto;
-import Plant.PlantProject.domain.dto.RoleDto;
-import Plant.PlantProject.domain.dto.vo.ResponseTradeBoardDto;
-import Plant.PlantProject.repository.RoleRepository;
+import Plant.PlantProject.domain.vo.request.MemberRequestDto;
+import Plant.PlantProject.domain.vo.response.MemberResponseDto;
 import Plant.PlantProject.service.user.MemberService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -31,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -46,56 +42,25 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-    private final RoleRepository roleRepository;
     private final JwtTokenUtil jwtTokenUtil;
 
-    @GetMapping("/tradeInfo/{id}")
-    @Operation(summary = "유저 기능 -거래 정보 조회", description = "유저 기능중 개인이 거래한 내역을 확인 할 수 있는 API")
-    public ResponseEntity<List<ResponseTradeBoardDto>> showTradeInfo(@PathVariable Long id){
-        List<ResponseTradeBoardDto> responseTradeBoardDtos = memberService.showTradeInfo(id);
-        return ResponseEntity.ok().body(responseTradeBoardDtos);
-    }
-    @GetMapping("/buyInfo/{id}")
-    @Operation(summary = "유저 기능 -구매 정보 조회", description = "유저 기능중 개인이 구매한 내역을 확인 할 수 있는 API")
-    public ResponseEntity<List<ResponseTradeBoardDto>> showBuyInfo(@PathVariable Long id){
-        List<ResponseTradeBoardDto> responseTradeBoardDtos = memberService.showBuyInfo(id);
-        return ResponseEntity.ok().body(responseTradeBoardDtos);
-    }
     @GetMapping("/users")
     @Operation(summary = "유저 전체 조회", description = "유저 전체 조회를 할 수 있는 API")
-    public ResponseEntity<List<MemberDto>> findAll() {
+    public ResponseEntity<List<MemberResponseDto>> findAll() {
         return ResponseEntity.ok().body(memberService.findAll());
     }
 
     @PostMapping("/user/save")
     @Operation(summary = "회원 가입", description = "회원가입을 할 수 있는 API")
-    public ResponseEntity<Member> saveUser(@RequestBody MemberDto memberDto) {
+    public ResponseEntity<Long> saveUser(@RequestBody MemberRequestDto memberRequestDto) {
         URI uri = URI.create(
                 ServletUriComponentsBuilder
                         .fromCurrentContextPath()
                         .path("/api/user/save").toUriString());
-        Member member = memberDto.toEntity();
 
-        member.getRole().add(roleRepository.findByName("ROLE_USER"));
-        return ResponseEntity.created(uri).body(memberService.joinUser(member));
+        return ResponseEntity.created(uri).body(memberService.joinUser(memberRequestDto));
     }
-
-    @PostMapping("/role/save")
-    public ResponseEntity<Role> saveRole(@RequestBody Role role) {
-        URI uri = URI.create(
-                ServletUriComponentsBuilder
-                        .fromCurrentContextPath()
-                        .path("/api/role/save").toUriString());
-        return ResponseEntity.created(uri).body(memberService.saveRole(role));
-    }
-
-    @PostMapping("/role/grant-to-user")
-    public ResponseEntity<?> grantRole(@RequestBody RoleDto roleDto) {
-        memberService.grantRoleToUser(roleDto.getUserName(), roleDto.getRoleName());
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/token/refresh")
+    @GetMapping("/refresh-token")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response, @RequestParam String username) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
 
@@ -114,7 +79,6 @@ public class MemberController {
                             .withSubject(member.getUsername())
                             .withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000))
                             .withIssuer(request.getRequestURI().toString())
-                            .withClaim("roles", member.getRole().stream().map(Role::getName).collect(Collectors.toList()))
                             .sign(algorithm);
 
                     // 새로운 액세스 토큰 반환
@@ -140,63 +104,57 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/duplicate")
+    @GetMapping("/user/username-chk")
     @Operation(summary = "회원 가입시 중복 검사", description = "회원 가입시 유저 아이디를 기준을 가입한 이름이 있는지 확인할 수 있는 API")
     public ResponseEntity<?> duplicateMember(@RequestParam String username){
         HttpStatus httpStatus = memberService.duplicateMemberUsername(username);
 
         return new ResponseEntity<>(httpStatus);
     }
-    @GetMapping("/duplicate/nickname")
+    @GetMapping("/user/nickname-chk")
     @Operation(summary = "회원 가입시 중복 검사", description = "회원 가입시 닉네임 이름을 기준을 중복검사를 할 수 있는 API")
     public ResponseEntity<?> duplicateMemberNickname(@RequestParam String nickname){
         HttpStatus httpStatus = memberService.duplicateMemberNickname(nickname);
 
         return new ResponseEntity<>(httpStatus);
     }
-    @GetMapping("/duplicate/email")
+    @GetMapping("/user/email-chk")
     @Operation(summary = "회원 가입시 중복 검사", description = "회원 가입시 이메일 이름을 기준을 중복검사를 할 수 있는 API")
     public ResponseEntity<?> duplicateMemberEmail(@RequestParam String email){
         HttpStatus httpStatus = memberService.duplicateMemberEmail(email);
 
         return new ResponseEntity<>(httpStatus);
     }
-    @GetMapping("findEmail")
+    @GetMapping("/user/id")
     @Operation(summary = "아이디 찾기", description = "아이디 분실시 email 기준으로 아이디 찾기 할 수 있는 API")
-    public ResponseEntity<MemberDto> findIdByEmail(@RequestParam String email){
-        MemberDto memberDto = memberService.findIdByEmail(email);
-        return ResponseEntity.ok().body(memberDto);
+    public ResponseEntity<MemberResponseDto> findIdByEmail(@RequestParam String email){
+        MemberResponseDto memberResponseDto = memberService.findUsernameByEmail(email);
+        return ResponseEntity.ok().body(memberResponseDto);
     }
-    @GetMapping("findPassword")
-    @Operation(summary = "비밀번호 찾기", description = "유저 패스워드 분실시 아이디 기준으로 비밀번호 찾기 할 수 있는 API")
-    public ResponseEntity<MemberDto> findPasswordById(@RequestParam String username){
-        MemberDto passwordById = memberService.findPasswordByUsername(username);
-        return ResponseEntity.ok().body(passwordById);
-    }
-    @PostMapping("findPassword")
-    public ResponseEntity<Member> setPassword(@RequestBody MemberDto memberDto){
-        Member member=memberService.find(memberDto);
-        return ResponseEntity.ok().body(member);
+    @PostMapping("/user/pwd")
+    @Operation(summary = "비밀번호 재설정", description = "유저 패스워드 분실시 아이디 기준으로 계정 조회 후 재설정 할 수 있는 API")
+    public void resetPassword(@RequestBody MemberRequestDto memberRequestDto){
+        memberService.resetPassword(memberRequestDto);
     }
 
-    @GetMapping("/findUsername")
-    @Operation(summary = "회원 찾기- 회원 이름 기준", description = "회원 아이디 기준 회원 찾기 할 수 있는 API")
-    public ResponseEntity<MemberDto> findByUsername(@RequestParam String username) {
-        MemberDto memberDto = memberService.findByUsername(username);
-        return ResponseEntity.ok().body(memberDto);
+    @GetMapping("/user")
+    @Operation(summary = "회원 찾기- 회원 아이디 기준", description = "회원 아이디 기준 회원 찾기 할 수 있는 API")
+    public ResponseEntity<MemberResponseDto> findByUsername(@RequestParam String username) {
+        MemberResponseDto memberResponseDto = memberService.findByUsername(username);
+        return ResponseEntity.ok().body(memberResponseDto);
     }
-    @GetMapping("/findId")
-    @Operation(summary = "회원 찾기- 회원 id 기준", description = "회원 기본키 기준 회원 찾기 할 수 있는 API")
-    public ResponseEntity<MemberDto> findById(@RequestParam Long id) {
-        MemberDto memberDto = memberService.findById(id);
-        return ResponseEntity.ok().body(memberDto);
+    @GetMapping("/user/pk")
+    @Operation(summary = "회원 찾기- 회원 pk 기준", description = "회원 기본키 기준 회원 찾기 할 수 있는 API")
+    public ResponseEntity<MemberResponseDto> findById(@RequestParam Long id) {
+        MemberResponseDto memberResponseDto = memberService.findById(id);
+        return ResponseEntity.ok().body(memberResponseDto);
     }
 
-    @GetMapping("/joinMember")
-    public ResponseEntity<MemberDto> getJoinMember(@RequestHeader("Authorization") String jwtToken) {
+    @GetMapping("/user/token")
+    public ResponseEntity<MemberResponseDto> getJoinMember(@RequestHeader("Authorization") String jwtToken) {
         String username = jwtTokenUtil.getCurrentMember(jwtToken);
-        MemberDto memberDto = memberService.findByUsername(username);
-        return ResponseEntity.ok(memberDto);
+        MemberResponseDto memberResponseDto = memberService.findByUsername(username);
+        return ResponseEntity.ok(memberResponseDto);
 
     }
 }

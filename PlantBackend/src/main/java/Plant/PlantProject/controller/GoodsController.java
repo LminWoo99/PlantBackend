@@ -1,9 +1,9 @@
 package Plant.PlantProject.controller;
 
 import Plant.PlantProject.domain.Entity.Goods;
-import Plant.PlantProject.domain.dto.GoodsDto;
-import Plant.PlantProject.domain.dto.vo.GoodsRequestDto;
-import Plant.PlantProject.domain.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.domain.vo.response.GoodsResponseDto;
+import Plant.PlantProject.domain.vo.request.GoodsRequestDto;
+import Plant.PlantProject.domain.vo.response.TradeBoardResponseDto;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.service.tradeboard.GoodsService;
@@ -20,38 +20,32 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Slf4j
 public class GoodsController {
     private final GoodsService goodsService;
     private final TradeBoardService tradeBoardService;
-    private final GoodsRepository goodsRepository;
+
 
 
     @PostMapping("/goods/{memberId}")
     @Operation(summary = "찜 저장", description = "마음에 드는 중고 거래 게시글이 있을 경우,나중에 편하게 보기위해 찜을 할 수 있는 API")
-    public ResponseEntity<GoodsDto> saveGoods(@PathVariable Long memberId, @RequestBody GoodsRequestDto goodsRequestDto){
+    public ResponseEntity<GoodsResponseDto> saveGoods(@PathVariable Long memberId, @RequestBody GoodsRequestDto goodsRequestDto){
 
-        log.info("찜 저장");
         return ResponseEntity.ok().body(goodsService.saveGoods(goodsRequestDto));
     }
     @GetMapping("/goods/{memberId}")
     @Operation(summary = "찜 조회", description = "내가 여태까지 한 찜 조회를 할 수 있는 API")
-    public ResponseEntity<List<ResponseTradeBoardDto>> searchGoods(@PathVariable Long memberId){
-        List<GoodsDto> goodsDtos = goodsService.searchGoods(memberId);
-        List<ResponseTradeBoardDto> tradeBoards = new ArrayList<>();
-        for (GoodsDto goodsDto : goodsDtos) {
-            ResponseTradeBoardDto responseTradeBoardDto = tradeBoardService.findTradeBoardById(goodsDto.getTradeBoardId());
-            tradeBoards.add(responseTradeBoardDto);
-        }
-        return ResponseEntity.ok().body(tradeBoards);
+    public ResponseEntity<List<TradeBoardResponseDto>> searchGoods(@PathVariable Long memberId){
+        List<TradeBoardResponseDto> tradeBoardResponseDtoList = goodsService.searchGoods(memberId);
+
+        return ResponseEntity.ok().body(tradeBoardResponseDtoList);
 
     }
     @GetMapping("/goods/status")
     @Operation(summary = "찜 상태 조회", description = "찜 상태 조회 할 수 있는 API")
-    public ResponseEntity<GoodsDto> infoGoodsStatus(@RequestParam Long memberId, @RequestParam Long tradeBoardId) {
-        Goods goods = goodsRepository.findByMemberIdAndTradeBoardId(memberId, tradeBoardId).orElseThrow(ErrorCode::throwGoodsNotFound);
-        GoodsDto goodsDto = GoodsDto.convertGoodsToDto(goods);
-        return ResponseEntity.ok().body(goodsDto);
+    public ResponseEntity<GoodsResponseDto> infoGoodsStatus(@RequestParam Long memberId, @RequestParam Long tradeBoardId) {
+        GoodsResponseDto goodsResponseDto = goodsService.findByMemberIdAndTradeBoardId(memberId, tradeBoardId);
+
+        return ResponseEntity.ok().body(goodsResponseDto);
     }
 
 

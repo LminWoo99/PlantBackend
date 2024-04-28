@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TradeBoard {
     @Id
@@ -26,7 +28,7 @@ public class TradeBoard {
     private Member member;
     private String createBy;
 
-    private int price;
+    private Integer price;
 
     private String title;
 
@@ -41,44 +43,41 @@ public class TradeBoard {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "tradeBoardId", orphanRemoval = true)
-    List<Comment> commentList = new ArrayList<Comment>();
-    @OneToMany(mappedBy = "tradeBoard", orphanRemoval = true)
-    List<Goods> goodsList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "tradeBoard", orphanRemoval = true)
-    List<Image> imageList = new ArrayList<Image>();
+    //    @OneToMany(mappedBy = "tradeBoardId", orphanRemoval = true)
+    //    List<Comment> commentList = new ArrayList<Comment>();
+    //    @OneToMany(mappedBy = "tradeBoard", orphanRemoval = true)
+    //    List<Goods> goodsList = new ArrayList<>();
+    //
+    //    @OneToMany(mappedBy = "tradeBoard", orphanRemoval = true)
+    //    List<Image> imageList = new ArrayList<Image>();
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private int view;
+    private Integer view;
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private int goodCount;
+    private Integer goodCount;
 
     private String buyer;
-    public TradeBoard(String title, String content) {
+    @Builder
+    public TradeBoard(Long id, String createBy, Member member, String title, String content, Status status, int view) {
+        this.id = id;
+        this.createBy = createBy;
+        this.member = member;
         this.title = title;
         this.content = content;
+        this.status = status;
+        this.view= view;
     }
 
-    public void setTitle(String title) {
+    public void updatePost(String title, String content, Integer price) {
         this.title = title;
-    }
-
-    public void setContent(String content) {
         this.content = content;
-    }
-
-    public void setPrice(int price) {
         this.price = price;
     }
-
-    public void setStatus(Status status) {
+   /**
+    * 거래 완료 메서드
+    */
+    public void updateStatus(Status status) {
         this.status = status;
     }
-
-    public void setBuyer(String buyer) {
-        this.buyer = buyer;
-    }
-
     public static TradeBoard createTradeBoard(Member member, String title, String content,
                                               String createBy, int view, int price, int goodCount, String buyer){
         TradeBoard tradeBoard = new TradeBoard();
@@ -92,16 +91,6 @@ public class TradeBoard {
         tradeBoard.goodCount = goodCount;
         tradeBoard.buyer = buyer;
         return tradeBoard;
-    }
-    @Builder
-    public TradeBoard(Long id, String createBy, Member member, String title, String content, Status status, int view) {
-        this.id = id;
-        this.createBy = createBy;
-        this.member = member;
-        this.title = title;
-        this.content = content;
-        this.status = status;
-        this.view= view;
     }
     public void increaseGoodsCount() {
         this.goodCount++;

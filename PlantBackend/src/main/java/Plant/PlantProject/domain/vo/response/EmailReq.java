@@ -1,4 +1,4 @@
-package Plant.PlantProject.domain.dto;
+package Plant.PlantProject.domain.vo.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

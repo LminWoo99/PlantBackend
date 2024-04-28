@@ -1,13 +1,13 @@
 package Plant.PlantProject.controller;
 
-import Plant.PlantProject.Entity.Member;
-import Plant.PlantProject.Entity.Role;
-import Plant.PlantProject.config.JwtTokenUtil;
-import Plant.PlantProject.dto.MemberDto;
-import Plant.PlantProject.dto.RoleDto;
-import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.domain.Entity.Member;
+import Plant.PlantProject.domain.Entity.Role;
+import Plant.PlantProject.common.config.JwtTokenUtil;
+import Plant.PlantProject.domain.dto.MemberDto;
+import Plant.PlantProject.domain.dto.RoleDto;
+import Plant.PlantProject.domain.dto.vo.ResponseTradeBoardDto;
 import Plant.PlantProject.repository.RoleRepository;
-import Plant.PlantProject.service.MemberService;
+import Plant.PlantProject.service.user.MemberService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;

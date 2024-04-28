@@ -1,13 +1,13 @@
 package Plant.PlantProject.controller;
 
-import Plant.PlantProject.Entity.Goods;
-import Plant.PlantProject.dto.GoodsDto;
-import Plant.PlantProject.dto.vo.GoodsRequestDto;
-import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
-import Plant.PlantProject.exception.ErrorCode;
+import Plant.PlantProject.domain.Entity.Goods;
+import Plant.PlantProject.domain.dto.GoodsDto;
+import Plant.PlantProject.domain.dto.vo.GoodsRequestDto;
+import Plant.PlantProject.domain.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.repository.GoodsRepository;
-import Plant.PlantProject.service.GoodsService;
-import Plant.PlantProject.service.TradeBoardService;
+import Plant.PlantProject.service.tradeboard.GoodsService;
+import Plant.PlantProject.service.tradeboard.TradeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

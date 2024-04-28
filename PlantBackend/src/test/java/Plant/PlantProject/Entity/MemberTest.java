@@ -1,10 +1,7 @@
 package Plant.PlantProject.Entity;
 
-import Plant.PlantProject.dto.MemberDto;
 import Plant.PlantProject.repository.MemberRepository;
-import Plant.PlantProject.service.MemberService;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+import Plant.PlantProject.service.user.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;

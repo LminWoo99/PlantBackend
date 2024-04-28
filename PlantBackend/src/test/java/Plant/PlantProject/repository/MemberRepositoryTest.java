@@ -1,17 +1,11 @@
 package Plant.PlantProject.repository;
 
-import Plant.PlantProject.Entity.Member;
-import Plant.PlantProject.dto.MemberDto;
-import Plant.PlantProject.service.MemberService;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
+import Plant.PlantProject.service.user.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 /**
  * packageName    : Plant/PlantProject/repository
  * fileName       : MemberRepositoryTest

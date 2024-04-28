@@ -1,6 +1,6 @@
 package Plant.PlantProject.repository;
 
-import Plant.PlantProject.Entity.Goods;
+import Plant.PlantProject.domain.Entity.Goods;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

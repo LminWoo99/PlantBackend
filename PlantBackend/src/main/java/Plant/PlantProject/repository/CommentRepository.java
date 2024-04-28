@@ -1,7 +1,7 @@
 package Plant.PlantProject.repository;
 
-import Plant.PlantProject.Entity.Comment;
-import Plant.PlantProject.Entity.TradeBoard;
+import Plant.PlantProject.domain.Entity.Comment;
+import Plant.PlantProject.domain.Entity.TradeBoard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

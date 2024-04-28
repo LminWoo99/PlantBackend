@@ -1,14 +1,15 @@
 package Plant.PlantProject.controller;
 
-import Plant.PlantProject.Entity.Member;
+import Plant.PlantProject.domain.Entity.Member;
 
-import Plant.PlantProject.Entity.TradeBoard;
+import Plant.PlantProject.domain.dto.CommentDto;
+import Plant.PlantProject.domain.dto.TradeBoardDto;
 import Plant.PlantProject.dto.*;
-import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
-import Plant.PlantProject.dto.vo.TradeBoardRequestDto;
-import Plant.PlantProject.service.CommentService;
-import Plant.PlantProject.service.MemberService;
-import Plant.PlantProject.service.TradeBoardService;
+import Plant.PlantProject.domain.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.domain.dto.vo.TradeBoardRequestDto;
+import Plant.PlantProject.service.tradeboard.CommentService;
+import Plant.PlantProject.service.user.MemberService;
+import Plant.PlantProject.service.tradeboard.TradeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +67,7 @@ public class TradeBoardController {
 
     @PutMapping("/list/{id}")
     @Operation(summary = "식물 중고 거래 게시글 수정", description = "식물 중고 거래 게시글 수정할 수 있는 API")
-    public ResponseEntity<TradeBoardDto> updateTradeBoard( @PathVariable("id") Long id, @RequestBody TradeBoardDto tradeBoardDto){
+    public ResponseEntity<TradeBoardDto> updateTradeBoard(@PathVariable("id") Long id, @RequestBody TradeBoardDto tradeBoardDto){
 
 
         TradeBoardDto byId = tradeBoardService.findById(id);

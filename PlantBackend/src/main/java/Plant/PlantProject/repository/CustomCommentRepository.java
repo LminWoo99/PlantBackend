@@ -1,6 +1,6 @@
 package Plant.PlantProject.repository;
 
-import Plant.PlantProject.Entity.Comment;
+import Plant.PlantProject.domain.Entity.Comment;
 
 import java.util.List;
 

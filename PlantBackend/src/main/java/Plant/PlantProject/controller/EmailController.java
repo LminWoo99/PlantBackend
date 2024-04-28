@@ -1,7 +1,7 @@
 package Plant.PlantProject.controller;
 
-import Plant.PlantProject.dto.EmailReq;
-import Plant.PlantProject.service.RegisterMail;
+import Plant.PlantProject.domain.dto.EmailReq;
+import Plant.PlantProject.service.user.RegisterMail;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

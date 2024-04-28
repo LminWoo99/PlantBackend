@@ -1,6 +1,6 @@
 package Plant.PlantProject.repository;
 
-import Plant.PlantProject.Entity.Plant;
+import Plant.PlantProject.domain.Entity.Plant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

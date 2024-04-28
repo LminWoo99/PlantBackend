@@ -1,16 +1,14 @@
 package Plant.PlantProject.repository;
 
-import Plant.PlantProject.Entity.Comment;
+import Plant.PlantProject.domain.Entity.Comment;
 
 import Plant.PlantProject.Entity.QComment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Entity;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static Plant.PlantProject.Entity.QComment.*;
 import static Plant.PlantProject.Entity.QComment.comment;
 
 @RequiredArgsConstructor

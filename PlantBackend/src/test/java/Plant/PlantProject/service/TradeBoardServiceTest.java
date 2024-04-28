@@ -1,9 +1,11 @@
 package Plant.PlantProject.service;
 
-import Plant.PlantProject.Entity.Status;
+import Plant.PlantProject.domain.Entity.Status;
 import Plant.PlantProject.controller.TradeBoardController;
-import Plant.PlantProject.dto.TradeBoardDto;
-import Plant.PlantProject.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.domain.dto.TradeBoardDto;
+import Plant.PlantProject.domain.dto.vo.ResponseTradeBoardDto;
+import Plant.PlantProject.service.tradeboard.CommentService;
+import Plant.PlantProject.service.tradeboard.TradeBoardService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -44,15 +44,16 @@ public class GoodsService {
             existingGoods.get().getTradeBoard().decreaseGoodsCount();
             return null;
         } else {
+            TradeBoard tradeBoard = tradeBoardRepository.findById(goodsDto.getTradeBoardId())
+                    .orElseThrow(ErrorCode::throwTradeBoardNotFound);
             // 새로운 찜 정보 저장
             Goods goods = goodsRepository.save(
                     Goods.createGoods(
                             memberRepository.findById(goodsDto.getMemberId())
                                     .orElseThrow(ErrorCode::throwMemberNotFound),
-                            tradeBoardRepository.findById(goodsDto.getTradeBoardId())
-                                    .orElseThrow(ErrorCode::throwTradeBoardNotFound)
+                            tradeBoard
                     ));
-            existingGoods.get().getTradeBoard().increaseGoodsCount();
+            tradeBoard.increaseGoodsCount();
             return convertGoodsToDto(goods);
         }
     }

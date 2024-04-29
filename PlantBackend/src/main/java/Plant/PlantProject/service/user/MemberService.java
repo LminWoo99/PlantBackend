@@ -2,9 +2,9 @@ package Plant.PlantProject.service.user;
 
 import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.domain.Entity.SocialLogin;
-import Plant.PlantProject.domain.vo.request.MemberRequestDto;
+import Plant.PlantProject.vo.request.MemberRequestDto;
 import Plant.PlantProject.common.exception.ErrorCode;
-import Plant.PlantProject.domain.vo.response.MemberResponseDto;
+import Plant.PlantProject.vo.response.MemberResponseDto;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +31,6 @@ import java.util.Optional;
 @Transactional
 public class MemberService extends DefaultOAuth2UserService implements UserDetailsService{
     private final MemberRepository memberRepository;
-    private final TradeBoardRepository tradeBoardRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
 
     /**
      * 유저 전체 조회
@@ -73,6 +71,7 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
      * @param : MemberRequestDto memberRequestDto
      */
     public Long joinUser(MemberRequestDto memberRequestDto) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         // 비밀번호 암호화
         Member member = memberRequestDto.toEntity();
         member.encryptPassword(passwordEncoder.encode(member.getPassword()), SocialLogin.NON);
@@ -147,7 +146,7 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
      * @param : MemberRequestDto memberRequestDto
      */
     public void resetPassword(MemberRequestDto memberRequestDto){
-
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Member member = memberRepository.findByUsername(memberRequestDto.getUsername())
                 .orElseThrow(ErrorCode::throwUnRegisteredId);
         // 다시 암호화하여 초기화, 변경감지
@@ -155,14 +154,14 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        System.out.println("userName = " + userName);
-        Member user = memberRepository.findByUsername(userName).orElseThrow(ErrorCode::throwMemberNotFound);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("userName = " + username);
+        Member user = memberRepository.findByUsername(username).orElseThrow(ErrorCode::throwMemberNotFound);
         if(user == null) {
-            log.error("User not found in the database {}", userName);
+            log.error("User not found in the database {}", username);
             throw new UsernameNotFoundException("User not found in the database");
         } else {
-            log.info("User found in the database: {}", userName);
+            log.info("User found in the database: {}", username);
         }
         //권한 필요없기 때문 리스트 비우기
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();

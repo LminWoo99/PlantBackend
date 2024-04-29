@@ -1,4 +1,4 @@
-package Plant.PlantProject.domain.vo.request;
+package Plant.PlantProject.vo.request;
 
 import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.domain.Entity.Status;
@@ -38,16 +38,9 @@ public class TradeBoardRequestDto {
     private int view;
     private Integer goodCount;
 
+    private String username;
     private String buyer;
 
 
-//    public TradeBoard toEntity() {
-//        return TradeBoard.builder()
-//                .member(member)
-//                .title(title)
-//                .content(content)
-//                .status(status)
-//                .view(view)
-//                .build();
-//    }
+
 }

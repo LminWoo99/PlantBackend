@@ -1,13 +1,12 @@
 package Plant.PlantProject.controller;
 
-import Plant.PlantProject.domain.vo.response.CommentDto;
-import Plant.PlantProject.domain.vo.request.TradeBoardRequestDto;
-import Plant.PlantProject.domain.vo.response.TradeBoardResponseDto;
+import Plant.PlantProject.vo.response.CommentResponseDto;
+import Plant.PlantProject.vo.request.TradeBoardRequestDto;
+import Plant.PlantProject.vo.response.TradeBoardResponseDto;
 import Plant.PlantProject.service.tradeboard.CommentService;
 import Plant.PlantProject.service.tradeboard.TradeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,8 +14,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -28,11 +30,9 @@ public class TradeBoardController {
     private final CommentService commentService;
     @PostMapping("/trade-board")
     @Operation(summary = "식물 중고 거래 게시글 작성", description = "식물 중고 거래 게시글 작성 할 수 있는 API")
-    public ResponseEntity<Long> write(@RequestBody TradeBoardRequestDto tradeBoardDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+    public ResponseEntity<Long> write(@RequestPart TradeBoardRequestDto tradeBoardDto, @RequestPart("file") List<MultipartFile> files) throws IOException {
 
-        Long id=tradeBoardService.saveTradePost(tradeBoardDto, username);
+        Long id=tradeBoardService.saveTradePost(tradeBoardDto, files);
 
         return ResponseEntity.ok().body(id);
     }
@@ -86,9 +86,9 @@ public class TradeBoardController {
     }
     @GetMapping("/buyer/{id}")
     @Operation(summary = "구매자 조회", description = "해당 중고 게시글 구매자 조회 하는 API")
-    public ResponseEntity<List<CommentDto>> getBuyer(@PathVariable Long id) {
+    public ResponseEntity<List<CommentResponseDto>> getBuyer(@PathVariable Long id) {
 
-        List<CommentDto> comment = commentService.findCommentsByTradeBoardId(id);
+        List<CommentResponseDto> comment = commentService.findCommentsByTradeBoardId(id);
         return ResponseEntity.ok().body(comment);
     }
 

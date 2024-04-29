@@ -1,6 +1,6 @@
 package Plant.PlantProject.controller;
 
-import Plant.PlantProject.domain.vo.response.EmailReq;
+import Plant.PlantProject.vo.response.EmailReq;
 import Plant.PlantProject.service.user.RegisterMail;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

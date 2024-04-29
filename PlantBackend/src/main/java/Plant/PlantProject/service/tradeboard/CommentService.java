@@ -3,8 +3,8 @@ package Plant.PlantProject.service.tradeboard;
 import Plant.PlantProject.domain.Entity.Comment;
 import Plant.PlantProject.domain.Entity.DeleteStatus;
 import Plant.PlantProject.domain.Entity.TradeBoard;
-import Plant.PlantProject.domain.vo.request.CommentCreateRequestDto;
-import Plant.PlantProject.domain.vo.response.CommentDto;
+import Plant.PlantProject.vo.request.CommentCreateRequestDto;
+import Plant.PlantProject.vo.response.CommentResponseDto;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.repository.CommentRepository;
 import Plant.PlantProject.repository.MemberRepository;
@@ -28,17 +28,18 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final TradeBoardRepository tradeBoardRepository;
 
-    public List<CommentDto> findCommentsByTradeBoardId(Long tradeBoardId) {
+    public List<CommentResponseDto> findCommentsByTradeBoardId(Long tradeBoardId) {
         return convertNestedStructure(commentRepository.findCommentByTradeBoardId(tradeBoardId));
     }
-    public Page<CommentDto> pageList(TradeBoard tradeBoardId, Pageable pageable) {
-        Page<Comment> comments;
+    public Page<CommentResponseDto> pageList(Long tradeBoardId, Pageable pageable) {
+        TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId).orElseThrow(ErrorCode::throwTradeBoardNotFound);
 
-        comments = commentRepository.findCommentByTradeBoardId(tradeBoardId, pageable);
-        return comments.map(comment -> CommentDto.convertCommentToDto(comment));
+        Page<Comment> comments = commentRepository.findCommentByTradeBoardId(tradeBoard, pageable);
+
+        return comments.map(comment -> CommentResponseDto.convertCommentToDto(comment));
     }
 
-    public CommentDto createComment(CommentCreateRequestDto requestDto) {
+    public CommentResponseDto createComment(CommentCreateRequestDto requestDto) {
         System.out.println("requestDto.getTradeBoardId() = " + requestDto.getTradeBoardId());
         Comment comment = commentRepository.save(
                 Comment.createComment(
@@ -52,7 +53,7 @@ public class CommentService {
                 )
 
         );
-        return CommentDto.convertCommentToDto(comment);
+        return CommentResponseDto.convertCommentToDto(comment);
     }
 
     public void deleteComment(Long commentId) {
@@ -72,11 +73,11 @@ public class CommentService {
     }
 
 
-    private List<CommentDto> convertNestedStructure(List<Comment> comments) {
-        List<CommentDto> result = new ArrayList<>();
-        Map<Long, CommentDto> map = new HashMap<>();
+    private List<CommentResponseDto> convertNestedStructure(List<Comment> comments) {
+        List<CommentResponseDto> result = new ArrayList<>();
+        Map<Long, CommentResponseDto> map = new HashMap<>();
         comments.stream().forEach(c -> {
-            CommentDto dto = CommentDto.convertCommentToDto(c);
+            CommentResponseDto dto = CommentResponseDto.convertCommentToDto(c);
             map.put(dto.getId(), dto);
             if(c.getParent() != null) map.get(c.getParent().getId()).getChildren().add(dto);
             else result.add(dto);
@@ -84,10 +85,16 @@ public class CommentService {
         return result;
     }
 
-    public CommentDto updateComment(CommentDto commentCreateRequestDto) {
+    public CommentResponseDto updateComment(CommentResponseDto commentCreateRequestDto) {
         Comment comment = commentRepository.findById(commentCreateRequestDto.getId()).orElseThrow(EntityNotFoundException::new);
-        comment.setContent(commentCreateRequestDto.getContent());
+
         commentRepository.updateComment(comment);
-        return CommentDto.convertCommentToDto(comment);
+        return CommentResponseDto.convertCommentToDto(comment);
+    }
+
+    public void deleteCommentByTradeBoardId(TradeBoard tradeBoard) {
+        commentRepository.deleteAllByTradeBoardId(tradeBoard);
+
+
     }
 }

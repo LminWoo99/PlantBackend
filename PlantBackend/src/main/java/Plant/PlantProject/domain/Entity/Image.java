@@ -39,4 +39,7 @@ public class Image{
         this.tradeBoard = tradeBoard;
     }
 
+    public void add(TradeBoard tradeBoard) {
+        this.tradeBoard = tradeBoard;
+    }
 }

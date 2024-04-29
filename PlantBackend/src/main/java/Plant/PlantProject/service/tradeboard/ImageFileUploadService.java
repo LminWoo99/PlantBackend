@@ -6,6 +6,7 @@ import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.repository.ImageRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import Plant.PlantProject.common.util.FileUtils;
+import Plant.PlantProject.vo.response.ImageResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,32 +16,29 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class ImageFileUploadService {
 
     private final AwsS3Service awsS3Service;
-    private final TradeBoardService tradeBoardService;
     private final TradeBoardRepository tradeBoardRepository;
     private final ImageRepository imageRepository;
 
-    @Transactional
-    public List<Image> uploadImagesToTradeBoard(Long tradeBoardId, List<MultipartFile> files) throws IOException {
-        log.info("Uploading images for TradeBoard ID: {}", tradeBoardId);
-        TradeBoard tradeBoard = tradeBoardRepository.findTradeBoardById(tradeBoardId);
-        List<Image> uploadedImages = saveImages(files, tradeBoard);
-        return uploadedImages;
-    }
 
-    private List<Image> saveImages(List<MultipartFile> files, TradeBoard tradeBoard) throws IOException {
+    public List<Image> saveImages(List<MultipartFile> files, TradeBoard tradeBoard) throws IOException {
         List<Image> images = new ArrayList<>();
         for (MultipartFile file : files) {
             if (file.getSize() > 1048576) {
                 throw ErrorCode.throwMaxFileSizeExceeded();
             }
-            images.add(uploadImage(file, tradeBoard));
+            Image image = uploadImage(file, tradeBoard);
+            images.add(image);
+
+            tradeBoard.addImageList(image);
         }
         imageRepository.saveAll(images);
         return images;

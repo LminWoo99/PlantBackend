@@ -2,8 +2,8 @@ package Plant.PlantProject.controller;
 
 import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.common.config.JwtTokenUtil;
-import Plant.PlantProject.domain.vo.request.MemberRequestDto;
-import Plant.PlantProject.domain.vo.response.MemberResponseDto;
+import Plant.PlantProject.vo.request.MemberRequestDto;
+import Plant.PlantProject.vo.response.MemberResponseDto;
 import Plant.PlantProject.service.user.MemberService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

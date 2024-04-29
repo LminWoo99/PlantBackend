@@ -35,6 +35,4 @@ public class Goods {
         return goods;
     }
 
-
-
 }

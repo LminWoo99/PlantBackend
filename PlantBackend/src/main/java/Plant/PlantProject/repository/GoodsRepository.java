@@ -1,6 +1,7 @@
 package Plant.PlantProject.repository;
 
 import Plant.PlantProject.domain.Entity.Goods;
+import Plant.PlantProject.domain.Entity.TradeBoard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +16,5 @@ public interface GoodsRepository extends JpaRepository<Goods, Long> {
     Optional<Goods> findByMemberIdAndTradeBoardId(Long memberId, Long tradeBoardId);
 
 
-
+    void deleteAllByTradeBoard(TradeBoard tradeBoard);
 }

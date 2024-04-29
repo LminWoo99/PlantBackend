@@ -11,16 +11,12 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 public class AwsS3Properties {
-    @Value("${aws.s3.credentials.accessKey}")
+    @Value("${cloud.aws.credentials.access-key}")
     private String accessKey;
-    @Value("${aws.s3.credentials.secretKey}")
+    @Value("${cloud.aws.credentials.secret-key}")
     private String secretKey;
-    @Value("${aws.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-    @Value("${aws.s3.region.static}")
+    @Value("${cloud.aws.region.static}")
     private String region;
-
-    private String uploadPath;
-    @Value("${aws.s3.end-point}")
-    private String endPoint;
 }

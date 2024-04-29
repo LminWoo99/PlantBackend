@@ -1,20 +1,15 @@
 package Plant.PlantProject.controller;
 
-import Plant.PlantProject.domain.Entity.Goods;
-import Plant.PlantProject.domain.vo.response.GoodsResponseDto;
-import Plant.PlantProject.domain.vo.request.GoodsRequestDto;
-import Plant.PlantProject.domain.vo.response.TradeBoardResponseDto;
-import Plant.PlantProject.common.exception.ErrorCode;
-import Plant.PlantProject.repository.GoodsRepository;
+import Plant.PlantProject.vo.response.GoodsResponseDto;
+import Plant.PlantProject.vo.request.GoodsRequestDto;
+import Plant.PlantProject.vo.response.TradeBoardResponseDto;
 import Plant.PlantProject.service.tradeboard.GoodsService;
 import Plant.PlantProject.service.tradeboard.TradeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,9 +17,6 @@ import java.util.List;
 @RequestMapping("/api")
 public class GoodsController {
     private final GoodsService goodsService;
-    private final TradeBoardService tradeBoardService;
-
-
 
     @PostMapping("/goods/{memberId}")
     @Operation(summary = "찜 저장", description = "마음에 드는 중고 거래 게시글이 있을 경우,나중에 편하게 보기위해 찜을 할 수 있는 API")

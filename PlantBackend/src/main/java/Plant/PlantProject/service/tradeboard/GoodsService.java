@@ -1,10 +1,11 @@
 package Plant.PlantProject.service.tradeboard;
 
 import Plant.PlantProject.domain.Entity.Goods;
-import Plant.PlantProject.domain.vo.response.GoodsResponseDto;
-import Plant.PlantProject.domain.vo.request.GoodsRequestDto;
+import Plant.PlantProject.domain.Entity.TradeBoard;
+import Plant.PlantProject.vo.response.GoodsResponseDto;
+import Plant.PlantProject.vo.request.GoodsRequestDto;
 import Plant.PlantProject.common.exception.ErrorCode;
-import Plant.PlantProject.domain.vo.response.TradeBoardResponseDto;
+import Plant.PlantProject.vo.response.TradeBoardResponseDto;
 import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
@@ -13,12 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static Plant.PlantProject.domain.vo.response.GoodsResponseDto.convertGoodsToDto;
+import static Plant.PlantProject.vo.response.GoodsResponseDto.convertGoodsToDto;
 
 
 @Service
@@ -29,7 +29,6 @@ public class GoodsService {
     private final MemberRepository memberRepository;
     private final TradeBoardRepository tradeBoardRepository;
     private final GoodsRepository goodsRepository;
-    private final TradeBoardService tradeBoardService;
     /**
      * 찜 저장
      * @param : GoodsRequestDto goodsDto
@@ -42,7 +41,7 @@ public class GoodsService {
         if (existingGoods.isPresent()) {
 //             이미 찜한 상태라면 삭제
             goodsRepository.delete(existingGoods.get());
-            tradeBoardService.decreaseGoodCount(goodsDto.getTradeBoardId());
+            existingGoods.get().getTradeBoard().decreaseGoodsCount();
             return null;
         } else {
             // 새로운 찜 정보 저장
@@ -53,7 +52,7 @@ public class GoodsService {
                             tradeBoardRepository.findById(goodsDto.getTradeBoardId())
                                     .orElseThrow(ErrorCode::throwTradeBoardNotFound)
                     ));
-            tradeBoardService.increaseGoodCount(goodsDto.getTradeBoardId());
+            existingGoods.get().getTradeBoard().increaseGoodsCount();
             return convertGoodsToDto(goods);
         }
     }
@@ -78,4 +77,8 @@ public class GoodsService {
         Goods goods = goodsRepository.findByMemberIdAndTradeBoardId(memberId, tradeBoardId).orElseThrow(ErrorCode::throwGoodsNotFound);
         return GoodsResponseDto.convertGoodsToDto(goods);
     }
+    public void deleteGoods(TradeBoard tradeBoard) {
+        goodsRepository.deleteAllByTradeBoard(tradeBoard);
+    }
+
 }

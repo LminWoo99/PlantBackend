@@ -17,27 +17,20 @@ import java.util.List;
 public class Member{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "MEMBER_ID")
     private Long id;
 
     @NotNull
-    @Column(name = "NICKNAME")
     private String nickname;
     @NotNull
-    @Column(name = "USERNAME")
     private String username;
     @NotNull
     @JsonIgnore
-    @Column(name = "PASSWORD")
     private String password;
     @NotNull
-    @Column(name = "EMAIL")
     private String email;
 
     @Enumerated(EnumType.STRING)
     private SocialLogin socialLogin;
-//    @OneToMany(mappedBy = "member")
-//    private List<TradeBoard> tradeBoard = new ArrayList<>();
 
     private String refreshToken;
 

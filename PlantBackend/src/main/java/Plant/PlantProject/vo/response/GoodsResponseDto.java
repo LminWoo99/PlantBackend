@@ -1,4 +1,4 @@
-package Plant.PlantProject.domain.vo.response;
+package Plant.PlantProject.vo.response;
 
 import Plant.PlantProject.domain.Entity.Goods;
 import lombok.AllArgsConstructor;

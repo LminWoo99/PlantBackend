@@ -1,4 +1,4 @@
-package Plant.PlantProject.domain.vo.response;
+package Plant.PlantProject.vo.response;
 
 import Plant.PlantProject.domain.Entity.Plant;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlantDto {
+public class PlantResponseDto {
 
     private Long id;
     private String contentNum;
@@ -45,8 +45,8 @@ public class PlantDto {
     private String light;
 
     private String special;
-    public static PlantDto convertPlantToDto(Plant plant) {
-        return new PlantDto(plant.getId(), plant.getContentNum(), plant.getPlantName(),plant.getPlantInfo(),plant.getHeight(),
+    public static PlantResponseDto convertPlantToDto(Plant plant) {
+        return new PlantResponseDto(plant.getId(), plant.getContentNum(), plant.getPlantName(),plant.getPlantInfo(),plant.getHeight(),
                 plant.getBreed(),  plant.getManage(),plant.getGrowthRate(),plant.getGrowthTmp(),
                 plant.getFertilizer(), plant.getPlantSpring(), plant.getPlantSummner(), plant.getPlantAutumn()
                 ,plant.getPlantWinter(), plant.getCategory(), plant.getSeason(), plant.getGrowth(), plant.getImage(), plant.getThumbFile(),

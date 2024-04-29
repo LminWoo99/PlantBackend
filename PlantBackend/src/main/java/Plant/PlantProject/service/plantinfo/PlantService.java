@@ -2,7 +2,7 @@ package Plant.PlantProject.service.plantinfo;
 
 
 import Plant.PlantProject.domain.Entity.Plant;
-import Plant.PlantProject.domain.vo.response.PlantDto;
+import Plant.PlantProject.vo.response.PlantResponseDto;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.repository.PlantRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,14 +36,14 @@ public class PlantService {
 
 
 
-    public Page<PlantDto> plantList(String search, Pageable pageable) {
+    public Page<PlantResponseDto> plantList(String search, Pageable pageable) {
         Page<Plant> plants = plantRepository.findByPlantNameContaining(search, pageable);
-        return plants.map(plant -> PlantDto.convertPlantToDto(plant));
+        return plants.map(plant -> PlantResponseDto.convertPlantToDto(plant));
     }
 
-    public PlantDto plantDetail(Long id) {
+    public PlantResponseDto plantDetail(Long id) {
         Plant plant = plantRepository.findById(id).orElseThrow(ErrorCode::throwPlantNotFound);
-        return PlantDto.convertPlantToDto(plant);
+        return PlantResponseDto.convertPlantToDto(plant);
 
     }
     public void getPlantDetail(String item) throws IOException {

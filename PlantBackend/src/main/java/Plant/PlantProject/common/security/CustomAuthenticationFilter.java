@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -27,7 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.springframework.security.core.GrantedAuthority;
+
 
 @Slf4j
 @AllArgsConstructor
@@ -82,6 +83,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         log.info("{} attempt to login with {}", username, password);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+
         return authenticationManager.authenticate(authenticationToken);
     }
 

@@ -43,16 +43,12 @@ public class TradeBoard {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    //    @OneToMany(mappedBy = "tradeBoardId", orphanRemoval = true)
-    //    List<Comment> commentList = new ArrayList<Comment>();
-    //    @OneToMany(mappedBy = "tradeBoard", orphanRemoval = true)
-    //    List<Goods> goodsList = new ArrayList<>();
-    //
-    //    @OneToMany(mappedBy = "tradeBoard", orphanRemoval = true)
-    //    List<Image> imageList = new ArrayList<Image>();
-    @Column(columnDefinition = "integer default 0", nullable = false)
+    @OneToMany(mappedBy = "tradeBoard", cascade = CascadeType.REMOVE)
+    List<Image> imageList = new ArrayList<Image>();
+
+    @Column(columnDefinition = "integer default 0")
     private Integer view;
-    @Column(columnDefinition = "integer default 0", nullable = false)
+    @Column(columnDefinition = "integer default 0")
     private Integer goodCount;
 
     private String buyer;
@@ -79,18 +75,24 @@ public class TradeBoard {
         this.status = status;
     }
     public static TradeBoard createTradeBoard(Member member, String title, String content,
-                                              String createBy, int view, int price, int goodCount, String buyer){
+                                              String createBy,  int price){
         TradeBoard tradeBoard = new TradeBoard();
         tradeBoard.member=member;
         tradeBoard.title=title;
         tradeBoard.content = content;
         tradeBoard.createBy = createBy;
-        tradeBoard.view=view;
         tradeBoard.price = price;
         tradeBoard.status=Status.판매중;
-        tradeBoard.goodCount = goodCount;
-        tradeBoard.buyer = buyer;
+        tradeBoard.goodCount = 0;
+        tradeBoard.view = 0;
         return tradeBoard;
+    }
+    /**
+     * 양방향 연관관계 메서드
+     */
+    public void addImageList(Image image) {
+        this.imageList.add(image);
+        image.add(this);
     }
     public void increaseGoodsCount() {
         this.goodCount++;

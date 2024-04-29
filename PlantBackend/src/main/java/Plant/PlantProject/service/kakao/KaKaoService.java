@@ -138,7 +138,7 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
                         .nickname(nickname)
                         .build();
 
-                member.encryptPassword(passwordEncoder.encode(member.getPassword(), KAKAO);
+                member.encryptPassword(passwordEncoder.encode(member.getPassword()), KAKAO);
                 member.setRefreshToken(refresh_token.toString());
 
 

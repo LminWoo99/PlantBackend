@@ -34,10 +34,10 @@ public class GoodsController {
     }
     @GetMapping("/goods/status")
     @Operation(summary = "찜 상태 조회", description = "찜 상태 조회 할 수 있는 API")
-    public ResponseEntity<GoodsResponseDto> infoGoodsStatus(@RequestParam Long memberId, @RequestParam Long tradeBoardId) {
-        GoodsResponseDto goodsResponseDto = goodsService.findByMemberIdAndTradeBoardId(memberId, tradeBoardId);
+    public ResponseEntity<Boolean> infoGoodsStatus(@RequestParam Long memberId, @RequestParam Long tradeBoardId) {
+        Boolean statusGood = goodsService.findByMemberIdAndTradeBoardId(memberId, tradeBoardId);
 
-        return ResponseEntity.ok().body(goodsResponseDto);
+        return ResponseEntity.ok().body(statusGood);
     }
 
 

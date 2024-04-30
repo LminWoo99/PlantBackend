@@ -11,6 +11,7 @@ import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,9 +75,12 @@ public class GoodsService {
      * 찜 상태 조회
      * @param : Long memberId, , Long tradeBoardId
      */
-    public GoodsResponseDto findByMemberIdAndTradeBoardId(Long memberId, Long tradeBoardId) {
-        Goods goods = goodsRepository.findByMemberIdAndTradeBoardId(memberId, tradeBoardId).orElseThrow(ErrorCode::throwGoodsNotFound);
-        return GoodsResponseDto.convertGoodsToDto(goods);
+    public Boolean findByMemberIdAndTradeBoardId(Long memberId, Long tradeBoardId) {
+        Optional<Goods> goods = goodsRepository.findByMemberIdAndTradeBoardId(memberId, tradeBoardId);
+        if (goods.isEmpty()) {
+            return Boolean.FALSE;
+        }
+        return  Boolean.TRUE;
     }
     public void deleteGoods(TradeBoard tradeBoard) {
         goodsRepository.deleteAllByTradeBoard(tradeBoard);

@@ -84,7 +84,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         log.info("{} attempt to login with {}", username, password);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
 
-        return authenticationManager.authenticate(authenticationToken);
+
+        try {
+            return authenticationManager.authenticate(authenticationToken);
+        } catch (AuthenticationException e) {
+            log.error("Authentication failed for user {}: {}", username, e.getMessage());
+            throw e;
+        }
     }
 
     @Override
@@ -93,6 +99,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
 
         String username = user.getUsername();
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         log.info("success:" + username);
 
@@ -115,6 +122,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         String id = String.valueOf(byUsername.getId());
         String nickname = byUsername.getNickname();
+
         tokens.put("access_token", accessToken);
         tokens.put("username", username);
         tokens.put("refresh_token", refreshToken);

@@ -9,13 +9,18 @@ import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +36,7 @@ import java.util.Optional;
 @Transactional
 public class MemberService extends DefaultOAuth2UserService implements UserDetailsService{
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 유저 전체 조회
@@ -71,7 +77,6 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
      * @param : MemberRequestDto memberRequestDto
      */
     public Long joinUser(MemberRequestDto memberRequestDto) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         // 비밀번호 암호화
         Member member = memberRequestDto.toEntity();
         member.encryptPassword(passwordEncoder.encode(member.getPassword()), SocialLogin.NON);
@@ -146,17 +151,16 @@ public class MemberService extends DefaultOAuth2UserService implements UserDetai
      * @param : MemberRequestDto memberRequestDto
      */
     public void resetPassword(MemberRequestDto memberRequestDto){
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Member member = memberRepository.findByUsername(memberRequestDto.getUsername())
                 .orElseThrow(ErrorCode::throwUnRegisteredId);
         // 다시 암호화하여 초기화, 변경감지
-        member.encryptPassword(passwordEncoder.encode(member.getPassword()), SocialLogin.NON);
+        member.encryptPassword(passwordEncoder.encode(memberRequestDto.getPassword()), SocialLogin.NON);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("userName = " + username);
         Member user = memberRepository.findByUsername(username).orElseThrow(ErrorCode::throwMemberNotFound);
+
         if(user == null) {
             log.error("User not found in the database {}", username);
             throw new UsernameNotFoundException("User not found in the database");

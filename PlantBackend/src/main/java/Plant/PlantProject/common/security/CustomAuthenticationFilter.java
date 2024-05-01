@@ -1,14 +1,18 @@
 package Plant.PlantProject.common.security;
 
+import Plant.PlantProject.common.config.JwtTokenUtil;
 import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.repository.MemberRepository;
+import Plant.PlantProject.service.user.RefreshTokenService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -33,14 +37,18 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private final AuthenticationManager authenticationManager;
+
     private HashMap<String, String> jsonRequest;
+    private  AuthenticationManager authenticationManager;
+    private MemberRepository memberRepository;
+    private RefreshTokenService refreshTokenService;
+    private JwtTokenUtil jwtTokenUtil;
 
-    private  MemberRepository memberRepository;
-
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository) {
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository,RefreshTokenService refreshTokenService, JwtTokenUtil jwtTokenUtil) {
         this.authenticationManager = authenticationManager;
         this.memberRepository=memberRepository;
+        this.refreshTokenService = refreshTokenService;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @Override
@@ -103,22 +111,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         log.info("success:" + username);
 
-        String accessToken = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 20 * 60 * 1000))
-                .withIssuer(request.getRequestURI().toString())
-                .sign(algorithm);
+        String accessToken = jwtTokenUtil.generateAccessToken(username);
 
-        String refreshToken = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() +  14 * 24 * 60 * 60 * 1000))
-                .withIssuer(request.getRequestURI().toString())
-                .sign(algorithm);
+        String refreshToken = jwtTokenUtil.generateRefreshToken(username);
 
         Map<String, Object> tokens = new HashMap<>();
         Member byUsername = memberRepository.findByUsername(username).orElseThrow(ErrorCode::throwMemberNotFound);
-        byUsername.setRefreshToken(refreshToken);
-        memberRepository.save(byUsername);
+
+        refreshTokenService.saveTokenInfo(username, accessToken, refreshToken);
 
         String id = String.valueOf(byUsername.getId());
         String nickname = byUsername.getNickname();

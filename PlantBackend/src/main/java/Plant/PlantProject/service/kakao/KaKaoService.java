@@ -4,6 +4,7 @@ import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.domain.Entity.SocialLogin;
 import Plant.PlantProject.repository.MemberRepository;
+import Plant.PlantProject.service.user.RefreshTokenService;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.parser.JSONParser;
 import com.nimbusds.jose.shaded.json.parser.ParseException;
@@ -33,7 +34,7 @@ import static Plant.PlantProject.domain.Entity.SocialLogin.KAKAO;
 @Slf4j
 public class KaKaoService extends DefaultOAuth2UserService implements UserDetailsService {
     private final MemberRepository memberRepository;
-
+    private final RefreshTokenService refreshTokenService;
     public Map<String, Object> getToken(String code) throws IOException {
         // 인가코드로 토큰받기
         String host = "https://kauth.kakao.com/oauth/token";
@@ -123,6 +124,8 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             String password="1234";
 
             String username = email;
+
+//            refreshTokenService.saveTokenInfo(username, access_token, refresh_token);
             result.put("nickname", nickname);
             result.put("email", email);
             result.put("access_token", access_token);
@@ -139,7 +142,6 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
                         .build();
 
                 member.encryptPassword(passwordEncoder.encode(member.getPassword()), KAKAO);
-                member.setRefreshToken(refresh_token.toString());
 
 
                 memberRepository.save(member);

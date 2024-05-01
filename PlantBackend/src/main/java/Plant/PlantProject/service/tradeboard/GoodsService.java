@@ -6,12 +6,11 @@ import Plant.PlantProject.vo.response.GoodsResponseDto;
 import Plant.PlantProject.vo.request.GoodsRequestDto;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.vo.response.TradeBoardResponseDto;
-import Plant.PlantProject.repository.GoodsRepository;
+import Plant.PlantProject.repository.tradeboard.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
-import Plant.PlantProject.repository.TradeBoardRepository;
+import Plant.PlantProject.repository.tradeboard.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

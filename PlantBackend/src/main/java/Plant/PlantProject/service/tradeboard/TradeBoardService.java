@@ -7,16 +7,14 @@ import Plant.PlantProject.vo.request.TradeBoardRequestDto;
 import Plant.PlantProject.vo.response.TradeBoardResponseDto;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.common.messagequeue.KafkaProducer;
-import Plant.PlantProject.repository.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
-import Plant.PlantProject.repository.TradeBoardRepository;
+import Plant.PlantProject.repository.tradeboard.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

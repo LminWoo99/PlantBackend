@@ -21,16 +21,16 @@ public class JwtTokenUtil {
     // 토큰 유효 시간 5시간
     Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
 
-    public String generateAccessToken(UserDetails user) {
+    public String generateAccessToken(String username) {
         return JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                .withSubject(username)
+                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                 .sign(algorithm);
     }
 
-    public String generateRefreshToken(UserDetails user) {
+    public String generateRefreshToken(String username) {
         return JWT.create()
-                .withSubject(user.getUsername())
+                .withSubject(username)
                 .withExpiresAt(new Date(System.currentTimeMillis() +  14 * 24 * 60 * 60 * 1000))
                 .sign(algorithm);
     }
@@ -46,7 +46,6 @@ public class JwtTokenUtil {
 
             DecodedJWT decodedJWT = verifier.verify(jwt);
             username = decodedJWT.getSubject();
-            String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
 
         } catch (Exception e) {
             return username;
@@ -55,5 +54,30 @@ public class JwtTokenUtil {
             return username;
         }
         return username;
+    }
+    public boolean isJwtValid(String jwt) {
+        boolean returnValue = true;
+        String username = null;
+
+        try {
+            //복호화
+            Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
+            JWTVerifier verifier = JWT.require(algorithm).build();
+
+            DecodedJWT decodedJWT = verifier.verify(jwt);
+            username = decodedJWT.getSubject();
+            String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+//            username = Jwts.parser().setSigningKey(env.getProperty("token.secret"))
+//                    .parseClaimsJws(jwt).getBody()
+//                    .getSubject();
+        } catch (Exception e) {
+            returnValue = false;
+        }
+        if (username == null || username.isEmpty()) {
+            returnValue = false;
+        }
+
+
+        return returnValue;
     }
 }

@@ -1,4 +1,4 @@
-package Plant.PlantProject.controller;
+package Plant.PlantProject.controller.tradeboard;
 
 import Plant.PlantProject.domain.Entity.TradeBoard;
 import Plant.PlantProject.vo.request.CommentCreateRequestDto;

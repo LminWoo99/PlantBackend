@@ -1,4 +1,4 @@
-package Plant.PlantProject.repository;
+package Plant.PlantProject.repository.comment;
 
 import Plant.PlantProject.domain.Entity.Comment;
 import Plant.PlantProject.domain.Entity.TradeBoard;

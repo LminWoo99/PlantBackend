@@ -5,6 +5,7 @@ import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.common.security.CustomAuthenticationFilter;
 
 import Plant.PlantProject.service.user.MemberService;
+import Plant.PlantProject.service.user.RefreshTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     // 비밀번호 암호화
@@ -43,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //Request 가 들어오는 경우 권한 설정 & 로그인 & 로그아웃 처리
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), memberRepository);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), memberRepository, refreshTokenService, jwtTokenUtil);
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http
                 .csrf().disable()

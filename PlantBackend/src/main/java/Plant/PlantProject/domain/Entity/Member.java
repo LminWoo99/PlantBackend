@@ -32,11 +32,6 @@ public class Member{
     @Enumerated(EnumType.STRING)
     private SocialLogin socialLogin;
 
-    private String refreshToken;
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
     @Builder
     public Member(Long id, String email, String password, String nickname, SocialLogin socialLogin, String username) {
         this.id = id;

@@ -1,4 +1,4 @@
-package Plant.PlantProject.controller;
+package Plant.PlantProject.controller.user;
 
 import Plant.PlantProject.vo.response.EmailReq;
 import Plant.PlantProject.service.user.RegisterMail;

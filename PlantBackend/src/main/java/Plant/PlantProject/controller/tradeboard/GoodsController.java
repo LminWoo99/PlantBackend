@@ -1,4 +1,4 @@
-package Plant.PlantProject.controller;
+package Plant.PlantProject.controller.tradeboard;
 
 import Plant.PlantProject.vo.response.GoodsResponseDto;
 import Plant.PlantProject.vo.request.GoodsRequestDto;

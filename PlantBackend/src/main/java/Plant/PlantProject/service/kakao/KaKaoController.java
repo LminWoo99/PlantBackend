@@ -22,8 +22,8 @@ public class KaKaoController {
         Map<String, Object> token = kaKaoService.getToken(code);
         Map<String, Object> userInfo = kaKaoService.getUserInfo(token);
         UserDetails userDetails = (UserDetails) kaKaoService.loadUserByUsername((String) userInfo.get("username"));
-        String accessToken=jwtTokenUtil.generateAccessToken(userDetails);
-        String refreshToken=jwtTokenUtil.generateRefreshToken(userDetails);
+        String accessToken=jwtTokenUtil.generateAccessToken(userDetails.getUsername());
+        String refreshToken=jwtTokenUtil.generateRefreshToken(userDetails.getUsername());
         System.out.println("userInfo = " + userInfo);
         userInfo.put("access_token", accessToken);
         userInfo.put("refresh_token", refreshToken);

@@ -1,4 +1,4 @@
-package Plant.PlantProject.controller;
+package Plant.PlantProject.controller.plantinfo;
 
 import Plant.PlantProject.vo.response.PlantResponseDto;
 import Plant.PlantProject.service.plantinfo.PlantService;

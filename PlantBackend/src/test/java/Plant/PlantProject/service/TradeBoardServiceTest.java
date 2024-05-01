@@ -1,7 +1,7 @@
 //package Plant.PlantProject.service;
 //
 //import Plant.PlantProject.domain.Entity.Status;
-//import Plant.PlantProject.controller.TradeBoardController;
+//import Plant.PlantProject.controller.tradeboard.TradeBoardController;
 //import Plant.PlantProject.domain.vo.request.TradeBoardRequestDto;
 //import Plant.PlantProject.domain.vo.response.ResponseTradeBoardDto;
 //import Plant.PlantProject.service.tradeboard.CommentService;

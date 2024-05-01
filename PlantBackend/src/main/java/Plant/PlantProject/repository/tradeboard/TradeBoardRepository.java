@@ -1,4 +1,4 @@
-package Plant.PlantProject.repository;
+package Plant.PlantProject.repository.tradeboard;
 
 import Plant.PlantProject.domain.Entity.TradeBoard;
 import org.springframework.data.domain.Page;

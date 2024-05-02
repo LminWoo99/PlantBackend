@@ -67,7 +67,6 @@ public class ChatController {
     @MessageExceptionHandler
     @SendTo("/error")
     public String handleException(Exception e) {
-
         return "WebSocket 메시지 핸들러에서 예외가 발생했습니다: " + e;
     }
 

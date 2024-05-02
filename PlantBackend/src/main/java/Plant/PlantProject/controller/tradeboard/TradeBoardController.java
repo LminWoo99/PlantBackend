@@ -1,9 +1,7 @@
 package Plant.PlantProject.controller.tradeboard;
 
-import Plant.PlantProject.vo.response.CommentResponseDto;
 import Plant.PlantProject.vo.request.TradeBoardRequestDto;
 import Plant.PlantProject.vo.response.TradeBoardResponseDto;
-import Plant.PlantProject.service.tradeboard.CommentService;
 import Plant.PlantProject.service.tradeboard.TradeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +22,6 @@ import java.util.List;
 @RequestMapping("/api")
 public class TradeBoardController {
     private final TradeBoardService tradeBoardService;
-    private final CommentService commentService;
     @PostMapping("/trade-board")
     @Operation(summary = "식물 중고 거래 게시글 작성", description = "식물 중고 거래 게시글 작성 할 수 있는 API")
     public ResponseEntity<Long> write(@RequestPart TradeBoardRequestDto tradeBoardDto, @RequestPart("file") List<MultipartFile> files) throws IOException {
@@ -69,27 +63,6 @@ public class TradeBoardController {
     public ResponseEntity<TradeBoardRequestDto> deleteTradeBoard(@PathVariable("id") Long id){
         tradeBoardService.deletePost(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/view/{id}")
-    @Operation(summary = "식물 중고 거래 게시글 조회수 증가", description = "식물 중고 거래 게시글 조회수 증가 하는 API")
-    public ResponseEntity<Integer> updateReadCount(@PathVariable Long id) {
-        Integer view = tradeBoardService.updateView(id);// views ++
-
-        return ResponseEntity.ok(view);
-}
-    @PutMapping("/update-status/{id}")
-    @Operation(summary = "거래 완료", description = "구매자가 정해지면 거래 완료 확정 처리 하는 API")
-    public ResponseEntity<Long> updateStatus(@PathVariable Long id) {
-        Long tradeBoardId = tradeBoardService.updateStatus(id);
-        return ResponseEntity.ok().body(tradeBoardId);
-    }
-    @GetMapping("/buyer/{id}")
-    @Operation(summary = "구매자 조회", description = "해당 중고 게시글 구매자 조회 하는 API")
-    public ResponseEntity<List<CommentResponseDto>> getBuyer(@PathVariable Long id) {
-
-        List<CommentResponseDto> comment = commentService.findCommentsByTradeBoardId(id);
-        return ResponseEntity.ok().body(comment);
     }
 
     @PostMapping("/buyer/{id}")

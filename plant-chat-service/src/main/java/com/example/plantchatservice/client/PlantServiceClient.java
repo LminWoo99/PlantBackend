@@ -1,7 +1,7 @@
 package com.example.plantchatservice.client;
 
 import com.example.plantchatservice.dto.member.MemberDto;
-import com.example.plantchatservice.dto.vo.ResponseTradeBoardDto;
+import com.example.plantchatservice.dto.vo.TradeBoardResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,16 +16,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name="plant-service")
 public interface PlantServiceClient {
     @GetMapping("/api/list/{id}")
-    ResponseEntity<ResponseTradeBoardDto> boardContent(@PathVariable(value = "id") Long id);
+    ResponseEntity<TradeBoardResponseDto> boardContent(@PathVariable(value = "id") Long id);
 
-    @GetMapping("/api/findId")
+    @GetMapping("/api/user/pk")
     ResponseEntity<MemberDto> findById(@RequestParam Long id);
 
-    @GetMapping("/api/findUsername")
+    @GetMapping("/api/user")
     ResponseEntity<MemberDto> findByUsername(@RequestParam String username);
-//    @GetMapping("/api/findEmail")
-//    ResponseEntity<MemberDto> findIdByEmail(@RequestParam String email);
 
-    @GetMapping("/api/joinMember")
+
+    @GetMapping("/api/user/token")
     ResponseEntity<MemberDto> getJoinMember(@RequestHeader("Authorization") String jwtToken);
 }

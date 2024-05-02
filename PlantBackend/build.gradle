@@ -61,9 +61,9 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	// (3)
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-
+	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 	// (3)
 //	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	//querydsl 추가

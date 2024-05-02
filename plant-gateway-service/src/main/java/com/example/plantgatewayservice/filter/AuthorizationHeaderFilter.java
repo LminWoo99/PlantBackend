@@ -10,14 +10,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.nio.charset.StandardCharsets;
 
 
 @Component
@@ -80,9 +86,20 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     private Mono<Void> OnError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
-
         log.error(err);
-        return response.setComplete();
+        // 문자열로 에러 메시지 생성
+        String errorMessage = err;
+        byte[] bytes = errorMessage.getBytes(StandardCharsets.UTF_8);
+        DataBuffer buffer = new DefaultDataBufferFactory().wrap(bytes);
+
+        // 컨텐트 타입 설정
+        response.getHeaders().setContentType(MediaType.TEXT_PLAIN);
+
+        // 에러 로깅
+        log.error(err);
+
+        // 에러 메시지를 응답 본문에 쓰기
+        return response.writeWith(Flux.just(buffer));
     }
 
 }

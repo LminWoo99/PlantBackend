@@ -1,10 +1,7 @@
 package com.example.plantchatservice.service.chat;
 
 import com.example.plantchatservice.GenerateMockToken;
-import com.example.plantchatservice.chat.ChatController;
-import com.example.plantchatservice.chat.MvcTestBasic;
 import com.example.plantchatservice.client.PlantServiceClient;
-import com.example.plantchatservice.common.util.KafkaUtil;
 import com.example.plantchatservice.common.util.TokenHandler;
 import com.example.plantchatservice.domain.Chat;
 import com.example.plantchatservice.domain.NotifiTypeEnum;
@@ -13,41 +10,28 @@ import com.example.plantchatservice.dto.chat.Message;
 import com.example.plantchatservice.dto.member.MemberDto;
 import com.example.plantchatservice.dto.vo.*;
 import com.example.plantchatservice.repository.chat.ChatRepository;
-import com.example.plantchatservice.repository.chat.CustomChatRepository;
 import com.example.plantchatservice.repository.mongo.MongoChatRepository;
 import com.example.plantchatservice.service.AggregationSender;
 import com.example.plantchatservice.service.notification.NotificationService;
 import com.example.plantchatservice.testUser.WithMockCustomAccount;
-import com.google.common.base.Function;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -92,10 +76,9 @@ class ChatServiceTest{
 
         ChatRequestDto chatRequestDto = new ChatRequestDto(1, 1);
 
-        ResponseTradeBoardDto responseTradeBoardDto = new ResponseTradeBoardDto(11L, "test",
-                "test하기", "Lee", 1L, 11, "거래중",LocalDateTime.now(), LocalDateTime.now(), 32000, 1, "minwoo");
+        TradeBoardResponseDto tradeBoardResponseDto = new TradeBoardResponseDto();
 
-        ResponseEntity<ResponseTradeBoardDto> mockResponse = ResponseEntity.ok(responseTradeBoardDto);
+        ResponseEntity<TradeBoardResponseDto> mockResponse = ResponseEntity.ok(tradeBoardResponseDto);
         Chat expectChat = new Chat(1, 1, 2, 11, LocalDateTime.now());
 
         when(chatRepository.existChatRoomByBuyer(any(), any(), any())).thenReturn(false);
@@ -118,9 +101,8 @@ class ChatServiceTest{
 
         ChatRequestDto chatRequestDto = new ChatRequestDto(1, 1);
 
-        ResponseTradeBoardDto responseTradeBoardDto = new ResponseTradeBoardDto(11L, "test",
-                "test하기", "Lee", 1L, 11, "거래완료",LocalDateTime.now(), LocalDateTime.now(), 32000, 1, "minwoo");
-        ResponseEntity<ResponseTradeBoardDto> mockResponse = ResponseEntity.ok(responseTradeBoardDto);
+        TradeBoardResponseDto tradeBoardResponseDto = new TradeBoardResponseDto();
+        ResponseEntity<TradeBoardResponseDto> mockResponse = ResponseEntity.ok(tradeBoardResponseDto);
 
         when(circuitBreaker.run(any(), any())).thenReturn(mockResponse);
 
@@ -154,7 +136,7 @@ class ChatServiceTest{
 
         mockChatRoomList.add(chatRoomResponseDto);
 
-        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(3L , "minu", "ee", "이민우", "pass", "mw310@~"));
+        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(3L , "minu", "ee", "이민우", "mw310@~"));
 
         when(chatRepository.getChattingList(anyInt(), anyInt())).thenReturn(mockChatRoomList);
         when(plantServiceClient.findById(anyLong())).thenReturn(mockResponseEntity);

@@ -1,5 +1,6 @@
 package Plant.PlantProject.service.kakao;
 
+import Plant.PlantProject.common.config.JwtTokenUtil;
 import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.domain.Entity.SocialLogin;
@@ -10,12 +11,14 @@ import com.nimbusds.jose.shaded.json.parser.JSONParser;
 import com.nimbusds.jose.shaded.json.parser.ParseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +38,18 @@ import static Plant.PlantProject.domain.Entity.SocialLogin.KAKAO;
 public class KaKaoService extends DefaultOAuth2UserService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final RefreshTokenService refreshTokenService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenUtil jwtTokenUtil;
+    @Value("${kakao.host}")
+    private String host;
+    @Value("${kakao.clientId}")
+    private String client;
+    @Value("${kakao.redirect}")
+    private String redirectUrl;
+
     public Map<String, Object> getToken(String code) throws IOException {
+        Map<String, Object> userInfo = new HashMap<>();
         // 인가코드로 토큰받기
-        String host = "https://kauth.kakao.com/oauth/token";
         URL url = new URL(host);
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         Map<String, Object> key = new HashMap<>();
@@ -48,15 +60,12 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=9f8bf0134e25a65f80e7b9849efc41ae");
-            sb.append("&redirect_uri=http://localhost:3000/oauth2/login/kakao");
+            sb.append("&client_id="+client);
+            sb.append("&redirect_uri="+redirectUrl);
             sb.append("&code=" + code);
 
             bw.write(sb.toString());
             bw.flush();
-
-            int responseCode = urlConnection.getResponseCode();
-            System.out.println("responseCode = " + responseCode);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String line = "";
@@ -64,21 +73,18 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             while ((line = br.readLine()) != null) {
                 result += line;
             }
-            System.out.println("result = " + result);
             // json parsing
             JSONParser parser = new JSONParser();
             JSONObject elem = (JSONObject) parser.parse(result);
 
             String access_token = elem.get("access_token").toString();
             String refresh_token = elem.get("refresh_token").toString();
-            System.out.println("refresh_token = " + refresh_token);
-            System.out.println("access_token = " + access_token);
-
 
             key.put("access_token", access_token);
             key.put("refresh_token", refresh_token);
             br.close();
             bw.close();
+            userInfo = getUserInfo(key);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -86,7 +92,7 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
         }
 
 
-        return key;
+        return userInfo;
     }
     public Map<String, Object> getUserInfo(Map<String, Object> token) throws IOException {
         String host = "https://kapi.kakao.com/v2/user/me";
@@ -99,9 +105,6 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Authorization", "Bearer " +access_token);
             urlConnection.setRequestMethod("GET");
-            int responseCode = urlConnection.getResponseCode();
-            System.out.println("responseCode = " + responseCode);
-
 
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String line = "";
@@ -110,7 +113,7 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             {
                 res+=line;
             }
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 
 
             JSONParser parser = new JSONParser();
@@ -124,12 +127,14 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
             String password="1234";
 
             String username = email;
+            String accessToken=jwtTokenUtil.generateAccessToken(username);
+            String refreshToken=jwtTokenUtil.generateRefreshToken(username);
+            refreshTokenService.saveTokenInfo(username, accessToken, refreshToken);
 
-//            refreshTokenService.saveTokenInfo(username, access_token, refresh_token);
             result.put("nickname", nickname);
             result.put("email", email);
-            result.put("access_token", access_token);
-            result.put("refresh_token", refresh_token);
+            result.put("access_token", accessToken);
+            result.put("refresh_token", refreshToken);
             result.put("username", username);
 
             if (!memberRepository.existsByEmail(email)) {
@@ -146,6 +151,7 @@ public class KaKaoService extends DefaultOAuth2UserService implements UserDetail
 
                 memberRepository.save(member);
                 result.put("id", member.getId());
+                result.put("access_token", accessToken);
             } else {
                 // 이미 존재하는 회원이면 그냥 넘어가거나 다른 로직 수행 (예: 로그 작성 등)
                 Member byUsername = memberRepository.findByUsername(username).orElseThrow(ErrorCode::throwMemberNotFound);

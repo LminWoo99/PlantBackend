@@ -4,6 +4,8 @@ import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.domain.Entity.Status;
 import Plant.PlantProject.domain.Entity.TradeBoard;
 import Plant.PlantProject.vo.request.TradeBoardRequestDto;
+import Plant.PlantProject.vo.response.ChatRoomResponseDto;
+import Plant.PlantProject.vo.response.MemberResponseDto;
 import Plant.PlantProject.vo.response.TradeBoardResponseDto;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.common.messagequeue.KafkaProducer;
@@ -11,8 +13,11 @@ import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.tradeboard.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static Plant.PlantProject.vo.response.TradeBoardResponseDto.convertTradeBoardToDto;
@@ -30,14 +36,12 @@ import static Plant.PlantProject.vo.response.TradeBoardResponseDto.convertTradeB
 public class TradeBoardService {
     private final TradeBoardRepository tradeBoardRepository;
     private final MemberRepository memberRepository;
-    private final CommentService commentService;
     private final ImageFileUploadService imageFileUploadService;
     private final GoodsService goodsService;
     private final KafkaProducer kafkaProducer;
 
     /**
      * 거래게시글 저장
-     * username은 Security에서 Principal을 가져와서 전달
      * @param : TradeBoardRequestDto tradeBoardRequestDto, String username
      */
     @Transactional
@@ -104,8 +108,7 @@ public class TradeBoardService {
      * 조회수 증가
      * @param : Long id
      */
-    @Transactional
-    public synchronized Integer updateView(Long id) {
+    private synchronized Integer updateView(Long id) {
         Integer view = tradeBoardRepository.updateView(id);
         return view;
     }
@@ -120,6 +123,7 @@ public class TradeBoardService {
         TradeBoard tradeBoard = tradeBoardRepository.findTradeBoardById(id);
         // 구매자 업데이트
         tradeBoardRepository.updateBuyer(tradeBoard.getId(), tradeBoardRequestDto.getBuyer());
+        updateStatus(id);
 
         return TradeBoardResponseDto.convertTradeBoardToDto(tradeBoard);
 
@@ -138,35 +142,13 @@ public class TradeBoardService {
      * 단건 거래 게시글 조회
      * @param : Long id
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public TradeBoardResponseDto findById(Long id){
         TradeBoard tradeBoard = tradeBoardRepository.findById(id).orElseThrow(ErrorCode::throwTradeBoardNotFound);
-
+        updateView(id);
         return TradeBoardResponseDto.convertTradeBoardToDto(tradeBoard);
 
     }
-//    /**
-//     * 찜 갯수 증가
-//     * @param : Long tradeBoardId
-//     */
-//    public synchronized void increaseGoodCount(Long tradeBoardId) {
-//        TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId)
-//                .orElseThrow(ErrorCode::throwTradeBoardNotFound);
-//
-//        tradeBoard.increaseGoodsCount(); // TradeBoard 엔티티의 메서드를 호출하여 찜 개수 증가
-//        tradeBoardRepository.save(tradeBoard);
-//    }
-//    /**
-//     * 찜 갯수 감소
-//     * @param : Long tradeBoardId
-//     */
-//    public synchronized void decreaseGoodCount(Long tradeBoardId) {
-//        TradeBoard tradeBoard = tradeBoardRepository.findById(tradeBoardId)
-//                .orElseThrow(ErrorCode::throwTradeBoardNotFound);
-//
-//        tradeBoard.decreaseGoodsCount(); // TradeBoard 엔티티의 메서드를 호출하여 찜 개수 증가
-//        tradeBoardRepository.save(tradeBoard);
-//    }
     /**
      * 게시글 삭제
      * 삭제 시 채팅 마이크로 서비스의 채팅 데이터를 삭제해야하므로
@@ -184,8 +166,7 @@ public class TradeBoardService {
                 .build();
         //관련 연관관계 단방향이므로 모두 삭제후 게시글 삭제
         goodsService.deleteGoods(tradeBoard);
-        //댓글 삭제후
-        commentService.deleteCommentByTradeBoardId(tradeBoard);
+
 
         //게시글 삭제
         tradeBoardRepository.delete(tradeBoard);
@@ -219,4 +200,5 @@ public class TradeBoardService {
                 .collect(Collectors.toList());
         return tradeBoardResponseDtos;
     }
+
 }

@@ -15,18 +15,10 @@ import java.util.Map;
 public class KaKaoController {
 
     private final KaKaoService kaKaoService;
-    private final JwtTokenUtil jwtTokenUtil;
 
     @GetMapping("/oauth2/login/kakao")
-    public ResponseEntity<Map> getCI(@RequestParam String code) throws IOException {
-        Map<String, Object> token = kaKaoService.getToken(code);
-        Map<String, Object> userInfo = kaKaoService.getUserInfo(token);
-        UserDetails userDetails = (UserDetails) kaKaoService.loadUserByUsername((String) userInfo.get("username"));
-        String accessToken=jwtTokenUtil.generateAccessToken(userDetails.getUsername());
-        String refreshToken=jwtTokenUtil.generateRefreshToken(userDetails.getUsername());
-        System.out.println("userInfo = " + userInfo);
-        userInfo.put("access_token", accessToken);
-        userInfo.put("refresh_token", refreshToken);
+    public ResponseEntity<Map<String, Object>> getCI(@RequestParam String code) throws IOException {
+        Map<String, Object> userInfo = kaKaoService.getToken(code);
         return ResponseEntity.ok(userInfo);
     }
 }

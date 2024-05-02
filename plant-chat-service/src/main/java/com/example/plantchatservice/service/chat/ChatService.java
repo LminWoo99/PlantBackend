@@ -23,7 +23,6 @@ import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +66,7 @@ public class ChatService {
     public Chat makeChatRoom(Integer memberNo, ChatRequestDto requestDto) {
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
         // 채팅을 걸려고 하는 거래글이 거래 가능 상태인지 조회해본다.
-        ResponseEntity<ResponseTradeBoardDto> tradeBoardDto = circuitBreaker.run(() ->
+        ResponseEntity<TradeBoardResponseDto> tradeBoardDto = circuitBreaker.run(() ->
                         plantServiceClient.boardContent(requestDto.getTradeBoardNo().longValue()),
                 throwable -> ResponseEntity.ok(null));
 
@@ -113,13 +112,13 @@ public class ChatService {
      * mongodb에서 채팅 메세지 보낸 시간을 내림차순으로 정렬후 첫번째 값 마지막 메세지로 세팅
      * @param : Integer memberNo, Integer tradeBoardNo
      */
+    @Transactional
     public List<ChatRoomResponseDto> getChatList(Integer memberNo, Integer tradeBoardNo) {
         List<ChatRoomResponseDto> chatRoomList = chatRepository.getChattingList(memberNo, tradeBoardNo);
         //Participant 채워야됨(username)
             chatRoomList
                     .forEach(chatRoomDto -> {
                         //param으로 넘어온 멤버가 채팅 만든 멤버일 경우 => Participant에 참가한 멤버
-//                        ResponseEntity<MemberDto> byId = plantServiceClient.findById(chatRoomDto.getCreateMember().longValue());
                         if (memberNo.equals(chatRoomDto.getCreateMember())) {
                             ResponseEntity<MemberDto> memberDtoResponse = plantServiceClient.findById(chatRoomDto.getJoinMember().longValue());
 
@@ -282,7 +281,6 @@ public class ChatService {
     /**
      * 판매자가 참가한  채팅방이 존재하는지 유무 처리 메서드
      * 단순 조회용 메서드라 readOnly = true
-     *
      * @param : Integer tradeBoardNo,  Integer memberNo
      */
     @Transactional(readOnly = true)

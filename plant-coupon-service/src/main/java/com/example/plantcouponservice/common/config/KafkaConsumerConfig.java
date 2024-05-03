@@ -4,6 +4,7 @@ import com.example.plantcouponservice.vo.CouponRequestDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -16,6 +17,8 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConsumerConfig {
+    @Value("${kafka.url}")
+    private String kafkaServerUrl;
     @Bean
     public ConsumerFactory<String, CouponRequestDto> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
@@ -23,7 +26,7 @@ public class KafkaConsumerConfig {
         // 패키지 신뢰 오류로 인해 모든 패키지를 신뢰하도록 작성
         deserializer.addTrustedPackages("*");
 
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerUrl);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "coupon");
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);

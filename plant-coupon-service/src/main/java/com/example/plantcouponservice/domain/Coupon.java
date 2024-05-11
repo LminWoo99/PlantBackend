@@ -34,4 +34,7 @@ public class Coupon {
     public void useCoupon() {
         this.type = CouponStatusEnum.사용완료;
     }
+    public void revertCoupon() {
+        this.type = CouponStatusEnum.사용가능;
+    }
 }

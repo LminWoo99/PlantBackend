@@ -1,19 +1,15 @@
 package com.example.plantpayservice.service;
 
-import com.example.plantpayservice.client.PlantCouponServiceClient;
 import com.example.plantpayservice.domain.entity.CouponStatus;
 import com.example.plantpayservice.domain.entity.Payment;
-import com.example.plantpayservice.exception.CustomException;
 import com.example.plantpayservice.exception.ErrorCode;
 import com.example.plantpayservice.repository.PaymentRepository;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
-import com.example.plantpayservice.vo.response.CouponResponseDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
-import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class PaymentService {
     private final PaymentRepository paymentRepository;
-    private final CircuitBreakerFactory circuitBreakerFactory;
-    private final PlantCouponServiceClient plantCouponServiceClient;
+    private final KafkaTemplate<String, PaymentRequestDto> kafkaTemplate;
     /**
      * 식구페이 머니 충전 메서드
      * iamport로 결제 완료 되면 페이 머니로 충전
@@ -88,22 +83,19 @@ public class PaymentService {
      */
 
     @Transactional
-    public void tradePayMoney(PaymentRequestDto paymentRequestDto, Integer sellerNo) {
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+    public void tradePayMoney(PaymentRequestDto paymentRequestDto) {
         Payment buyerPayment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
         Integer buyerPayMoney = paymentRequestDto.getPayMoney();
         //쿠폰 사용시 구매자 결제정보만 3000원 차감
         if (paymentRequestDto.getCouponStatus() == CouponStatus.쿠폰사용) {
-            //쿠폰 마이크로 서비스 호출및 circuitBreaker 예외
-           circuitBreaker.run(() ->
-                            plantCouponServiceClient.useCoupon(buyerPayment.getMemberNo(), paymentRequestDto.getCouponNo()),
-                    throwable -> ResponseEntity.ok(null));
             buyerPayMoney += paymentRequestDto.getDiscountPrice();
         }
         //거레할 금액보다 구매자 보유 payMoney가 적으면 예외 처리
         if (buyerPayment.getPayMoney()< paymentRequestDto.getPayMoney()) {
+            kafkaTemplate.send("payment-failed", paymentRequestDto);
             throw ErrorCode.throwInsufficientPayMoney();
         }
-        paymentRepository.tradePayMoney(sellerNo, buyerPayment.getMemberNo(), paymentRequestDto, buyerPayMoney);
+        paymentRepository.tradePayMoney(paymentRequestDto.getSellerNo(), buyerPayment.getMemberNo(), paymentRequestDto, buyerPayMoney);
     }
+
 }

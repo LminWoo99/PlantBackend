@@ -5,7 +5,7 @@ import com.example.plantcouponservice.domain.Coupon;
 import com.example.plantcouponservice.domain.FailedEvent;
 import com.example.plantcouponservice.repository.CouponRepository;
 import com.example.plantcouponservice.repository.FailedEventRepository;
-import com.example.plantcouponservice.vo.CouponRequestDto;
+import com.example.plantcouponservice.vo.request.CouponRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

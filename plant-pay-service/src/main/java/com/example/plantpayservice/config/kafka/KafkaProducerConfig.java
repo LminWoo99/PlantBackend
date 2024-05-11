@@ -1,7 +1,6 @@
-package com.example.plantcouponservice.common.config;
+package com.example.plantpayservice.config.kafka;
 
-import com.example.plantcouponservice.vo.request.CouponRequestDto;
-import com.example.plantcouponservice.vo.request.PaymentRequestDto;
+import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,23 +18,9 @@ public class KafkaProducerConfig {
 
     @Value("${kafka.url}")
     private String kafkaServerUrl;
-    @Bean
-    public ProducerFactory<String, CouponRequestDto> couponCreatedProducerFactory() {
-        HashMap<String, Object> config = new HashMap<>();
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerUrl);
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-        return new DefaultKafkaProducerFactory<>(config);
-
-    }
 
     @Bean
-    public KafkaTemplate<String, CouponRequestDto> kafkaTemplate() {
-        return new KafkaTemplate<>(couponCreatedProducerFactory());
-    }
-    @Bean
-    public ProducerFactory<String, PaymentRequestDto> couponUseProducerFactory() {
+    public ProducerFactory<String, PaymentRequestDto> kafkaProducerFactory() {
         HashMap<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerUrl);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -47,6 +32,6 @@ public class KafkaProducerConfig {
 
     @Bean
     public KafkaTemplate<String, PaymentRequestDto> couponUseKafkaTemplate() {
-        return new KafkaTemplate<>(couponUseProducerFactory());
+        return new KafkaTemplate<>(kafkaProducerFactory());
     }
 }

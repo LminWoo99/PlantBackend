@@ -1,4 +1,4 @@
-package com.example.plantcouponservice.vo;
+package com.example.plantcouponservice.vo.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

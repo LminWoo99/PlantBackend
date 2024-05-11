@@ -1,4 +1,4 @@
-package com.example.plantcouponservice.vo;
+package com.example.plantcouponservice.vo.response;
 
 import com.example.plantcouponservice.domain.Coupon;
 import com.fasterxml.jackson.annotation.JsonInclude;

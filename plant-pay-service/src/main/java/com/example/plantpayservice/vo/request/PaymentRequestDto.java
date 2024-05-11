@@ -17,6 +17,11 @@ public class PaymentRequestDto {
     @NotNull
     private Integer memberNo;
     private Long couponNo;
-
+    private Integer sellerNo;
     private CouponStatus couponStatus;
+
+    public PaymentRequestDto(@NotNull Integer payMoney, @NotNull Integer memberNo) {
+        this.payMoney = payMoney;
+        this.memberNo = memberNo;
+    }
 }

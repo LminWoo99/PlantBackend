@@ -1,24 +1,24 @@
 package com.example.plantcouponservice.service;
 
-import com.example.plantcouponservice.common.producer.CouponCreateProducer;
+import com.example.plantcouponservice.service.producer.CouponCreateProducer;
+import com.example.plantcouponservice.service.producer.CouponUseProducer;
 import com.example.plantcouponservice.domain.Coupon;
 import com.example.plantcouponservice.domain.CouponStatusEnum;
 import com.example.plantcouponservice.repository.AppliedUserRepository;
 import com.example.plantcouponservice.repository.CouponCountRepository;
 import com.example.plantcouponservice.repository.CouponRepository;
-import com.example.plantcouponservice.vo.CouponRequestDto;
-import com.example.plantcouponservice.vo.CouponResponseDto;
-import com.example.plantcouponservice.vo.StatusResponseDto;
+import com.example.plantcouponservice.vo.request.CouponRequestDto;
+import com.example.plantcouponservice.vo.request.PaymentRequestDto;
+import com.example.plantcouponservice.vo.response.CouponResponseDto;
+import com.example.plantcouponservice.vo.response.StatusResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +29,7 @@ public class CouponService {
     private final CouponCountRepository couponCountRepository;
     private final CouponCreateProducer couponCreateProducer;
     private final AppliedUserRepository appliedUserRepository;
+    private final CouponUseProducer couponUseProducer;
 
     /**
      * 쿠폰 발급
@@ -78,16 +79,31 @@ public class CouponService {
      * feignclient를 통해 결제 서비스의 결제 메서드와 하나의 작업단위로 이뤄야 됨
      * @param : Integer memberNo
      */
-    @Transactional
-    public CouponResponseDto useCoupon(Integer memberNo, Long couponNo) {
-        Coupon coupon = couponRepository.findByMemberNoAndCouponNo(memberNo, couponNo);
+    @KafkaListener(topics = "use-coupon", groupId = "coupon-service")
+    public CouponResponseDto useCoupon(PaymentRequestDto paymentRequestDto) {
+        Coupon coupon = couponRepository.findByMemberNoAndCouponNo(paymentRequestDto.getMemberNo(), paymentRequestDto.getCouponNo());
         //사용완료
         coupon.useCoupon();
+
+
+        couponUseProducer.create(paymentRequestDto);
+
         CouponResponseDto couponResponseDto = CouponResponseDto.builder()
-                .memberNo(memberNo)
+                .memberNo(paymentRequestDto.getMemberNo())
                 .discountPrice(3000)
                 .build();
-        couponRepository.save(coupon);
+
+
         return couponResponseDto;
     }
+    @KafkaListener(topics = "coupon-rollback", groupId = "coupon-service")
+    public void handleCouponRollbackEvent(PaymentRequestDto event) {
+        Coupon coupon = couponRepository.findByMemberNoAndCouponNo(event.getMemberNo(), event.getCouponNo());
+
+        if (coupon.getType() == CouponStatusEnum.사용완료) {
+            //다시 쿠폰 상태 롤백
+            coupon.revertCoupon();
+        }
+    }
+
 }

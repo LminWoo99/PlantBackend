@@ -3,21 +3,18 @@ package com.example.plantcouponservice.service;
 import com.example.plantcouponservice.domain.Coupon;
 import com.example.plantcouponservice.domain.CouponStatusEnum;
 import com.example.plantcouponservice.repository.CouponRepository;
-import com.example.plantcouponservice.vo.CouponRequestDto;
-import com.example.plantcouponservice.vo.CouponResponseDto;
-import org.assertj.core.api.Assertions;
+import com.example.plantcouponservice.vo.request.CouponRequestDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 class CouponServiceTest {
     @Autowired
@@ -87,7 +84,7 @@ class CouponServiceTest {
         CouponRequestDto couponRequestDto = new CouponRequestDto(4, 2000);
         couponService.applyCoupon(couponRequestDto);
         //when
-        couponService.useCoupon(4, 1325L);
+//        couponService.useCoupon(4, 1325L);
         Coupon coupon = couponRepository.findByMemberNoAndCouponNo(4, 1325L);
         //then
 

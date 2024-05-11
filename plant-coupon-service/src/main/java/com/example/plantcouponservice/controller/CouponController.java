@@ -1,9 +1,9 @@
 package com.example.plantcouponservice.controller;
 
 import com.example.plantcouponservice.service.CouponService;
-import com.example.plantcouponservice.vo.CouponRequestDto;
-import com.example.plantcouponservice.vo.CouponResponseDto;
-import com.example.plantcouponservice.vo.StatusResponseDto;
+import com.example.plantcouponservice.vo.request.CouponRequestDto;
+import com.example.plantcouponservice.vo.response.CouponResponseDto;
+import com.example.plantcouponservice.vo.response.StatusResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,13 +41,13 @@ public class CouponController {
         return ResponseEntity.ok().body(couponResponseDtoList);
     }
 
-    @PostMapping("/coupon/used")
-    @Operation(summary = "쿠폰 사용", description = "쿠폰 사용할 수 있는 API")
-    public ResponseEntity<CouponResponseDto> useCoupon(@RequestParam Integer memberNo, @RequestParam Long couponNo) {
-        CouponResponseDto couponResponseDto = couponService.useCoupon(memberNo, couponNo);
-        return ResponseEntity.ok().body(couponResponseDto);
-
-    }
+//    @PostMapping("/coupon/used")
+//    @Operation(summary = "쿠폰 사용", description = "쿠폰 사용할 수 있는 API")
+//    public ResponseEntity<CouponResponseDto> useCoupon(@RequestParam Integer memberNo, @RequestParam Long couponNo) {
+//        CouponResponseDto couponResponseDto = couponService.useCoupon(memberNo, couponNo);
+//        return ResponseEntity.ok().body(couponResponseDto);
+//
+//    }
 
 
 

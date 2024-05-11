@@ -1,4 +1,4 @@
-package com.example.plantcouponservice.vo;
+package com.example.plantcouponservice.vo.request;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;

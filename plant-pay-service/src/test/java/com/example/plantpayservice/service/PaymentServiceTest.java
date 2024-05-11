@@ -98,8 +98,9 @@ class PaymentServiceTest {
         paymentService.chargePayMoney(sellerRequestDto);
 
         PaymentRequestDto amountDto = new PaymentRequestDto(2000, 1);
+        amountDto.setSellerNo(2);
         //when
-        paymentService.tradePayMoney(amountDto, 2);
+        paymentService.tradePayMoney(amountDto);
         //then
         assertThat(paymentService.getPayMoney(1).getPayMoney()).isEqualTo(10000);
         assertThat(paymentService.getPayMoney(2).getPayMoney()).isEqualTo(8000);
@@ -116,10 +117,10 @@ class PaymentServiceTest {
         paymentService.chargePayMoney(sellerRequestDto);
 
         PaymentRequestDto amountDto = new PaymentRequestDto(2000, 1);
-
+        amountDto.setSellerNo(2);
         //when
         //then
-        assertThrows(CustomException.class, () -> paymentService.tradePayMoney(amountDto, 2));
+        assertThrows(CustomException.class, () -> paymentService.tradePayMoney(amountDto));
 
     }
 }

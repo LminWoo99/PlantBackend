@@ -1,6 +1,7 @@
 package com.example.plantpayservice.controller;
 
 
+import com.example.plantpayservice.service.PaymentOrchestrator;
 import com.example.plantpayservice.service.PaymentService;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
@@ -28,6 +29,7 @@ public class PaymentController {
     private String restApiSecret;
     private IamportClient iamportClient;
     private final PaymentService paymentService;
+    private final PaymentOrchestrator paymentOrchestrator;
     @PostConstruct
     public void init() {
         this.iamportClient = new IamportClient(restApiKey, restApiSecret);
@@ -56,8 +58,9 @@ public class PaymentController {
 
     //식구페이로 거래하기
     @PostMapping("/payMoney/trade")
-    public ResponseEntity<HttpStatus> tradePayMoney(@RequestBody PaymentRequestDto paymentRequestDto, @RequestParam(value = "sellerNo", required = false) Integer sellerNo) {
-        paymentService.tradePayMoney(paymentRequestDto, sellerNo);
+    public ResponseEntity<HttpStatus> tradePayMoney(@RequestBody PaymentRequestDto paymentRequestDto) {
+        //분산 트랜잭션 SAGA Pattern
+        paymentOrchestrator.startSaga(paymentRequestDto);
         return ResponseEntity.ok().body(HttpStatus.ACCEPTED);
 
     }

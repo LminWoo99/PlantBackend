@@ -1,7 +1,7 @@
 package com.example.plantcouponservice.service;
 
 import com.example.plantcouponservice.service.producer.CouponCreateProducer;
-import com.example.plantcouponservice.service.producer.CouponUseProducer;
+import com.example.plantcouponservice.service.producer.PaymentProducer;
 import com.example.plantcouponservice.domain.Coupon;
 import com.example.plantcouponservice.domain.CouponStatusEnum;
 import com.example.plantcouponservice.repository.AppliedUserRepository;
@@ -29,7 +29,7 @@ public class CouponService {
     private final CouponCountRepository couponCountRepository;
     private final CouponCreateProducer couponCreateProducer;
     private final AppliedUserRepository appliedUserRepository;
-    private final CouponUseProducer couponUseProducer;
+    private final PaymentProducer paymentProducer;
 
     /**
      * 쿠폰 발급
@@ -87,7 +87,7 @@ public class CouponService {
 
         couponRepository.save(coupon);
 
-        couponUseProducer.create(paymentRequestDto);
+        paymentProducer.create(paymentRequestDto);
 
         CouponResponseDto couponResponseDto = CouponResponseDto.builder()
                 .memberNo(paymentRequestDto.getMemberNo())

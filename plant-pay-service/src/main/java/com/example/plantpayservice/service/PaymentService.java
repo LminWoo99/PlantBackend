@@ -6,6 +6,7 @@ import com.example.plantpayservice.exception.ErrorCode;
 import com.example.plantpayservice.repository.PaymentRepository;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
+import com.example.plantpayservice.vo.response.StatusResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

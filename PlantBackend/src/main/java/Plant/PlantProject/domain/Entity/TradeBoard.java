@@ -71,9 +71,11 @@ public class TradeBoard {
    /**
     * 거래 완료 메서드
     */
-    public void updateStatus(Status status) {
+    public void updateBuyer(String buyer, Status status) {
+        this.buyer = buyer;
         this.status = status;
     }
+
     public static TradeBoard createTradeBoard(Member member, String title, String content,
                                               String createBy,  int price){
         TradeBoard tradeBoard = new TradeBoard();

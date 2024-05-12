@@ -14,7 +14,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
@@ -45,13 +44,13 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(couponCreatedProducerFactory());
     }
     @Bean
-    public ProducerFactory<String, PaymentRequestDto> couponUseProducerFactory() {
+    public ProducerFactory<String, PaymentRequestDto> paymentProducerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
 
     }
 
     @Bean
-    public KafkaTemplate<String, PaymentRequestDto> couponUseKafkaTemplate() {
-        return new KafkaTemplate<>(couponUseProducerFactory());
+    public KafkaTemplate<String, PaymentRequestDto> paymentUseKafkaTemplate() {
+        return new KafkaTemplate<>(paymentProducerFactory());
     }
 }

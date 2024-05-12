@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CouponUseProducer {
+public class PaymentProducer {
     private final KafkaTemplate<String, PaymentRequestDto> kafkaTemplate;
 
 
     public void create(PaymentRequestDto paymentRequestDto) {
         log.info("쿠폰 사용 이벤트: {}", paymentRequestDto.getCouponNo());
-        kafkaTemplate.send("coupon-success", paymentRequestDto);
+        kafkaTemplate.send("payment", paymentRequestDto);
     }
 
 

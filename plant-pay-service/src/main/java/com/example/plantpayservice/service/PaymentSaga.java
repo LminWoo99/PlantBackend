@@ -1,10 +1,10 @@
 package com.example.plantpayservice.service;
 
 import com.example.plantpayservice.domain.entity.CouponStatus;
+import com.example.plantpayservice.exception.ErrorCode;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -12,27 +12,24 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class PaymentOrchestrator {
+public class PaymentSaga {
     private final KafkaTemplate<String, PaymentRequestDto> kafkaTemplate;
     private final PaymentService paymentService;
 
     // 쿠폰 사용 요청을 시작하는 메서드
     public void startSaga(PaymentRequestDto paymentRequestDto) {
-        if (paymentRequestDto.getCouponStatus() == CouponStatus.쿠폰미사용){
-            //유저가 쿠폰 미사용 ==> 바로 결제 이벤트
-            kafkaTemplate.send("payment", paymentRequestDto);
-        }
-        else {
-            kafkaTemplate.send("coupon-use", paymentRequestDto);
+        try {
+            if (paymentRequestDto.getCouponStatus() == CouponStatus.쿠폰미사용) {
+                kafkaTemplate.send("payment", paymentRequestDto);
+            } else {
+                kafkaTemplate.send("coupon-use", paymentRequestDto);
+            }
+        } catch (Exception e) {
+            log.error("Failed to send Kafka message", e);
+            ErrorCode.throwInsufficientPayMoney();
         }
     }
 
-    @KafkaListener(topics = "coupon-success", containerFactory = "couponUseListenerContainerFactory")
-    public void handleCouponUsed(PaymentRequestDto paymentRequestDto) {
-        log.info("쿠폰 사용 완료후 결제 요청 ==>");
-        // 쿠폰 사용 성공 시 결제 요청 이벤트 발행
-        kafkaTemplate.send("payment", paymentRequestDto);
-    }
 
     @KafkaListener(topics = "payment", containerFactory = "paymentListenerContainerFactory")
     public void handlePayment(PaymentRequestDto paymentRequestDto) {

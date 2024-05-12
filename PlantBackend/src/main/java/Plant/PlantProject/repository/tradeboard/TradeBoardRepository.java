@@ -24,11 +24,8 @@ public interface TradeBoardRepository extends JpaRepository<TradeBoard, Long>{
     @Modifying
     @Query("update TradeBoard t set t.view = t.view + 1 where t.id = :id")
     Integer updateView(@Param("id") Long id);
-    @Modifying
-    @Query("update TradeBoard t set t.buyer = :buyer where t.id = :id")
-    void updateBuyer(@Param("id") Long id, @Param("buyer") String buyer);
 
-    TradeBoard findTradeBoardById(Long id);
+
 
     @Modifying
     @Query("UPDATE TradeBoard tb SET tb.goodCount = :goodCount WHERE tb.id = :id")

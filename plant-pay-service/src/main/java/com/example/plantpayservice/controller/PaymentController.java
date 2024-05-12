@@ -1,7 +1,7 @@
 package com.example.plantpayservice.controller;
 
 
-import com.example.plantpayservice.service.PaymentOrchestrator;
+import com.example.plantpayservice.service.PaymentSaga;
 import com.example.plantpayservice.service.PaymentService;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
@@ -29,7 +29,7 @@ public class PaymentController {
     private String restApiSecret;
     private IamportClient iamportClient;
     private final PaymentService paymentService;
-    private final PaymentOrchestrator paymentOrchestrator;
+    private final PaymentSaga paymentSaga;
     @PostConstruct
     public void init() {
         this.iamportClient = new IamportClient(restApiKey, restApiSecret);
@@ -51,18 +51,19 @@ public class PaymentController {
     }
     @PostMapping("/payMoney/charge")
     @Operation(summary = "식구페이 머니 충전", description = "구매자는 보유 금액-거래 금액, 판매자는 보유 금액+거래 금액 ")
-    public void chargePayMoney(@RequestBody PaymentRequestDto paymentRequestDto) {
+    public ResponseEntity<?> chargePayMoney(@RequestBody PaymentRequestDto paymentRequestDto) {
         paymentService.chargePayMoney(paymentRequestDto);
 
+        return ResponseEntity.ok().build();
     }
 
     //식구페이로 거래하기
     @PostMapping("/payMoney/trade")
-    public ResponseEntity<HttpStatus> tradePayMoney(@RequestBody PaymentRequestDto paymentRequestDto) {
+    public ResponseEntity<?> tradePayMoney(@RequestBody PaymentRequestDto paymentRequestDto) {
         //분산 트랜잭션 SAGA Pattern
-        paymentOrchestrator.startSaga(paymentRequestDto);
-        return ResponseEntity.ok().body(HttpStatus.ACCEPTED);
+        paymentSaga.startSaga(paymentRequestDto);
 
+        return ResponseEntity.ok().build();
     }
     //식구페이 머니 환불
     @PatchMapping("/payMoney/refund")

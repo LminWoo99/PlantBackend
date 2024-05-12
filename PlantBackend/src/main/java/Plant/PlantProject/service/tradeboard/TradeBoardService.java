@@ -4,8 +4,6 @@ import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.domain.Entity.Status;
 import Plant.PlantProject.domain.Entity.TradeBoard;
 import Plant.PlantProject.vo.request.TradeBoardRequestDto;
-import Plant.PlantProject.vo.response.ChatRoomResponseDto;
-import Plant.PlantProject.vo.response.MemberResponseDto;
 import Plant.PlantProject.vo.response.TradeBoardResponseDto;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.common.messagequeue.KafkaProducer;
@@ -13,11 +11,8 @@ import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.tradeboard.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static Plant.PlantProject.vo.response.TradeBoardResponseDto.convertTradeBoardToDto;
@@ -84,27 +78,6 @@ public class TradeBoardService {
         }
     }
     /**
-     * 거래 완료 상태 변경 메서드
-     * 수정 사항 : Status status
-     * 쿼리 대신 변경 감지
-     * @param : Long id
-     */
-    @Transactional
-    public Long updateStatus(Long id) {
-        Optional<TradeBoard> optionalTradeBoard = tradeBoardRepository.findById(id);
-
-        if (optionalTradeBoard.isPresent()) {
-            TradeBoard tradeBoard = optionalTradeBoard.get();
-            tradeBoard.updateStatus(Status.거래완료);
-
-            // 업데이트된 정보를 TradeBoardDto로 변환하여 반환
-            return tradeBoard.getId();
-        } else {
-            // 해당 id에 해당하는 게시글이 없는 경우 처리
-            throw ErrorCode.throwTradeBoardNotFound();
-        }
-    }
-    /**
      * 조회수 증가
      * @param : Long id
      */
@@ -120,12 +93,21 @@ public class TradeBoardService {
      */
     @Transactional
     public TradeBoardResponseDto setBuyer(Long id, TradeBoardRequestDto tradeBoardRequestDto) {
-        TradeBoard tradeBoard = tradeBoardRepository.findTradeBoardById(id);
         // 구매자 업데이트
-        tradeBoardRepository.updateBuyer(tradeBoard.getId(), tradeBoardRequestDto.getBuyer());
-        updateStatus(id);
+        Optional<TradeBoard> optionalTradeBoard = tradeBoardRepository.findById(id);
 
-        return TradeBoardResponseDto.convertTradeBoardToDto(tradeBoard);
+        if (optionalTradeBoard.isPresent()) {
+            TradeBoard tradeBoard = optionalTradeBoard.get();
+            tradeBoard.updateBuyer(tradeBoardRequestDto.getBuyer(), Status.거래완료);
+
+            // 업데이트된 정보를 TradeBoardDto로 변환하여 반환
+            return TradeBoardResponseDto.convertTradeBoardToDto(tradeBoard);
+        } else {
+            // 해당 id에 해당하는 게시글이 없는 경우 처리
+            throw ErrorCode.throwTradeBoardNotFound();
+        }
+
+
 
     }
     /**

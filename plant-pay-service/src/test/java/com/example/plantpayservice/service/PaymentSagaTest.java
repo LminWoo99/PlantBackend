@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @EmbeddedKafka(partitions = 1, topics = {"payment", "coupon-success", "payment-failed", "coupon-rollback"})
-class PaymentOrchestratorTest {
+class PaymentSagaTest {
 
     @Autowired
     private KafkaTemplate<String, PaymentRequestDto> kafkaTemplate;

@@ -21,21 +21,7 @@ public class KafkaConsumerConfig {
     @Value("${kafka.url}")
     private String kafkaServerUrl;
 
-    @Bean
-    public ConsumerFactory<String, PaymentRequestDto> couponUseConsumerFactory() {
-        Map<String, Object> config = new HashMap<>();
-        JsonDeserializer<PaymentRequestDto> deserializer = new JsonDeserializer<>(PaymentRequestDto.class, false);
-        // 패키지 신뢰 오류로 인해 모든 패키지를 신뢰하도록 작성
-        deserializer.addTrustedPackages("*");
 
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerUrl);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "coupon-success");
-        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);
-
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), deserializer);
-
-    }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, PaymentRequestDto> paymentListenerContainerFactory() {
@@ -58,15 +44,6 @@ public class KafkaConsumerConfig {
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);
 
         return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), deserializer);
-
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PaymentRequestDto> couponUseListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, PaymentRequestDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(couponUseConsumerFactory());
-
-        return factory;
 
     }
     @Bean

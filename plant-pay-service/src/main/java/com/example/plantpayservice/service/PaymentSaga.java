@@ -1,6 +1,7 @@
 package com.example.plantpayservice.service;
 
 import com.example.plantpayservice.domain.entity.CouponStatus;
+import com.example.plantpayservice.exception.CustomException;
 import com.example.plantpayservice.exception.ErrorCode;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class PaymentSaga {
             } else {
                 kafkaTemplate.send("coupon-use", paymentRequestDto);
             }
-        } catch (Exception e) {
+        } catch (CustomException e) {
             log.error("Failed to send Kafka message", e);
             ErrorCode.throwInsufficientPayMoney();
         }

@@ -1,6 +1,7 @@
 package com.example.plantpayservice.service;
 
 import com.example.plantpayservice.domain.entity.CouponStatus;
+import com.example.plantpayservice.exception.CustomException;
 import com.example.plantpayservice.exception.ErrorCode;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class PaymentSaga {
     private final KafkaTemplate<String, PaymentRequestDto> kafkaTemplate;
     private final PaymentService paymentService;
+
     // 쿠폰 사용 요청을 시작하는 메서드
     public void startSaga(PaymentRequestDto paymentRequestDto) {
         try {
@@ -23,7 +25,7 @@ public class PaymentSaga {
             } else {
                 kafkaTemplate.send("coupon-use", paymentRequestDto);
             }
-        } catch (Exception e) {
+        } catch (CustomException e) {
             log.error("Failed to send Kafka message", e);
             ErrorCode.throwInsufficientPayMoney();
         }

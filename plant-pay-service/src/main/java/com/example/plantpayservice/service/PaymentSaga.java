@@ -30,8 +30,6 @@ public class PaymentSaga {
             ErrorCode.throwInsufficientPayMoney();
         }
     }
-
-
     @KafkaListener(topics = "payment", containerFactory = "paymentListenerContainerFactory")
     public void handlePayment(PaymentRequestDto paymentRequestDto) {
         log.info("결제 요청 시작 ==>");

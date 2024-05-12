@@ -25,7 +25,7 @@ public class KafkaConsumer {
      *
      * @param : MemberDto memberDto, ChatRequestDto requestDto
      */
-    @KafkaListener(topics = "deletePost")
+    @KafkaListener(topics = "deletePost", containerFactory = "kafkaDeletePostContainerFactory")
     public void deleteChat(String kafkaMessage) {
         log.info("Kafka Message : ->" + kafkaMessage);
 

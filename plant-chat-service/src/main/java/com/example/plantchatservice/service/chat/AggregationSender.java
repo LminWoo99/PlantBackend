@@ -1,4 +1,4 @@
-package com.example.plantchatservice.service;
+package com.example.plantchatservice.service.chat;
 
 import com.example.plantchatservice.dto.aggregation.AggregationDto;
 import lombok.RequiredArgsConstructor;

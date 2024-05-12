@@ -14,7 +14,6 @@ import com.example.plantchatservice.repository.chat.ChatRepository;
 import com.example.plantchatservice.repository.mongo.MongoChatRepository;
 import com.example.plantchatservice.common.util.KafkaUtil;
 import com.example.plantchatservice.common.util.TokenHandler;
-import com.example.plantchatservice.service.AggregationSender;
 import com.example.plantchatservice.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

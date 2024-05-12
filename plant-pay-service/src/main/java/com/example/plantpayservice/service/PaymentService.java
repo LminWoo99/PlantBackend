@@ -86,15 +86,16 @@ public class PaymentService {
     public void tradePayMoney(PaymentRequestDto paymentRequestDto) {
         Payment buyerPayment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
         Integer buyerPayMoney = paymentRequestDto.getPayMoney();
-        //쿠폰 사용시 구매자 결제정보만 3000원 차감
-        if (paymentRequestDto.getCouponStatus() == CouponStatus.쿠폰사용) {
-            buyerPayMoney += paymentRequestDto.getDiscountPrice();
-        }
         //거레할 금액보다 구매자 보유 payMoney가 적으면 예외 처리
         if (buyerPayment.getPayMoney()< paymentRequestDto.getPayMoney()) {
             kafkaTemplate.send("payment-failed", paymentRequestDto);
             throw ErrorCode.throwInsufficientPayMoney();
         }
+        //쿠폰 사용시 구매자 결제정보만 3000원 차감
+        if (paymentRequestDto.getCouponStatus() == CouponStatus.쿠폰사용) {
+            buyerPayMoney += paymentRequestDto.getDiscountPrice();
+        }
+
         paymentRepository.tradePayMoney(paymentRequestDto.getSellerNo(), buyerPayment.getMemberNo(), paymentRequestDto, buyerPayMoney);
     }
 

@@ -60,6 +60,8 @@ public class SnsHashTagMapService {
     @Transactional
     public void deleteSnsHashTagMap(Long snsPostId) {
         snsHashTagMapRepository.deleteBySnsPostId(snsPostId);
+
+
     }
     /**
      * sns 게시글에 가장 많이 사용된 해시태그 10개조회

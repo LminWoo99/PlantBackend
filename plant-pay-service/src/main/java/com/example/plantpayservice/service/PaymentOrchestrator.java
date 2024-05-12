@@ -27,19 +27,19 @@ public class PaymentOrchestrator {
         }
     }
 
-    @KafkaListener(topics = "coupon-success")
+    @KafkaListener(topics = "coupon-success", containerFactory = "couponUseListenerContainerFactory")
     public void handleCouponUsed(PaymentRequestDto paymentRequestDto) {
         log.info("쿠폰 사용 완료후 결제 요청 ==>");
         // 쿠폰 사용 성공 시 결제 요청 이벤트 발행
         kafkaTemplate.send("payment", paymentRequestDto);
     }
 
-    @KafkaListener(topics = "payment")
+    @KafkaListener(topics = "payment", containerFactory = "paymentListenerContainerFactory")
     public void handlePayment(PaymentRequestDto paymentRequestDto) {
         log.info("결제 요청 시작 ==>");
         paymentService.tradePayMoney(paymentRequestDto);
     }
-    @KafkaListener(topics = "payment-failed")
+    @KafkaListener(topics = "payment-failed", containerFactory = "paymentFailedListenerContainerFactory")
     public void handlePaymentFailed(PaymentRequestDto paymentRequestDto) {
         log.info("결제 요청 오류 ==> 쿠폰 롤백");
         // 결제 실패 시 쿠폰 사용 취소 이벤트 발행

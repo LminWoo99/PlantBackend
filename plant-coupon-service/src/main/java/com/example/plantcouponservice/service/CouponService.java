@@ -79,12 +79,13 @@ public class CouponService {
      * feignclient를 통해 결제 서비스의 결제 메서드와 하나의 작업단위로 이뤄야 됨
      * @param : Integer memberNo
      */
-    @KafkaListener(topics = "use-coupon", groupId = "coupon-service")
+    @KafkaListener(topics = "coupon-use", containerFactory = "couponUseListenerContainerFactory")
     public CouponResponseDto useCoupon(PaymentRequestDto paymentRequestDto) {
         Coupon coupon = couponRepository.findByMemberNoAndCouponNo(paymentRequestDto.getMemberNo(), paymentRequestDto.getCouponNo());
         //사용완료
         coupon.useCoupon();
 
+        couponRepository.save(coupon);
 
         couponUseProducer.create(paymentRequestDto);
 
@@ -96,13 +97,15 @@ public class CouponService {
 
         return couponResponseDto;
     }
-    @KafkaListener(topics = "coupon-rollback", groupId = "coupon-service")
+    @KafkaListener(topics = "coupon-rollback", containerFactory = "couponUseListenerContainerFactory")
     public void handleCouponRollbackEvent(PaymentRequestDto event) {
         Coupon coupon = couponRepository.findByMemberNoAndCouponNo(event.getMemberNo(), event.getCouponNo());
 
         if (coupon.getType() == CouponStatusEnum.사용완료) {
+            log.info("보상 트랜잭션 동작 ==> 쿠폰 정보= " + coupon);
             //다시 쿠폰 상태 롤백
             coupon.revertCoupon();
+            couponRepository.save(coupon);
         }
     }
 

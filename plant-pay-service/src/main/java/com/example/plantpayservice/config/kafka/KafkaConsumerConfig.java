@@ -34,7 +34,7 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, PaymentRequestDto> paymentConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
-        JsonDeserializer<PaymentRequestDto> deserializer = new JsonDeserializer<>();
+        JsonDeserializer<PaymentRequestDto> deserializer = new JsonDeserializer<>(PaymentRequestDto.class, false);
         // 패키지 신뢰 오류로 인해 모든 패키지를 신뢰하도록 작성
         deserializer.addTrustedPackages("*");
 

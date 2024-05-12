@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class PaymentSaga {
     private final KafkaTemplate<String, PaymentRequestDto> kafkaTemplate;
     private final PaymentService paymentService;
+
     // 쿠폰 사용 요청을 시작하는 메서드
     public void startSaga(PaymentRequestDto paymentRequestDto) {
         try {

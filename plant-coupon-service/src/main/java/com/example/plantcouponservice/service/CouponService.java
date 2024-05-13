@@ -8,12 +8,12 @@ import com.example.plantcouponservice.repository.AppliedUserRepository;
 import com.example.plantcouponservice.repository.CouponCountRepository;
 import com.example.plantcouponservice.repository.CouponRepository;
 import com.example.plantcouponservice.vo.request.CouponRequestDto;
+import com.example.plantcouponservice.vo.request.CouponStatus;
 import com.example.plantcouponservice.vo.request.PaymentRequestDto;
 import com.example.plantcouponservice.vo.response.CouponResponseDto;
 import com.example.plantcouponservice.vo.response.StatusResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +54,6 @@ public class CouponService {
         couponCreateProducer.create(couponRequestDto);
         return StatusResponseDto.success();
     }
-
     /**
      * 본인 쿠폰 조회
      * @param : Integer memberNo
@@ -76,36 +75,37 @@ public class CouponService {
 
     /**
      * 쿠폰 사용 메서드
-     * feignclient를 통해 결제 서비스의 결제 메서드와 하나의 작업단위로 이뤄야 됨
-     * @param : Integer memberNo
+     * 쿠폰 , 결제 마이크로서비스 saga pattern 적용
+     * coupon status가 미적용이면 바로 결제 이벤트
+     * 적용이면 쿠폰 사용후 결제 이벤트
+     * @param : PaymentRequestDto paymentRequestDto
      */
-    @KafkaListener(topics = "coupon-use", containerFactory = "couponUseListenerContainerFactory")
-    public CouponResponseDto useCoupon(PaymentRequestDto paymentRequestDto) {
+   @Transactional
+    public void useCouponAndPayment(PaymentRequestDto paymentRequestDto) {
+       if (paymentRequestDto.getCouponStatus()== CouponStatus.쿠폰미사용){
+           log.info("======couponUseConsumer Data :{}======", paymentRequestDto);
+           paymentProducer.create(paymentRequestDto);
+           return;
+       }
         Coupon coupon = couponRepository.findByMemberNoAndCouponNo(paymentRequestDto.getMemberNo(), paymentRequestDto.getCouponNo());
-        //사용완료
+        //사용완료 및 변경감지
         coupon.useCoupon();
-
-        couponRepository.save(coupon);
-
+       log.info("======couponUseConsumer Data :{}======", paymentRequestDto);
+        //쿠폰 적용완료후 결제 요청
         paymentProducer.create(paymentRequestDto);
-
-        CouponResponseDto couponResponseDto = CouponResponseDto.builder()
-                .memberNo(paymentRequestDto.getMemberNo())
-                .discountPrice(3000)
-                .build();
-
-
-        return couponResponseDto;
-    }
-    @KafkaListener(topics = "coupon-rollback", containerFactory = "couponUseListenerContainerFactory")
-    public void handleCouponRollbackEvent(PaymentRequestDto event) {
-        Coupon coupon = couponRepository.findByMemberNoAndCouponNo(event.getMemberNo(), event.getCouponNo());
-
+   }
+    /**
+     * 쿠폰 롤백 메서드
+     * 보상 트랜잭션
+     * 결제 실패시 쿠폰 상태를 update
+     * @param : PaymentRequestDto paymentRequestDto
+     */
+    @Transactional
+    public void revertCouponStatus(PaymentRequestDto paymentRequestDto) {
+        Coupon coupon = couponRepository.findByMemberNoAndCouponNo(paymentRequestDto.getMemberNo(), paymentRequestDto.getCouponNo());
         if (coupon.getType() == CouponStatusEnum.사용완료) {
-            log.info("보상 트랜잭션 동작 ==> 쿠폰 정보= " + coupon);
-            //다시 쿠폰 상태 롤백
+            //다시 쿠폰 상태 롤백 및 변경감지
             coupon.revertCoupon();
-            couponRepository.save(coupon);
         }
     }
 

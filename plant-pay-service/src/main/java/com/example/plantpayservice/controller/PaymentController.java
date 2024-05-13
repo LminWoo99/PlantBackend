@@ -1,10 +1,10 @@
 package com.example.plantpayservice.controller;
 
 
-import com.example.plantpayservice.service.PaymentSaga;
 import com.example.plantpayservice.service.PaymentService;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
+import com.example.plantpayservice.vo.response.StatusResponseDto;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +28,6 @@ public class PaymentController {
     private String restApiSecret;
     private IamportClient iamportClient;
     private final PaymentService paymentService;
-    private final PaymentSaga paymentSaga;
     @PostConstruct
     public void init() {
         this.iamportClient = new IamportClient(restApiKey, restApiSecret);
@@ -58,13 +56,12 @@ public class PaymentController {
     }
 
     //식구페이로 거래하기
-    @PostMapping("/payMoney/trade")
-    public ResponseEntity<?> tradePayMoney(@RequestBody PaymentRequestDto paymentRequestDto) {
-        //분산 트랜잭션 SAGA Pattern
-        paymentSaga.startSaga(paymentRequestDto);
-
-        return ResponseEntity.ok().build();
+    @PostMapping("/payMoney/validation")
+    public ResponseEntity<StatusResponseDto> validTransaction(@RequestBody PaymentRequestDto paymentRequestDto) {
+        StatusResponseDto statusResponseDto = paymentService.validTransaction(paymentRequestDto);
+        return ResponseEntity.ok().body(statusResponseDto);
     }
+
     //식구페이 머니 환불
     @PatchMapping("/payMoney/refund")
     public void refundPayMoney(@RequestBody PaymentRequestDto paymentRequestDto) {

@@ -1,4 +1,4 @@
-package com.example.plantpayservice.config.swagger;
+package com.example.plantpayservice.common.config.swagger;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

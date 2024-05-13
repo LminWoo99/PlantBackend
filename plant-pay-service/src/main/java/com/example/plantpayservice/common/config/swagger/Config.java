@@ -1,4 +1,4 @@
-package com.example.plantpayservice.config.swagger;
+package com.example.plantpayservice.common.config.swagger;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;

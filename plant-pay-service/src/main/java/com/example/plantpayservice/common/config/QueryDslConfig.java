@@ -1,4 +1,4 @@
-package com.example.plantpayservice.config;
+package com.example.plantpayservice.common.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.context.annotation.Bean;

@@ -2,24 +2,27 @@ package com.example.plantpayservice.service;
 
 import com.example.plantpayservice.domain.entity.CouponStatus;
 import com.example.plantpayservice.domain.entity.Payment;
+import com.example.plantpayservice.exception.CustomException;
 import com.example.plantpayservice.exception.ErrorCode;
 import com.example.plantpayservice.repository.PaymentRepository;
+import com.example.plantpayservice.service.event.CouponRollbackProducer;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
 import com.example.plantpayservice.vo.response.StatusResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentService {
     private final PaymentRepository paymentRepository;
-    private final KafkaTemplate<String, PaymentRequestDto> kafkaTemplate;
+    private final CouponRollbackProducer couponRollbackProducer;
+    private static final int BETWEEN_ZERO_AND_ONE = 1;
     /**
      * 식구페이 머니 충전 메서드
      * iamport로 결제 완료 되면 페이 머니로 충전
@@ -75,29 +78,58 @@ public class PaymentService {
 
     }
     /**
+     * 식구페이로 거래 유효성 검증
+     * 구매자가 보유한 금액보다 거래 금액이 더 크면 예외처리
+     * 쿠폰 사용시 kafka를 통한 이벤트
+     * 쿠폰 미적용시 바로 거래 결제 메서드 호출
+     * @param : PaymentRequestDto paymentRequestDto
+     */
+    public StatusResponseDto validTransaction(PaymentRequestDto paymentRequestDto) {
+        Payment buyerPayment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
+
+        //거레할 금액보다 구매자 보유 payMoney가 적으면 예외 처리
+        if (buyerPayment.getPayMoney() < paymentRequestDto.getPayMoney()) {
+            throw ErrorCode.throwInsufficientPayMoney();
+        }
+        StatusResponseDto statusResponseDto = StatusResponseDto.success();
+        return statusResponseDto;
+    }
+    private void errorPerHalf() {
+        int zeroOrOne = new Random().nextInt(BETWEEN_ZERO_AND_ONE);
+
+        if (zeroOrOne == 0) {
+            throw ErrorCode.paymentProcessingError();
+        }
+    }
+    /**
      *
      * 식구페이 거래 메서드
      * 판매자 상대 멤버 번호를 통해 해당 조회 후
      * 판매자 paymoney += 거래할 금액
      * 구매자 Paymoney -= 거래할 금액
+     * 분산 트랜잭션 Saga Pattern 적용
+     * 에러 발생시 쿠폰 마이크로서비스로 보상 트랜잭션 시작, Rollback
      * @param : PaymentRequestDto paymentRequestDto, Integer sellerNo
      */
-
     @Transactional
     public void tradePayMoney(PaymentRequestDto paymentRequestDto) {
-        Payment buyerPayment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
-        Integer buyerPayMoney = paymentRequestDto.getPayMoney();
-        //거레할 금액보다 구매자 보유 payMoney가 적으면 예외 처리
-        if (buyerPayment.getPayMoney()< paymentRequestDto.getPayMoney()) {
-            kafkaTemplate.send("payment-failed", paymentRequestDto);
-            throw ErrorCode.throwInsufficientPayMoney();
-        }
-        //쿠폰 사용시 구매자 결제정보만 3000원 차감
-        if (paymentRequestDto.getCouponStatus() == CouponStatus.쿠폰사용) {
-            buyerPayMoney += paymentRequestDto.getDiscountPrice();
+        try {
+            Payment buyerPayment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
+            Integer buyerPayMoney = paymentRequestDto.getPayMoney();
+
+            if (paymentRequestDto.getCouponStatus() == CouponStatus.쿠폰사용) {
+                //쿠폰 사용시 구매자 결제정보만 쿠폰금액 차감
+                buyerPayMoney += paymentRequestDto.getDiscountPrice();
+            }
+//            errorPerHalf();
+            paymentRepository.tradePayMoney(paymentRequestDto.getSellerNo(), buyerPayment.getMemberNo(), paymentRequestDto, buyerPayMoney);
+        } catch (CustomException e) {
+            // 결제 실패 시 쿠폰 사용 취소 이벤트 발행
+            log.error("===[결제 요청 오류] -> coupon-rollback ,  쿠폰 번호 :{} / {}====",paymentRequestDto.getCouponNo(), e.getMessage());
+            couponRollbackProducer.rollbackCouponStatus(paymentRequestDto);
+
         }
 
-        paymentRepository.tradePayMoney(paymentRequestDto.getSellerNo(), buyerPayment.getMemberNo(), paymentRequestDto, buyerPayMoney);
     }
 
 }

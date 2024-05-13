@@ -1,4 +1,4 @@
-package com.example.plantcouponservice.common.consumer;
+package com.example.plantcouponservice.service.consumer;
 
 
 import com.example.plantcouponservice.domain.Coupon;

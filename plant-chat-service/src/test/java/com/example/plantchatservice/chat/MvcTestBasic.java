@@ -5,7 +5,7 @@ import com.example.plantchatservice.common.util.TokenHandler;
 import com.example.plantchatservice.repository.chat.ChatRepository;
 import com.example.plantchatservice.repository.chat.ChatRoomRepository;
 import com.example.plantchatservice.repository.mongo.MongoChatRepository;
-import com.example.plantchatservice.service.AggregationSender;
+import com.example.plantchatservice.service.chat.AggregationSender;
 import com.example.plantchatservice.service.chat.ChatRoomService;
 import com.example.plantchatservice.service.chat.MessageSender;
 import org.junit.jupiter.api.extension.ExtendWith;

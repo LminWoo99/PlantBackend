@@ -1,4 +1,4 @@
-package com.example.plantpayservice.config.kafka;
+package com.example.plantpayservice.common.config.kafka;
 
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import org.apache.kafka.clients.producer.ProducerConfig;

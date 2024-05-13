@@ -70,7 +70,7 @@ public class TradeBoardService {
         if (optionalTradeBoard.isPresent()) {
             TradeBoard tradeBoard = optionalTradeBoard.get();
             //변경감지
-            tradeBoard.updatePost(tradeBoardRequestDto.getTitle(), tradeBoardRequestDto.getContent(), tradeBoard.getPrice());
+            tradeBoard.updatePost(tradeBoardRequestDto.getTitle(), tradeBoardRequestDto.getContent(), tradeBoardRequestDto.getPrice());
             return tradeBoard.getId();
         } else {
             // 해당 id에 해당하는 게시글이 없는 경우 처리

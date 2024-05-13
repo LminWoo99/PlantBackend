@@ -75,11 +75,11 @@ public class NotificationService {
      * @param : MemberDto sender, MemberDto receiver, NotifiTypeEnum type, String resource, String content
      */
     @Transactional
-    public void send(MemberDto sender, MemberDto receiver, NotifiTypeEnum type, String resource, String content) {
+    public void send(Integer senderNo, Integer receiverNo, NotifiTypeEnum type, String resource, String content) {
         // 알림 생성
         Notification notification = Notification.builder()
-                .senderNo(sender.getId().intValue())
-                .receiverNo(receiver.getId().intValue())
+                .senderNo(senderNo)
+                .receiverNo(receiverNo)
                 .typeEnum(type)
                 .url(PREFIX_URL + type.getPath() + resource)
                 .content(content)
@@ -88,7 +88,7 @@ public class NotificationService {
                 .build();
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
         //보낸 사람 이름 찾기 위해 feignClient를 통해 호출
-        ResponseEntity<MemberDto> findMember = circuitBreaker.run(() -> plantServiceClient.findById(sender.getId()),
+        ResponseEntity<MemberDto> findMember = circuitBreaker.run(() -> plantServiceClient.findById(senderNo.longValue()),
                 throwable -> ResponseEntity.ok(null));
 
         notification.setSenderName(findMember.getBody().getNickname());

@@ -1,9 +1,7 @@
 package Plant.PlantProject.service.kakao;
 
-import Plant.PlantProject.common.config.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;

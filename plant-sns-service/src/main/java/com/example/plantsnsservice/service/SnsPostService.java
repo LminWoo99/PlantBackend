@@ -2,10 +2,12 @@ package com.example.plantsnsservice.service;
 
 import com.example.plantsnsservice.common.exception.CustomException;
 import com.example.plantsnsservice.common.exception.ErrorCode;
+import com.example.plantsnsservice.domain.NotifiTypeEnum;
 import com.example.plantsnsservice.domain.entity.SnsPost;
 import com.example.plantsnsservice.repository.querydsl.SnsPostRepository;
 import com.example.plantsnsservice.repository.redis.SnsLikesCountRepository;
 import com.example.plantsnsservice.service.image.ImageService;
+import com.example.plantsnsservice.vo.request.NotificationEventDto;
 import com.example.plantsnsservice.vo.request.SnsPostRequestDto;
 import com.example.plantsnsservice.vo.response.SnsPostResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class SnsPostService {
     private final SnsCommentService snsCommentService;
     private final ImageService imageService;
     private final SnsLikesCountRepository snsLikesCountRepository;
+    private final NotificationSender notificationSender;
     /**
      * sns 게시글 생성
      * 게시글 형식은 게시글 문구, 해시태그, 게시글 내용
@@ -164,23 +167,7 @@ public class SnsPostService {
 
     public List<SnsPostResponseDto> getSnsPostByCreated(String createdBy) {
         List<SnsPost> snsPostList = snsPostRepository.findAllByCreatedBy(createdBy);
-        List<SnsPostResponseDto> snsPosts = snsPostList.stream().map(snsPost -> {
-            SnsPostResponseDto snsPostResponseDto = SnsPostResponseDto.builder()
-                    .id(snsPost.getId())
-                    .snsPostTitle(snsPost.getSnsPostTitle())
-                    .snsPostContent(snsPost.getSnsPostContent())
-                    .createdBy(snsPost.getCreatedBy())
-                    .snsLikesCount(snsPost.getSnsLikesCount())
-                    .snsViewsCount(snsPost.getSnsViewsCount())
-                    .createdAt(snsPost.getCreatedAt())
-                    .hashTags(snsHashTagMapService.findHashTagListBySnsPost(snsPost))
-                    .commentCount(snsCommentService.findCommentListByPostId(snsPost.getId()).stream().count())
-                    .build();
-            snsPostResponseDto.imageUrls(snsPost);
-            return snsPostResponseDto;
-        }).collect(Collectors.toList());
-
-        return snsPosts;
+        return getCollect(snsPostList);
     }
 
     /**
@@ -189,24 +176,27 @@ public class SnsPostService {
      * 실제락을 거는 시점은 퍼사드 패턴으로 분리하여
      * 락의 범위가 트랜잭션 범위보다 크게
      * 좋아요 중복관리는 redis set 자료구조를 활용
-     * @param : Long snsPostId(게시글 번호), Integer memberNo
+     * @param : Long snsPostId(게시글 번호), Integer senderNo(좋아요 누른 사람)
      * @Transactional 바깥에서 락을 걸어줌
      */
     @Transactional
-    public void updateSnsLikesCount(Long snsPostId, Integer memberNo) {
+    public void updateSnsLikesCount(Long snsPostId, Integer senderNo) {
 
         SnsPost snsPost = snsPostRepository.findById(snsPostId).orElseThrow(ErrorCode::throwSnsPostNotFound);
         String key = "sns_likes:" + snsPostId;
         //좋아요 중복 관리
-        boolean alreadyLiked = snsLikesCountRepository.isMember(key,memberNo);
+        boolean alreadyLiked = snsLikesCountRepository.isMember(key,senderNo);
 
         if (alreadyLiked) {
             // 특정 게시글에 특정 유저가 좋아요 누른적이 있을시
-            snsLikesCountRepository.decrement(memberNo, snsPostId);
+            snsLikesCountRepository.decrement(senderNo, snsPostId);
             snsPost.likesCountDown();
         } else {
-            snsLikesCountRepository.increment(memberNo, snsPostId);
+            snsLikesCountRepository.increment(senderNo, snsPostId);
             snsPost.likesCountUp();
+
+            getNotificationData(snsPost, senderNo);
+
         }
 
         snsPostRepository.save(snsPost);
@@ -231,4 +221,22 @@ public class SnsPostService {
             return snsPostResponseDto;
         }).collect(Collectors.toList());
     }
+
+    /**
+     * plant-chat-service로 kafka를 통한
+     * 메세지 스트리밍
+     * @Param SnsPost snsPost, Integer senderNo
+     */
+    private void getNotificationData(SnsPost snsPost, Integer senderNo) {
+        NotificationEventDto notificationEventDto=NotificationEventDto.builder()
+                .senderNo(senderNo)
+                .receiverNo(snsPost.getMemberNo())
+                .type(NotifiTypeEnum.SNS_HEART)
+                .resource(snsPost.getId().toString())
+                .build();
+        // 알림 이벤트 발행
+        notificationSender.send("notification", notificationEventDto);
+
+    }
+
 }

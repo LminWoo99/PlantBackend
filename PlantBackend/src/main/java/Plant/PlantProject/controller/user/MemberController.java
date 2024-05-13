@@ -1,6 +1,6 @@
 package Plant.PlantProject.controller.user;
 
-import Plant.PlantProject.common.config.JwtTokenUtil;
+import Plant.PlantProject.common.config.auth.JwtTokenUtil;
 import Plant.PlantProject.vo.request.MemberRequestDto;
 import Plant.PlantProject.vo.response.MemberResponseDto;
 import Plant.PlantProject.service.user.MemberService;

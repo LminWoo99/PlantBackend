@@ -1,10 +1,12 @@
 package com.example.plantsnsservice.service;
 
 import com.example.plantsnsservice.common.exception.ErrorCode;
+import com.example.plantsnsservice.domain.NotifiTypeEnum;
 import com.example.plantsnsservice.domain.entity.SnsComment;
 import com.example.plantsnsservice.domain.entity.SnsPost;
 import com.example.plantsnsservice.repository.querydsl.SnsPostRepository;
 import com.example.plantsnsservice.repository.querydsl.SnsCommentRepository;
+import com.example.plantsnsservice.vo.request.NotificationEventDto;
 import com.example.plantsnsservice.vo.request.SnsCommentRequestDto;
 import com.example.plantsnsservice.vo.response.SnsCommentResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class SnsCommentService {
     private final SnsCommentRepository snsCommentRepository;
     private final SnsPostRepository snsPostRepository;
+    private final NotificationSender notificationSender;
 
     /**
      * sns 댓글 저장
@@ -42,6 +45,9 @@ public class SnsCommentService {
                 .build();
 
         snsCommentRepository.save(snsComment);
+
+        getNotificationData(snsComment, snsCommentRequestDto.getSenderNo(), snsPost.getMemberNo());
+
         return SnsCommentResponseDto.convertCommentToDto(snsComment);
     }
     /**
@@ -96,6 +102,25 @@ public class SnsCommentService {
             }
         });
         return result;
+    }
+
+    /**
+     * plant-chat-service로 kafka를 통한
+     * 메세지 스트리밍
+     * @Param SnsComment snsComment, Integer senderNo, Integer receiverNo
+     */
+    private void getNotificationData(SnsComment snsComment, Integer senderNo, Integer receiverNo) {
+        NotificationEventDto notificationEventDto=NotificationEventDto.builder()
+                .senderNo(senderNo)
+                .receiverNo(receiverNo)
+                .type(NotifiTypeEnum.SNS_COMMENT)
+                .content(snsComment.getContent())
+                .resource(receiverNo.toString())
+                .build();
+
+        // 알림 이벤트 발행
+        notificationSender.send("notification", notificationEventDto);
+
     }
 
 

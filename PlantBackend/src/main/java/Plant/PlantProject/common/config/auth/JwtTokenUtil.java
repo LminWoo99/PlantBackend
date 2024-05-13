@@ -1,4 +1,4 @@
-package Plant.PlantProject.common.config;
+package Plant.PlantProject.common.config.auth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

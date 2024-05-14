@@ -14,10 +14,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             "WHERE (n.url, n.reg_date)" +
             "IN (SELECT url, max(reg_date) " +
             "FROM notification "+
-            "WHERE type = 'CHAT' "+
             "GROUP BY url) "+
             "AND n.receiver_no =:memberNo", nativeQuery = true)
-    List<Notification> findChatByReceiver(Integer memberNo);
+    List<Notification> findByReceiver(Integer memberNo);
 
     //자동으로 영속성 컨텍스트를 clear(조회시 바로 db)
     @Modifying(clearAutomatically = true)

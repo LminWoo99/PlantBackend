@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NotificationService {
     private static final Long DEFAULT_TIMEOUT = 1000L * 60 * 29 ;// 29분
-    public static final String PREFIX_URL = "https://sikguhaza.site/";
+    public static final String PREFIX_URL = "http://localhost:3000/";
     private final NotificationRepository notificationRepository;
     private final EmitterRepository emitterRepository;
 
@@ -100,14 +100,17 @@ public class NotificationService {
 
         // 로그인 한 유저의 SseEmitter 모두 가져오기
         Map<String, SseEmitter> sseEmitterMap = emitterRepository.findAllStartWithById(id);
-        sseEmitterMap.forEach(
-                (key, emitter) -> {
-                    //캐시 저장(유실한 데이터를 처리)
-                    emitterRepository.saveCache(key, notification);
-                    //데아터 전송
-                    sendToClient(emitter, key, NotificationResponse.toDto(notification));
-                }
-        );
+        //채팅일때만 SSE 알림 전송
+        if (notification.getTypeEnum().equals(NotifiTypeEnum.CHAT)) {
+            sseEmitterMap.forEach(
+                    (key, emitter) -> {
+                        //캐시 저장(유실한 데이터를 처리)
+                        emitterRepository.saveCache(key, notification);
+                        //데아터 전송
+                        sendToClient(emitter, key, NotificationResponse.toDto(notification));
+                    }
+            );
+        }
     }
     /**
      * 클라이언트에 SSE + 알림 데이터 전송 메서드
@@ -135,7 +138,7 @@ public class NotificationService {
     public List<NotificationResponse> findAllById(Long memberNo) {
         // 채팅의 마지막 알림 조회
         List<Notification> chat
-                = notificationRepository.findChatByReceiver(memberNo.intValue());
+                = notificationRepository.findByReceiver(memberNo.intValue());
 
         return chat.stream()
                 .map(NotificationResponse::toDto)

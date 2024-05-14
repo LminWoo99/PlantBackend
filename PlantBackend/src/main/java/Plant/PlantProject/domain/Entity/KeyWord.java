@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 public class KeyWord {
     @Id
     @GeneratedValue   //jpa 어노테이션인데 그냥 기본키 어노테이션으로 알고있으면됨
-    @Column(name = "keyId")
     private Long id;  //고유번호
     @CreatedDate
     private LocalDateTime createdAt;
@@ -25,9 +24,7 @@ public class KeyWord {
 
     private String keyContent;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tPostId")
     private TradeBoard tradeBoard;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
     private Member member;
 }

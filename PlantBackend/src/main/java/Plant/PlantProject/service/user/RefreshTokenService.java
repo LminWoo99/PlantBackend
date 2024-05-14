@@ -1,6 +1,6 @@
 package Plant.PlantProject.service.user;
 
-import Plant.PlantProject.common.config.JwtTokenUtil;
+import Plant.PlantProject.common.config.auth.JwtTokenUtil;
 import Plant.PlantProject.domain.redis.RefreshToken;
 import Plant.PlantProject.repository.redis.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package Plant.PlantProject.common.config;
+package Plant.PlantProject.common.config.auth;
 
 
 import Plant.PlantProject.repository.MemberRepository;
@@ -17,7 +17,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.springframework.http.HttpMethod.GET;

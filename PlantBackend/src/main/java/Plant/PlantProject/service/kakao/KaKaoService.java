@@ -1,9 +1,8 @@
 package Plant.PlantProject.service.kakao;
 
-import Plant.PlantProject.common.config.JwtTokenUtil;
+import Plant.PlantProject.common.config.auth.JwtTokenUtil;
 import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.common.exception.ErrorCode;
-import Plant.PlantProject.domain.Entity.SocialLogin;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.service.user.RefreshTokenService;
 import com.nimbusds.jose.shaded.json.JSONObject;
@@ -17,7 +16,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.stereotype.Service;

@@ -6,7 +6,6 @@ import Plant.PlantProject.domain.Entity.TradeBoard;
 import Plant.PlantProject.vo.request.TradeBoardRequestDto;
 import Plant.PlantProject.vo.response.TradeBoardResponseDto;
 import Plant.PlantProject.common.exception.ErrorCode;
-import Plant.PlantProject.common.messagequeue.KafkaProducer;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.tradeboard.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,7 @@ public class TradeBoardService {
     private final MemberRepository memberRepository;
     private final ImageFileUploadService imageFileUploadService;
     private final GoodsService goodsService;
-    private final KafkaProducer kafkaProducer;
+    private final DeleteTradeBoardProducer deleteTradeBoardProducer;
 
     /**
      * 거래게시글 저장
@@ -155,7 +154,7 @@ public class TradeBoardService {
 
 
         /*send this deletePost to the kafka*/
-        kafkaProducer.send("deletePost", tradeBoardRequestDto);
+        deleteTradeBoardProducer.send("deletePost", tradeBoardRequestDto);
     }
     /**
      * 유저가 올린 거래 게시글 조회

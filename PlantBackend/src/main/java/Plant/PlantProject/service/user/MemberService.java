@@ -1,17 +1,15 @@
 package Plant.PlantProject.service.user;
 
-import Plant.PlantProject.common.config.JwtTokenUtil;
+import Plant.PlantProject.common.config.auth.JwtTokenUtil;
 import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.domain.Entity.SocialLogin;
 import Plant.PlantProject.vo.request.MemberRequestDto;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.vo.response.MemberResponseDto;
 import Plant.PlantProject.repository.MemberRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

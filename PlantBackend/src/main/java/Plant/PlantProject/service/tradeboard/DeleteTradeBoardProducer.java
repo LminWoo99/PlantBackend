@@ -1,4 +1,4 @@
-package Plant.PlantProject.common.messagequeue;
+package Plant.PlantProject.service.tradeboard;
 
 import Plant.PlantProject.vo.request.TradeBoardRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class KafkaProducer {
+public class DeleteTradeBoardProducer {
     private KafkaTemplate<String, String> kafkaTemplate;
     @Autowired
-    public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
+    public DeleteTradeBoardProducer(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
     /**

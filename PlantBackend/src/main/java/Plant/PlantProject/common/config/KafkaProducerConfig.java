@@ -1,5 +1,6 @@
-package Plant.PlantProject.common.messagequeue;
+package Plant.PlantProject.common.config;
 
+import Plant.PlantProject.vo.response.NotificationEventDto;
 import com.google.common.collect.ImmutableMap;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -36,6 +37,14 @@ public class KafkaProducerConfig {
     @Bean
     public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
+    }
+    @Bean
+    public ProducerFactory<String, NotificationEventDto> notificationProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigurations());
+    }
+    @Bean
+    public KafkaTemplate<String, NotificationEventDto> notificationKafkaTemplate() {
+        return new KafkaTemplate<>(notificationProducerFactory());
     }
 
 }

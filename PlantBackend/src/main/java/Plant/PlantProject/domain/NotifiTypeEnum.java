@@ -1,4 +1,4 @@
-package com.example.plantchatservice.domain;
+package Plant.PlantProject.domain;
 
 import lombok.Getter;
 

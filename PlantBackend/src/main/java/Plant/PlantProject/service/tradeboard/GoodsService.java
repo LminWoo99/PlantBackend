@@ -2,9 +2,12 @@ package Plant.PlantProject.service.tradeboard;
 
 import Plant.PlantProject.domain.Entity.Goods;
 import Plant.PlantProject.domain.Entity.TradeBoard;
+import Plant.PlantProject.domain.NotifiTypeEnum;
+import Plant.PlantProject.service.notification.NotificationSender;
 import Plant.PlantProject.vo.response.GoodsResponseDto;
 import Plant.PlantProject.vo.request.GoodsRequestDto;
 import Plant.PlantProject.common.exception.ErrorCode;
+import Plant.PlantProject.vo.response.NotificationEventDto;
 import Plant.PlantProject.vo.response.TradeBoardResponseDto;
 import Plant.PlantProject.repository.tradeboard.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
@@ -29,6 +32,7 @@ public class GoodsService {
     private final MemberRepository memberRepository;
     private final TradeBoardRepository tradeBoardRepository;
     private final GoodsRepository goodsRepository;
+    private final NotificationSender notificationSender;
     /**
      * 찜 저장
      * @param : GoodsRequestDto goodsDto
@@ -54,6 +58,9 @@ public class GoodsService {
                             tradeBoard
                     ));
             tradeBoard.increaseGoodsCount();
+
+            sendNotificationData(goodsDto.getMemberId().intValue(), tradeBoard.getMember().getId().intValue(), tradeBoard.getId());
+
             return convertGoodsToDto(goods);
         }
     }
@@ -83,6 +90,24 @@ public class GoodsService {
     }
     public void deleteGoods(TradeBoard tradeBoard) {
         goodsRepository.deleteAllByTradeBoard(tradeBoard);
+    }
+
+    /**
+     * plant-chat-service로 kafka를 통한
+     * 메세지 스트리밍
+     * @Param SnsComment snsComment, Integer senderNo, Integer receiverNo
+     */
+    private void sendNotificationData(Integer senderNo, Integer receiverNo, Long tradeBoardNo) {
+        NotificationEventDto notificationEventDto=NotificationEventDto.builder()
+                .senderNo(senderNo)
+                .receiverNo(receiverNo)
+                .type(NotifiTypeEnum.TRADEBOARD_GOODS)
+                .resource(tradeBoardNo.toString())
+                .build();
+
+        // 알림 이벤트 발행
+        notificationSender.send("notification", notificationEventDto);
+
     }
 
 }

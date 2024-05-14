@@ -45,9 +45,10 @@ public class SnsCommentService {
                 .build();
 
         snsCommentRepository.save(snsComment);
-
-        getNotificationData(snsComment, snsCommentRequestDto.getSenderNo(), snsPost.getMemberNo());
-
+        //게시글에는 본인도 댓글을 달수있기떄문에, 다른 사람이 댓글달때만 알림 전송
+        if (!(snsCommentRequestDto.getSenderNo().equals(snsComment.getSnsPost().getMemberNo()))) {
+            getNotificationData(snsComment, snsCommentRequestDto.getSenderNo(), snsPost.getMemberNo());
+        }
         return SnsCommentResponseDto.convertCommentToDto(snsComment);
     }
     /**
@@ -115,7 +116,7 @@ public class SnsCommentService {
                 .receiverNo(receiverNo)
                 .type(NotifiTypeEnum.SNS_COMMENT)
                 .content(snsComment.getContent())
-                .resource(receiverNo.toString())
+                .resource(snsComment.getSnsPost().getId().toString())
                 .build();
 
         // 알림 이벤트 발행

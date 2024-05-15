@@ -1,6 +1,6 @@
-package Plant.PlantProject.common.config;
+package Plant.PlantProject.common.config.kafka;
 
-import Plant.PlantProject.vo.response.NotificationEventDto;
+import Plant.PlantProject.dto.response.NotificationEventDto;
 import com.google.common.collect.ImmutableMap;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -13,6 +13,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+import java.util.List;
 import java.util.Map;
 
 @EnableKafka

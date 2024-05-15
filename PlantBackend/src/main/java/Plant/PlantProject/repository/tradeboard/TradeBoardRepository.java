@@ -17,7 +17,7 @@ import java.util.List;
  특이 사항: 없음
 */
 public interface TradeBoardRepository extends JpaRepository<TradeBoard, Long>{
-    Page<TradeBoard> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
+    Page<TradeBoard> findByTitleContainingOrContentContainingOrKeywordContentContaining(String title, String content,String keywordContent, Pageable pageable);
 
     List<TradeBoard> findTradeBoardByMemberId(Long memberId);
     List<TradeBoard> findTradeBoardByBuyer(String buyer);

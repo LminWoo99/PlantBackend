@@ -21,7 +21,8 @@ public enum ErrorCode {
     PLANT_NOT_FOUND(NOT_FOUND, "식물 정보를 조회할 수 없습니다", "017"),
     USER_DUPLICATED_ID(CONFLICT, "이미 가입된 아이디입니다", "018"),
     USER_DUPLICATED_EMAIL(CONFLICT, "이미 가입된 이메일입니다", "019"),
-    MAX_FILE_SIZE_EXCEEDED(PAYLOAD_TOO_LARGE, "파일 크기가 허용되는 최대치를 초과하였습니다.", "025");
+    MAX_FILE_SIZE_EXCEEDED(PAYLOAD_TOO_LARGE, "파일 크기가 허용되는 최대치를 초과하였습니다.", "025"),
+    KEYWORD_NOT_FOUND(NOT_FOUND, "파일 크기가 허용되는 최대치를 초과하였습니다.", "027");
 
 
     private final HttpStatus httpStatus;
@@ -65,6 +66,10 @@ public enum ErrorCode {
 
     public static CustomException throwMaxFileSizeExceeded() {
         throw new CustomException(MAX_FILE_SIZE_EXCEEDED);
+    }
+
+    public static CustomException throwKeywordNotFound() {
+        throw new CustomException(KEYWORD_NOT_FOUND);
     }
 
 }

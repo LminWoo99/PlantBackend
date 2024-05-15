@@ -7,6 +7,7 @@ public enum NotifiTypeEnum {
     SNS_COMMENT("snspostlist/","댓글"),
     TRADEBOARD_GOODS("bbsdetail/","찜"),
     SNS_HEART("snspostlist/","좋아요"),
+    KEYWORD("bbsdetail/", "키워드"),
     CHAT("chatroom/","채팅");
 
     private final String path;

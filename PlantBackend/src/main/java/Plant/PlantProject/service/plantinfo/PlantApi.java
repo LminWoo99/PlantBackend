@@ -2,19 +2,14 @@ package Plant.PlantProject.service.plantinfo;
 
 
 import Plant.PlantProject.domain.Entity.Plant;
-import Plant.PlantProject.vo.response.PlantResponseDto;
-import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.repository.plantinfo.PlantRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import lombok.RequiredArgsConstructor;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

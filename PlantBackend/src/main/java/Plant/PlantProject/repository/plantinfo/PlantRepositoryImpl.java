@@ -2,9 +2,7 @@ package Plant.PlantProject.repository.plantinfo;
 
 
 import Plant.PlantProject.domain.Entity.Plant;
-import Plant.PlantProject.vo.response.PlantResponseDto;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

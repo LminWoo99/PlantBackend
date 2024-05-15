@@ -1,8 +1,7 @@
 package Plant.PlantProject.controller.plantinfo;
 
 import Plant.PlantProject.service.plantinfo.PlantService;
-import Plant.PlantProject.vo.response.PlantResponseDto;
-import Plant.PlantProject.service.plantinfo.PlantApi;
+import Plant.PlantProject.dto.response.PlantResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

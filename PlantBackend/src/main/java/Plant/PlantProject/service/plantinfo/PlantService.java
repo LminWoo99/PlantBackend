@@ -3,7 +3,7 @@ package Plant.PlantProject.service.plantinfo;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.domain.Entity.Plant;
 import Plant.PlantProject.repository.plantinfo.PlantRepository;
-import Plant.PlantProject.vo.response.PlantResponseDto;
+import Plant.PlantProject.dto.response.PlantResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

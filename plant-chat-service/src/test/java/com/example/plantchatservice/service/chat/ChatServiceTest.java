@@ -11,7 +11,6 @@ import com.example.plantchatservice.dto.member.MemberDto;
 import com.example.plantchatservice.dto.vo.*;
 import com.example.plantchatservice.repository.chat.ChatRepository;
 import com.example.plantchatservice.repository.mongo.MongoChatRepository;
-import com.example.plantchatservice.service.AggregationSender;
 import com.example.plantchatservice.service.notification.NotificationService;
 import com.example.plantchatservice.testUser.WithMockCustomAccount;
 import org.junit.jupiter.api.DisplayName;

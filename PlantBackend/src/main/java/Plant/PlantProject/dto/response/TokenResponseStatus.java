@@ -1,4 +1,4 @@
-package Plant.PlantProject.vo.response;
+package Plant.PlantProject.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

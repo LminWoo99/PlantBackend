@@ -1,4 +1,4 @@
-package Plant.PlantProject.vo.response;
+package Plant.PlantProject.dto.response;
 
 import Plant.PlantProject.domain.Entity.TradeBoard;
 import lombok.AllArgsConstructor;
@@ -25,6 +25,7 @@ public class TradeBoardResponseDto {
     private int price;
     private int goodCount;
     private String buyer;
+    private String keywordContent;
     private List<String> imageUrls;
 
     public static TradeBoardResponseDto convertTradeBoardToDto(TradeBoard tradeBoard) {
@@ -35,7 +36,7 @@ public class TradeBoardResponseDto {
         return new TradeBoardResponseDto(tradeBoard.getId(), tradeBoard.getTitle(),tradeBoard.getContent(),tradeBoard.getCreateBy(),
                 tradeBoard.getMember().getId(),  tradeBoard.getView(),tradeBoard.getStatus().name(),
                 tradeBoard.getCreatedAt(), tradeBoard.getUpdatedAt(), tradeBoard.getPrice(),
-                tradeBoard.getGoodCount(), tradeBoard.getBuyer(), imageList
+                tradeBoard.getGoodCount(), tradeBoard.getBuyer(), tradeBoard.getKeywordContent(), imageList
         );
     }
 

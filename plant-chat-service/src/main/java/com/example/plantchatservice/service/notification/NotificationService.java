@@ -86,12 +86,14 @@ public class NotificationService {
                 .isRead(false)
                 .isDel(false)
                 .build();
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-        //보낸 사람 이름 찾기 위해 feignClient를 통해 호출
-        ResponseEntity<MemberDto> findMember = circuitBreaker.run(() -> plantServiceClient.findById(senderNo.longValue()),
-                throwable -> ResponseEntity.ok(null));
+        if (type != NotifiTypeEnum.KEYWORD) {
+            CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+            //보낸 사람 이름 찾기 위해 feignClient를 통해 호출
+            ResponseEntity<MemberDto> findMember = circuitBreaker.run(() -> plantServiceClient.findById(senderNo.longValue()),
+                    throwable -> ResponseEntity.ok(null));
 
-        notification.setSenderName(findMember.getBody().getNickname());
+            notification.setSenderName(findMember.getBody().getNickname());
+        }
         // SseEmitter 캐시 조회를 위해 key의 prefix 생성
         String id = String.valueOf(notification.getReceiverNo());
 

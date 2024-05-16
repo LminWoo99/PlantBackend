@@ -161,7 +161,7 @@ public class TradeBoardService {
 
 
         /*send this deletePost to the kafka*/
-        deleteTradeBoardProducer.send("deletePost", tradeBoardRequestDto);
+        deleteTradeBoardProducer.send("deletePost", tradeBoardRequestDto.getId());
     }
     /**
      * 유저가 올린 거래 게시글 조회

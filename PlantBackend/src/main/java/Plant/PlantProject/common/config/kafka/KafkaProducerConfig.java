@@ -47,5 +47,13 @@ public class KafkaProducerConfig {
     public KafkaTemplate<String, NotificationEventDto> notificationKafkaTemplate() {
         return new KafkaTemplate<>(notificationProducerFactory());
     }
+    @Bean
+    public ProducerFactory<String, Long> deletePostProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfigurations());
+    }
+    @Bean
+    public KafkaTemplate<String, Long> deletePostKafkaTemplate() {
+        return new KafkaTemplate<>(deletePostProducerFactory());
+    }
 
 }

@@ -65,7 +65,7 @@ public class KeywordService {
     public void getMembersByKeyword(Integer tradeBoardNo, String keywordContent) {
         List<Integer> memberList = keyWordRepository.findMemberNosByKeywordContent(keywordContent);
         if (!memberList.isEmpty()) {
-            sendKeywordNotificationData(tradeBoardNo, memberList);
+            sendKeywordNotificationData(tradeBoardNo, memberList, keywordContent);
         }
     }
     /**
@@ -73,11 +73,12 @@ public class KeywordService {
      * kafka를 통한 plant-chat-service에 전달
      * @param : Integer tradeBoardNo, List<Integer> memberList
      */
-    private void sendKeywordNotificationData(Integer tradeBoardNo, List<Integer> memberList) {
+    private void sendKeywordNotificationData(Integer tradeBoardNo, List<Integer> memberList, String keywordContent) {
 
         List<NotificationEventDto> notificationEventDtoList = memberList.stream().map(memberNo -> {
             NotificationEventDto notificationEventDto = NotificationEventDto.builder()
                     .receiverNo(memberNo)
+                    .content(keywordContent)
                     .senderNo(tradeBoardNo)
                     .type(NotifiTypeEnum.KEYWORD)
                     .resource(tradeBoardNo.toString())

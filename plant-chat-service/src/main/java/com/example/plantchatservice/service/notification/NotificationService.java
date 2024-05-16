@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NotificationService {
     private static final Long DEFAULT_TIMEOUT = 1000L * 60 * 29 ;// 29분
-    public static final String PREFIX_URL = "http://localhost:3000/";
+    public static final String PREFIX_URL = "https://sikguhaza.site/";
     private final NotificationRepository notificationRepository;
     private final EmitterRepository emitterRepository;
 

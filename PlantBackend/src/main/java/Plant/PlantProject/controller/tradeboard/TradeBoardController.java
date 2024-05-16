@@ -1,7 +1,7 @@
 package Plant.PlantProject.controller.tradeboard;
 
-import Plant.PlantProject.vo.request.TradeBoardRequestDto;
-import Plant.PlantProject.vo.response.TradeBoardResponseDto;
+import Plant.PlantProject.dto.request.TradeBoardRequestDto;
+import Plant.PlantProject.dto.response.TradeBoardResponseDto;
 import Plant.PlantProject.service.tradeboard.TradeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

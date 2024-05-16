@@ -1,18 +1,15 @@
 package Plant.PlantProject.common.security;
 
-import Plant.PlantProject.common.config.JwtTokenUtil;
+import Plant.PlantProject.common.config.auth.JwtTokenUtil;
 import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.service.user.RefreshTokenService;
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -28,7 +25,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;

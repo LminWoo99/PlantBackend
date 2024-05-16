@@ -3,12 +3,12 @@ package Plant.PlantProject.service.tradeboard;
 import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.domain.Entity.Status;
 import Plant.PlantProject.domain.Entity.TradeBoard;
-import Plant.PlantProject.vo.request.TradeBoardRequestDto;
-import Plant.PlantProject.vo.response.TradeBoardResponseDto;
+import Plant.PlantProject.dto.request.TradeBoardRequestDto;
+import Plant.PlantProject.dto.response.TradeBoardResponseDto;
 import Plant.PlantProject.common.exception.ErrorCode;
-import Plant.PlantProject.common.messagequeue.KafkaProducer;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.tradeboard.TradeBoardRepository;
+import Plant.PlantProject.service.keyword.KeywordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static Plant.PlantProject.vo.response.TradeBoardResponseDto.convertTradeBoardToDto;
+import static Plant.PlantProject.dto.response.TradeBoardResponseDto.convertTradeBoardToDto;
 
 @Service
 @Slf4j
@@ -32,7 +32,8 @@ public class TradeBoardService {
     private final MemberRepository memberRepository;
     private final ImageFileUploadService imageFileUploadService;
     private final GoodsService goodsService;
-    private final KafkaProducer kafkaProducer;
+    private final DeleteTradeBoardProducer deleteTradeBoardProducer;
+    private final KeywordService keywordService;
 
     /**
      * 거래게시글 저장
@@ -47,13 +48,18 @@ public class TradeBoardService {
                         tradeBoardRequestDto.getTitle(),
                         tradeBoardRequestDto.getContent(),
                         member.getNickname(),
-                        tradeBoardRequestDto.getPrice()
+                        tradeBoardRequestDto.getPrice(),
+                        tradeBoardRequestDto.getKeyWordContent()
                 )
         );
         Long id = tradeBoardRepository.save(tradeBoard).getId();
         if (!files.isEmpty()){
             imageFileUploadService.saveImages(files, tradeBoard);
         }
+        if (tradeBoardRequestDto.getKeyWordContent() != null) {
+            keywordService.getMembersByKeyword(tradeBoard.getId().intValue(), tradeBoardRequestDto.getKeyWordContent());
+        }
+
         return id;
     }
     /**
@@ -116,7 +122,7 @@ public class TradeBoardService {
      */
     @Transactional(readOnly = true)
     public Page<TradeBoardResponseDto> pageList(String search, Pageable pageable) {
-        Page<TradeBoard> tradeBoards = tradeBoardRepository.findByTitleContainingOrContentContaining(search, search, pageable);
+        Page<TradeBoard> tradeBoards = tradeBoardRepository.findByTitleContainingOrContentContainingOrKeywordContentContaining(search, search,search, pageable);
 
         return tradeBoards.map(tradeBoard -> TradeBoardResponseDto.convertTradeBoardToDto(tradeBoard));
     }
@@ -155,7 +161,7 @@ public class TradeBoardService {
 
 
         /*send this deletePost to the kafka*/
-        kafkaProducer.send("deletePost", tradeBoardRequestDto);
+        deleteTradeBoardProducer.send("deletePost", tradeBoardRequestDto.getId());
     }
     /**
      * 유저가 올린 거래 게시글 조회

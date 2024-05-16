@@ -52,6 +52,7 @@ public class TradeBoard {
     private Integer goodCount;
 
     private String buyer;
+    private String keywordContent;
     @Builder
     public TradeBoard(Long id, String createBy, Member member, String title, String content, Status status, int view) {
         this.id = id;
@@ -77,7 +78,7 @@ public class TradeBoard {
     }
 
     public static TradeBoard createTradeBoard(Member member, String title, String content,
-                                              String createBy,  int price){
+                                              String createBy,  int price, String keywordContent){
         TradeBoard tradeBoard = new TradeBoard();
         tradeBoard.member=member;
         tradeBoard.title=title;
@@ -87,6 +88,7 @@ public class TradeBoard {
         tradeBoard.status=Status.판매중;
         tradeBoard.goodCount = 0;
         tradeBoard.view = 0;
+        tradeBoard.keywordContent = keywordContent;
         return tradeBoard;
     }
     /**

@@ -21,6 +21,7 @@ public class SnsCommentRequestDto {
     private String content;
     @NotNull
     private String createdBy;
+    private Integer senderNo;
     private Long parentId;
     private List<SnsComment> children = new ArrayList<>();
 

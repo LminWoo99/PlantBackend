@@ -75,23 +75,25 @@ public class NotificationService {
      * @param : MemberDto sender, MemberDto receiver, NotifiTypeEnum type, String resource, String content
      */
     @Transactional
-    public void send(MemberDto sender, MemberDto receiver, NotifiTypeEnum type, String resource, String content) {
+    public void send(Integer senderNo, Integer receiverNo, NotifiTypeEnum type, String resource, String content) {
         // 알림 생성
         Notification notification = Notification.builder()
-                .senderNo(sender.getId().intValue())
-                .receiverNo(receiver.getId().intValue())
+                .senderNo(senderNo)
+                .receiverNo(receiverNo)
                 .typeEnum(type)
                 .url(PREFIX_URL + type.getPath() + resource)
                 .content(content)
                 .isRead(false)
                 .isDel(false)
                 .build();
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-        //보낸 사람 이름 찾기 위해 feignClient를 통해 호출
-        ResponseEntity<MemberDto> findMember = circuitBreaker.run(() -> plantServiceClient.findById(sender.getId()),
-                throwable -> ResponseEntity.ok(null));
+        if (type != NotifiTypeEnum.KEYWORD) {
+            CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+            //보낸 사람 이름 찾기 위해 feignClient를 통해 호출
+            ResponseEntity<MemberDto> findMember = circuitBreaker.run(() -> plantServiceClient.findById(senderNo.longValue()),
+                    throwable -> ResponseEntity.ok(null));
 
-        notification.setSenderName(findMember.getBody().getNickname());
+            notification.setSenderName(findMember.getBody().getNickname());
+        }
         // SseEmitter 캐시 조회를 위해 key의 prefix 생성
         String id = String.valueOf(notification.getReceiverNo());
 
@@ -100,14 +102,17 @@ public class NotificationService {
 
         // 로그인 한 유저의 SseEmitter 모두 가져오기
         Map<String, SseEmitter> sseEmitterMap = emitterRepository.findAllStartWithById(id);
-        sseEmitterMap.forEach(
-                (key, emitter) -> {
-                    //캐시 저장(유실한 데이터를 처리)
-                    emitterRepository.saveCache(key, notification);
-                    //데아터 전송
-                    sendToClient(emitter, key, NotificationResponse.toDto(notification));
-                }
-        );
+        //채팅일때만 SSE 알림 전송
+        if (notification.getTypeEnum().equals(NotifiTypeEnum.CHAT)) {
+            sseEmitterMap.forEach(
+                    (key, emitter) -> {
+                        //캐시 저장(유실한 데이터를 처리)
+                        emitterRepository.saveCache(key, notification);
+                        //데아터 전송
+                        sendToClient(emitter, key, NotificationResponse.toDto(notification));
+                    }
+            );
+        }
     }
     /**
      * 클라이언트에 SSE + 알림 데이터 전송 메서드
@@ -135,7 +140,7 @@ public class NotificationService {
     public List<NotificationResponse> findAllById(Long memberNo) {
         // 채팅의 마지막 알림 조회
         List<Notification> chat
-                = notificationRepository.findChatByReceiver(memberNo.intValue());
+                = notificationRepository.findByReceiver(memberNo.intValue());
 
         return chat.stream()
                 .map(NotificationResponse::toDto)

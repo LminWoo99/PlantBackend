@@ -11,7 +11,6 @@ import com.example.plantchatservice.dto.member.MemberDto;
 import com.example.plantchatservice.dto.vo.*;
 import com.example.plantchatservice.repository.chat.ChatRepository;
 import com.example.plantchatservice.repository.mongo.MongoChatRepository;
-import com.example.plantchatservice.service.AggregationSender;
 import com.example.plantchatservice.service.notification.NotificationService;
 import com.example.plantchatservice.testUser.WithMockCustomAccount;
 import org.junit.jupiter.api.DisplayName;
@@ -230,7 +229,7 @@ class ChatServiceTest{
         //when
         chatService.sendNotificationAndSaveMessage(requestMessage);
         //then
-        verify(notificationService, times(1)).send(mockResponseEntity.getBody(),mockResponseEntity.getBody(), NotifiTypeEnum.CHAT,"1/2","거래 가능할까요?");
+        verify(notificationService, times(1)).send(mockResponseEntity.getBody().getId().intValue(),mockResponseEntity.getBody().getId().intValue(), NotifiTypeEnum.CHAT,"1/2","거래 가능할까요?");
 
     }
     @Test
@@ -248,7 +247,7 @@ class ChatServiceTest{
         CircuitBreaker circuitBreaker = mock(CircuitBreaker.class);
         when(circuitBreakerFactory.create(anyString())).thenReturn(circuitBreaker);
 
-        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(2L , "minu", "ee", "이민우", "pass", "xxxx@naver.com"));
+        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(2L , "minu", "ee", "이민우",  "xxxx@naver.com"));
 
         when(circuitBreaker.run(any(), any())).thenReturn(mockResponseEntity);
         when(chatRoomService.isAllConnected(1)).thenReturn(true);
@@ -256,7 +255,7 @@ class ChatServiceTest{
         //when
         chatService.sendNotificationAndSaveMessage(requestMessage);
         //then
-        verify(notificationService, times(0)).send(mockResponseEntity.getBody(),mockResponseEntity.getBody(), NotifiTypeEnum.CHAT,"1/2","거래 가능할까요?");
+        verify(notificationService, times(0)).send(mockResponseEntity.getBody().getId().intValue(),mockResponseEntity.getBody().getId().intValue(), NotifiTypeEnum.CHAT,"1/2","거래 가능할까요?");
 
     }
     @Test

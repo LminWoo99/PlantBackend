@@ -1,10 +1,9 @@
 package Plant.PlantProject.controller.tradeboard;
 
-import Plant.PlantProject.vo.response.GoodsResponseDto;
-import Plant.PlantProject.vo.request.GoodsRequestDto;
-import Plant.PlantProject.vo.response.TradeBoardResponseDto;
+import Plant.PlantProject.dto.response.GoodsResponseDto;
+import Plant.PlantProject.dto.request.GoodsRequestDto;
+import Plant.PlantProject.dto.response.TradeBoardResponseDto;
 import Plant.PlantProject.service.tradeboard.GoodsService;
-import Plant.PlantProject.service.tradeboard.TradeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

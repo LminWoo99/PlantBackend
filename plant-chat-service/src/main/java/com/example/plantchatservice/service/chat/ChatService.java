@@ -215,7 +215,7 @@ public class ChatService {
             String sendUrl = getNotificationUrl(message.getTradeBoardNo(), message.getChatNo(), memberDto.getBody().getNickname());
 
             //알림 전송
-            notificationService.send(memberDto.getBody(), receiveMember.getBody(), NotifiTypeEnum.CHAT, sendUrl, content);
+            notificationService.send(memberDto.getBody().getId().intValue(), receiveMember.getBody().getId().intValue(), NotifiTypeEnum.CHAT, sendUrl, content);
         }
         // 보낸 사람일 경우에만 메시지를 저장 -> 중복 저장 방지
         if (message.getSenderEmail().equals(memberDto.getBody().getEmail())) {

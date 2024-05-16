@@ -26,9 +26,9 @@ public class NotificationResponse {
     private boolean del;
 
     @Builder
-    public NotificationResponse(Long id, NotifiTypeEnum type, String content, String url, LocalDateTime publishedAt, Integer senderNo, boolean read, boolean del) {
+    public NotificationResponse(Long id, String type, String content, String url, LocalDateTime publishedAt, Integer senderNo, boolean read, boolean del) {
         this.id = id;
-        this.type = type.getAlias();
+        this.type = type;
         this.content = content;
         this.url = url;
         this.publishedAt = LocalDateTimeUtils.toArray(publishedAt);
@@ -40,7 +40,7 @@ public class NotificationResponse {
     public static NotificationResponse toDto(Notification notification) {
         return NotificationResponse.builder()
                 .id(notification.getNotifiNo())
-                .type(notification.getTypeEnum())
+                .type(notification.getTypeEnum().getAlias())
                 .content(notification.getContent())
                 .url(notification.getUrl())
                 .publishedAt(notification.getRegDate())

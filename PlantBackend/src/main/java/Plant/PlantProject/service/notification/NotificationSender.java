@@ -1,7 +1,7 @@
 package Plant.PlantProject.service.notification;
 
 
-import Plant.PlantProject.vo.response.NotificationEventDto;
+import Plant.PlantProject.dto.response.NotificationEventDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

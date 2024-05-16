@@ -4,11 +4,11 @@ import Plant.PlantProject.domain.Entity.Goods;
 import Plant.PlantProject.domain.Entity.TradeBoard;
 import Plant.PlantProject.domain.NotifiTypeEnum;
 import Plant.PlantProject.service.notification.NotificationSender;
-import Plant.PlantProject.vo.response.GoodsResponseDto;
-import Plant.PlantProject.vo.request.GoodsRequestDto;
+import Plant.PlantProject.dto.response.GoodsResponseDto;
+import Plant.PlantProject.dto.request.GoodsRequestDto;
 import Plant.PlantProject.common.exception.ErrorCode;
-import Plant.PlantProject.vo.response.NotificationEventDto;
-import Plant.PlantProject.vo.response.TradeBoardResponseDto;
+import Plant.PlantProject.dto.response.NotificationEventDto;
+import Plant.PlantProject.dto.response.TradeBoardResponseDto;
 import Plant.PlantProject.repository.tradeboard.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
 import Plant.PlantProject.repository.tradeboard.TradeBoardRepository;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static Plant.PlantProject.vo.response.GoodsResponseDto.convertGoodsToDto;
+import static Plant.PlantProject.dto.response.GoodsResponseDto.convertGoodsToDto;
 
 
 @Service

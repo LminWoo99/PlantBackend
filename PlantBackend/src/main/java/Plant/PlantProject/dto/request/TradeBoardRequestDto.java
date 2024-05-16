@@ -1,9 +1,6 @@
-package Plant.PlantProject.vo.request;
+package Plant.PlantProject.dto.request;
 
-import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.domain.Entity.Status;
-import Plant.PlantProject.domain.Entity.TradeBoard;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -40,6 +37,8 @@ public class TradeBoardRequestDto {
 
     private String username;
     private String buyer;
+
+    private String keyWordContent;
 
 
 

@@ -1,5 +1,6 @@
 package com.example.plantchatservice.service;
 
+import com.example.plantchatservice.dto.vo.TradeBoardResponseDto;
 import com.example.plantchatservice.service.chat.ChatService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -23,28 +24,12 @@ public class DeletePost {
      * @param : MemberDto memberDto, ChatRequestDto requestDto
      */
     @KafkaListener(topics = "deletePost", containerFactory = "kafkaDeletePostContainerFactory")
-    public void deleteChat(String kafkaMessage) {
+    public void deleteChat(String kafkaMessage, Long tradeBoardNo) {
         log.info("Kafka Message : ->" + kafkaMessage);
-
-        Map<Object, Object> map = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {
-            });
-            //TradeBoard id값 가져오기
-            Integer tradeBoardNo = (Integer) map.get("id");
-            if (tradeBoardNo == null) {
-                throw new IllegalArgumentException("TradeBoard ID is missing in the Kafka message");
-            }
-            chatService.deleteChatRoom(tradeBoardNo);
-
-        } catch (JsonProcessingException e) {
-            log.error("Error parsing Kafka message: {}", kafkaMessage, e);
-        } catch (IllegalArgumentException e) {
-            log.error("Validation error for Kafka message: {}", kafkaMessage, e);
-        } catch (Exception e) {
-            log.error("Error processing Kafka message: {}", kafkaMessage, e);
+        if (tradeBoardNo == null) {
+            throw new IllegalArgumentException("TradeBoard ID is missing in the Kafka message");
         }
+        chatService.deleteChatRoom(tradeBoardNo.intValue());
 
     }
 }

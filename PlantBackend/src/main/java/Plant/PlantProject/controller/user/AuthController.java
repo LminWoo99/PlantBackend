@@ -1,7 +1,7 @@
 package Plant.PlantProject.controller.user;
 
 import Plant.PlantProject.service.user.RefreshTokenService;
-import Plant.PlantProject.vo.response.TokenResponseStatus;
+import Plant.PlantProject.dto.response.TokenResponseStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +9,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @Slf4j
 @RestController

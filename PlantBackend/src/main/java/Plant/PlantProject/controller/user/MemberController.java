@@ -1,8 +1,8 @@
 package Plant.PlantProject.controller.user;
 
 import Plant.PlantProject.common.config.auth.JwtTokenUtil;
-import Plant.PlantProject.vo.request.MemberRequestDto;
-import Plant.PlantProject.vo.response.MemberResponseDto;
+import Plant.PlantProject.dto.request.MemberRequestDto;
+import Plant.PlantProject.dto.response.MemberResponseDto;
 import Plant.PlantProject.service.user.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

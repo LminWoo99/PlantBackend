@@ -1,4 +1,4 @@
-package Plant.PlantProject.vo.request;
+package Plant.PlantProject.dto.request;
 
 import Plant.PlantProject.domain.Entity.Member;
 import lombok.AllArgsConstructor;

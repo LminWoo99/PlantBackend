@@ -25,7 +25,6 @@ public class Message implements Serializable {
     private String content;
     private String senderName;
     private Integer senderNo;
-    @NotNull
     private Integer tradeBoardNo;
 
     private long sendTime;

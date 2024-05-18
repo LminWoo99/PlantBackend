@@ -50,6 +50,9 @@ public class StompHandler implements ChannelInterceptor {
             case SEND:
                 tokenHandler.getUid(getAccessToken(accessor));
                 break;
+            case DISCONNECT:
+                chatRoomService.disconnectChatRoom(getChatRoomNo(accessor), username);
+                break;
         }
     }
 

@@ -295,8 +295,10 @@ public class ChatService {
      */
     @Transactional
     public void deleteChatRoom(Integer tradeBoardNo) {
-        List<Integer> chatRoomNoList = chatRepository.deleteChatRoomAndReturnChatNo(tradeBoardNo);
+        List<Integer> chatRoomNoList= chatRoomService.delete(tradeBoardNo);
+
         deleteChatting(chatRoomNoList);
+
     }
     @Transactional
     public void deleteChatting(List<Integer> chatRoomNoList) {

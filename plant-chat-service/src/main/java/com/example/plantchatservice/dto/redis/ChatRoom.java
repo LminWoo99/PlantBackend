@@ -19,11 +19,15 @@ public class ChatRoom {
     private Integer chatroomNo;
 
     @Indexed
+    private Integer tradeBoardNo;
+
+    @Indexed
     private String username;
 
     @Builder
-    public ChatRoom(Integer chatroomNo, String username) {
+    public ChatRoom(Integer chatroomNo, Integer tradeBoardNo, String username) {
         this.chatroomNo = chatroomNo;
+        this.tradeBoardNo = tradeBoardNo;
         this.username = username;
     }
 }

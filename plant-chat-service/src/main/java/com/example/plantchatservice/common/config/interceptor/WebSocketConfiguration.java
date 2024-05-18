@@ -1,4 +1,4 @@
-package com.example.plantchatservice.common.config.kafka;
+package com.example.plantchatservice.common.config.interceptor;
 
 //import com.example.plantchatservice.common.config.interceptor.StompHandler;
 import com.example.plantchatservice.common.config.interceptor.StompHandler;

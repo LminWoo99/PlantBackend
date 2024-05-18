@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NotificationService {
     private static final Long DEFAULT_TIMEOUT = 1000L * 60 * 29 ;// 29분
-    public static final String PREFIX_URL = "https://sikguhaza.site/";
+    public static final String PREFIX_URL = "http://localhost:3000/";
     private final NotificationRepository notificationRepository;
     private final EmitterRepository emitterRepository;
 
@@ -37,7 +37,7 @@ public class NotificationService {
     private final CircuitBreakerFactory circuitBreakerFactory;
     /**
      * SSE 연결 메서드
-     * @param : MemberDto memberDto, String lastEnventId
+     * @param : MemberDto memberDto, String lastEventId
      */
     @Transactional
     public SseEmitter subscribe(String lastEventId, String jwtToken) {

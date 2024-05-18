@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -23,10 +24,11 @@ public class ChatRoomService {
      * @param : Long chatRoomNo , String username
      */
     @Transactional
-    public void connectChatRoom(Integer chatRoomNo, String username) {
+    public void connectChatRoom(Integer chatRoomNo, String username, Integer tradeBoardNo) {
         ChatRoom chatRoom = ChatRoom.builder()
                 .username(username)
                 .chatroomNo(chatRoomNo)
+                .tradeBoardNo(tradeBoardNo)
                 .build();
 
         chatRoomRepository.save(chatRoom);
@@ -57,4 +59,16 @@ public class ChatRoomService {
         List<ChatRoom> connectedList = chatRoomRepository.findByChatroomNo(chatRoomNo);
         return connectedList.size() == 1;
     }
+    @Transactional
+    public List<Integer> delete(Integer tradeBoardNo) {
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByTradeBoardNo(tradeBoardNo);
+
+        List<Integer> deletedChatNos = chatRoomList.stream().map(chatRoom -> {
+            Integer chatRoomNo = chatRoom.getChatroomNo();
+            chatRoomRepository.delete(chatRoom);
+            return chatRoomNo;
+        }).collect(Collectors.toList());
+        return deletedChatNos;
+    }
+
 }

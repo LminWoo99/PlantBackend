@@ -135,7 +135,7 @@ public class ChatControllerTest extends MvcTestBasic {
     @DisplayName("채팅방 접속 끊기 테스트")
     @WithMockCustomAccount
     void disconnectChatTest() throws Exception{
-        ChatRoom chatRoom = new ChatRoom(1, "minu");
+        ChatRoom chatRoom = new ChatRoom(1, 1, "minu");
 
         mvc.perform(post("/chatroom/{chatRoomNo}", chatRoom.getChatroomNo()).headers(GenerateMockToken.getToken())
                         .param("chatroomNo", "1")

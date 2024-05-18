@@ -41,7 +41,6 @@ public class StompHandler implements ChannelInterceptor {
 
     private void handleMessage(StompCommand stompCommand, StompHeaderAccessor accessor, String username) {
         switch (stompCommand) {
-
             case CONNECT:
                 connectToChatRoom(accessor, username);
                 break;
@@ -55,17 +54,17 @@ public class StompHandler implements ChannelInterceptor {
         return accessor.getFirstNativeHeader("Authorization");
     }
     private String verifyAccessToken(String accessToken) {
-
         return tokenHandler.getUid(accessToken);
     }
 
     private void connectToChatRoom(StompHeaderAccessor accessor, String username) {
         // 채팅방 번호를 가져온다.
         Integer chatRoomNo = getChatRoomNo(accessor);
-
+        // 게시글 번호를 가져온다
+        Integer tradeBoardNo = getTradeBoardNo(accessor);
         // 채팅방 입장 처리 -> Redis에 입장 내역 저장
-        chatRoomService.connectChatRoom(chatRoomNo, username);
-//        // 읽지 않은 채팅을 전부 읽음 처리
+        chatRoomService.connectChatRoom(chatRoomNo, username, tradeBoardNo);
+        // 읽지 않은 채팅을 전부 읽음 처리
         chatService.updateCountAllZero(chatRoomNo, username);
         // 현재 채팅방에 접속중인 인원이 있는지 확인한다.
         boolean isConnected = chatRoomService.isConnected(chatRoomNo);
@@ -81,6 +80,13 @@ public class StompHandler implements ChannelInterceptor {
                 Integer.valueOf(
                         Objects.requireNonNull(
                                 accessor.getFirstNativeHeader("chatRoomNo")
+                        ));
+    }
+    private Integer getTradeBoardNo(StompHeaderAccessor accessor) {
+        return
+                Integer.valueOf(
+                        Objects.requireNonNull(
+                                accessor.getFirstNativeHeader("tradeBoardNo")
                         ));
     }
 }

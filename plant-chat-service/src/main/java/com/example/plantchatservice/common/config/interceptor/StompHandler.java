@@ -1,5 +1,6 @@
 package com.example.plantchatservice.common.config.interceptor;
 
+import com.example.plantchatservice.common.exception.ErrorCode;
 import com.example.plantchatservice.service.chat.ChatRoomService;
 import com.example.plantchatservice.service.chat.ChatService;
 import com.example.plantchatservice.common.util.TokenHandler;
@@ -25,15 +26,16 @@ public class StompHandler implements ChannelInterceptor {
     private final ChatRoomService chatRoomService;
     private final ChatService chatService;
     private final TokenHandler tokenHandler;
-    /**
-     * class에 @AllArgsConstructor 붙이지 말고
-     * 생성자 선언해서 @Builder
-     */
+
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         // StompCommand에 따라서 로직을 분기해서 처리하는 메서드를 호출한다.
-        String username = verifyAccessToken(getAccessToken(accessor));
+        String accessToken = getAccessToken(accessor);
+        if (accessToken == null) {
+            throw ErrorCode.missingTokenException();
+        }
+        String username = verifyAccessToken(accessToken);
         log.info("StompAccessor = {}", accessor);
         handleMessage(accessor.getCommand(), accessor, username);
         return message;
@@ -50,9 +52,11 @@ public class StompHandler implements ChannelInterceptor {
                 break;
         }
     }
+
     private String getAccessToken(StompHeaderAccessor accessor) {
         return accessor.getFirstNativeHeader("Authorization");
     }
+
     private String verifyAccessToken(String accessToken) {
         return tokenHandler.getUid(accessToken);
     }
@@ -74,19 +78,11 @@ public class StompHandler implements ChannelInterceptor {
         }
     }
 
-
     private Integer getChatRoomNo(StompHeaderAccessor accessor) {
-        return
-                Integer.valueOf(
-                        Objects.requireNonNull(
-                                accessor.getFirstNativeHeader("chatRoomNo")
-                        ));
+        return Integer.valueOf(Objects.requireNonNull(accessor.getFirstNativeHeader("chatRoomNo")));
     }
+
     private Integer getTradeBoardNo(StompHeaderAccessor accessor) {
-        return
-                Integer.valueOf(
-                        Objects.requireNonNull(
-                                accessor.getFirstNativeHeader("tradeBoardNo")
-                        ));
+        return Integer.valueOf(Objects.requireNonNull(accessor.getFirstNativeHeader("tradeBoardNo")));
     }
 }

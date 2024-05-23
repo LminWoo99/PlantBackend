@@ -155,6 +155,6 @@
 
 # 📉 API 문서
 
-**👉 [[Swagger API 문서 보러가기]](https://43.202.205.242:8443/webjars/swagger-ui/index.html)**
+**👉 [[Swagger API 문서 보러가기]](https://43.202.232.79:8443/webjars/swagger-ui/index.html)**
 
 

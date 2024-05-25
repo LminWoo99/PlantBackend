@@ -1,8 +1,6 @@
 package com.example.plantsnsservice.repository.querydsl;
 
-import com.example.plantsnsservice.domain.entity.QImage;
-import com.example.plantsnsservice.domain.entity.SnsPost;
-import com.example.plantsnsservice.vo.SearchParam;
+
 import com.example.plantsnsservice.vo.response.SnsPostResponseDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -25,27 +23,67 @@ import static com.querydsl.core.types.Projections.list;
 
 @RequiredArgsConstructor
 public class SnsPostRepositoryImpl implements CustomSnsPostRepository{
+
     private final JPAQueryFactory jpaQueryFactory;
+
     @Override
-    public List<SnsPostResponseDto> findAllByHashTag(String hashTagName) {
+    public SnsPostResponseDto getSnsPostById(Long snsPostId) {
+
         return jpaQueryFactory.select(Projections.constructor(SnsPostResponseDto.class,
                         snsPost.id,
+                        snsPost.memberNo,
                         snsPost.snsPostTitle,
                         snsPost.snsPostContent,
                         snsPost.createdBy,
                         snsPost.createdAt,
                         snsPost.snsLikesCount,
-                        snsPost.snsViewsCount
-                        ))
-                .from(snsPost)
+                        snsPost.snsViewsCount,
+                        list(hashTag.name),
+                        list(image.url)))
+                .from(snsHashTagMap)
                 .join(snsHashTagMap.snsPost, snsPost)
                 .join(snsHashTagMap.hashTag, hashTag)
-                .where(hashTag.name.eq(hashTagName))
+                .join(snsPost.imageList, image)
+                .where(snsPost.id.eq(snsPostId))
+                .fetchOne();
+    }
+    @Override
+    public List<SnsPostResponseDto> findAllByOrderByCreatedAtDesc() {
+        return jpaQueryFactory.select(Projections.constructor(SnsPostResponseDto.class,
+                        snsPost.id,
+                        snsPost.memberNo,
+                        snsPost.snsPostTitle,
+                        snsPost.snsPostContent,
+                        snsPost.createdBy,
+                        snsPost.createdAt,
+                        snsPost.snsLikesCount,
+                        snsPost.snsViewsCount,
+                        list(hashTag.name),
+                        list(image.url)))
+                .from(snsHashTagMap)
+                .join(snsHashTagMap.snsPost, snsPost)
+                .join(snsHashTagMap.hashTag, hashTag)
+                .join(snsPost.imageList, image)
+                .orderBy(snsPost.createdAt.desc())
                 .fetch();
     }
     @Override
-    public List<SnsPost> findAllByCreatedBy(String createdBy) {
-        return jpaQueryFactory.selectFrom(snsPost)
+    public List<SnsPostResponseDto> findAllByCreatedBy(String createdBy) {
+        return jpaQueryFactory.select(Projections.constructor(SnsPostResponseDto.class,
+                        snsPost.id,
+                        snsPost.memberNo,
+                        snsPost.snsPostTitle,
+                        snsPost.snsPostContent,
+                        snsPost.createdBy,
+                        snsPost.createdAt,
+                        snsPost.snsLikesCount,
+                        snsPost.snsViewsCount,
+                        list(hashTag.name),
+                        list(image.url)))
+                .from(snsHashTagMap)
+                .join(snsHashTagMap.snsPost, snsPost)
+                .join(snsHashTagMap.hashTag, hashTag)
+                .join(snsPost.imageList, image)
                 .where(snsPost.createdBy.eq(createdBy))
                 .fetch();
 
@@ -59,6 +97,7 @@ public class SnsPostRepositoryImpl implements CustomSnsPostRepository{
         return jpaQueryFactory
                 .select(Projections.constructor(SnsPostResponseDto.class,
                         snsPost.id,
+                        snsPost.memberNo,
                         snsPost.snsPostTitle,
                         snsPost.snsPostContent,
                         snsPost.createdBy,
@@ -68,8 +107,8 @@ public class SnsPostRepositoryImpl implements CustomSnsPostRepository{
                         list(hashTag.name),
                         list(image.url)))
                 .from(snsHashTagMap)
-                .join(snsPost).on(snsHashTagMap.snsPost.id.eq(snsPost.id))
-                .join(hashTag).on(snsHashTagMap.hashTag.id.eq(hashTag.id))
+                .join(snsHashTagMap.snsPost, snsPost)
+                .join(snsHashTagMap.hashTag, hashTag)
                 .join(snsPost.imageList, image)
                 .where(snsPost.createdAt.after(oneWeekAgo))
                 .orderBy(snsPost.snsViewsCount.desc(), snsPost.snsLikesCount.desc())
@@ -86,6 +125,7 @@ public class SnsPostRepositoryImpl implements CustomSnsPostRepository{
         return jpaQueryFactory
                 .select(Projections.constructor(SnsPostResponseDto.class,
                         snsPost.id,
+                        snsPost.memberNo,
                         snsPost.snsPostTitle,
                         snsPost.snsPostContent,
                         snsPost.createdBy,
@@ -95,8 +135,8 @@ public class SnsPostRepositoryImpl implements CustomSnsPostRepository{
                         list(hashTag.name),
                         list(image.url)))
                 .from(snsHashTagMap)
-                .join(snsPost).on(snsHashTagMap.snsPost.id.eq(snsPost.id))
-                .join(hashTag).on(snsHashTagMap.hashTag.id.eq(hashTag.id))
+                .join(snsHashTagMap.snsPost, snsPost)
+                .join(snsHashTagMap.hashTag, hashTag)
                 .join(snsPost.imageList, image)
                 .where(snsPost.createdAt.after(oneMonthAgo))
                 .orderBy(snsPost.snsViewsCount.desc(), snsPost.snsLikesCount.desc())
@@ -104,23 +144,24 @@ public class SnsPostRepositoryImpl implements CustomSnsPostRepository{
                 .fetch();
     }
 
-    //snspost에서 on절 활용하여 따로 연관관계 없이 조회하기, projection 사용해서 한방 쿼리
+    // projection 사용해서 한방 쿼리
     @Override
     public List<SnsPostResponseDto> search(final Map<String, String> searchCondition) {
         return jpaQueryFactory
                 .select(Projections.constructor(SnsPostResponseDto.class,
-                                snsPost.id,
-                                snsPost.snsPostTitle,
-                                snsPost.snsPostContent,
-                                snsPost.createdBy,
-                                snsPost.createdAt,
-                                snsPost.snsLikesCount,
-                                snsPost.snsViewsCount,
-                                list(hashTag.name),
-                                list(image.url)))
+                        snsPost.id,
+                        snsPost.memberNo,
+                        snsPost.snsPostTitle,
+                        snsPost.snsPostContent,
+                        snsPost.createdBy,
+                        snsPost.createdAt,
+                        snsPost.snsLikesCount,
+                        snsPost.snsViewsCount,
+                        list(hashTag.name),
+                        list(image.url)))
                 .from(snsHashTagMap)
-                .join(snsPost).on(snsHashTagMap.snsPost.id.eq(snsPost.id))
-                .join(hashTag).on(snsHashTagMap.hashTag.id.eq(hashTag.id))
+                .join(snsHashTagMap.snsPost, snsPost)
+                .join(snsHashTagMap.hashTag, hashTag)
                 .join(snsPost.imageList, image)
                 .where(allCond(searchCondition))
                 .fetch();

@@ -1,13 +1,10 @@
 package com.example.plantsnsservice.service;
 
-import com.example.plantsnsservice.common.exception.CustomException;
 import com.example.plantsnsservice.common.exception.ErrorCode;
-import com.example.plantsnsservice.domain.NotifiTypeEnum;
 import com.example.plantsnsservice.domain.entity.SnsPost;
 import com.example.plantsnsservice.repository.querydsl.SnsPostRepository;
 import com.example.plantsnsservice.repository.redis.SnsLikesCountRepository;
 import com.example.plantsnsservice.service.image.ImageService;
-import com.example.plantsnsservice.vo.request.NotificationEventDto;
 import com.example.plantsnsservice.vo.request.SnsPostRequestDto;
 import com.example.plantsnsservice.vo.response.SnsPostResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,10 +26,10 @@ public class SnsPostService {
     private final SnsCommentService snsCommentService;
     private final ImageService imageService;
     private final SnsLikesCountRepository snsLikesCountRepository;
-    private final NotificationSender notificationSender;
     /**
      * sns 게시글 생성
      * 게시글 형식은 게시글 문구, 해시태그, 게시글 내용
+     * 모든 입력값은 필수
      * @param : SnsPostRequestDto snsPostRequestDto
      */
     @Transactional
@@ -46,8 +42,6 @@ public class SnsPostService {
                 .snsLikesCount(snsPostRequestDto.getSnsLikesCount())
                 .snsViewsCount(snsPostRequestDto.getSnsViewsCount())
                 .build();
-        //고민할 부분
-        //snsHashTagMapRepository(save
         Long id = snsPostRepository.save(snsPost).getId();
         //게시글 저장후 해시태그 저장 메서드 호출
         snsHashTagMapService.createHashTag(snsPost, snsPostRequestDto.getHashTags());
@@ -61,32 +55,22 @@ public class SnsPostService {
     /**
      * sns 게시글 단건 조회
      * 조회용이지만 조회수증가를 위해 readonly 제거
-     * 테스트 해본 결과 조인이 너무 많은 땐, 여러개 쿼리가 더 빨랐음
      * @param : Long snsPostId(게시글 번호)
      */
     @Transactional
     public SnsPostResponseDto findById(Long snsPostId) {
-        SnsPost snsPost = snsPostRepository.findById(snsPostId).orElseThrow(ErrorCode::throwSnsPostNotFound);
+        SnsPostResponseDto snsPostResponseDto = snsPostRepository.getSnsPostById(snsPostId);
+
         //글 자세히 볼때 조회수 증가(따로 중복 제거는 하지 않음)
-        snsPost.viewsCountUp();
+        viewCountUp(snsPostId);
 
-        String key = "sns_likes:" + snsPost.getId();
-        SnsPostResponseDto snsPostResponseDto = SnsPostResponseDto.builder()
-                .id(snsPost.getId())
-                .snsPostTitle(snsPost.getSnsPostTitle())
-                .snsPostContent(snsPost.getSnsPostContent())
-                .createdBy(snsPost.getCreatedBy())
-                .createdAt(snsPost.getCreatedAt())
-                .snsLikesCount(snsPost.getSnsLikesCount())
-                .snsViewsCount(snsPost.getSnsViewsCount())
-                .snsLikesStatus(snsLikesCountRepository.isMember(key, snsPost.getMemberNo()) ? true : false)
-                .hashTags(snsHashTagMapService.findHashTagListBySnsPost(snsPost))
-                .build();
-
-        snsPostResponseDto.imageUrls(snsPost);
+        String key = "sns_likes:" + snsPostId;
+        snsPostResponseDto.setSnsLikesStatus(snsLikesCountRepository.isMember(key, snsPostResponseDto.getMemberNo()) ? true : false);
 
         return snsPostResponseDto;
     }
+
+
 
     /**
      * sns 게시글 조건에 따라 검섹(querydsl 동적 쿼리 사용)
@@ -110,7 +94,7 @@ public class SnsPostService {
         //변경 감지
         snsPost.updateSnsPost(snsPostRequestDto);
 
-        //해시 태그 삭제 후 업데이트(조인해서 업데이트하는것보다 성능 상 우위)
+        //해시 태그 삭제 후 업데이트
         snsHashTagMapService.deleteSnsHashTagMap(snsPost.getId());
         snsHashTagMapService.createHashTag(snsPost, snsPostRequestDto.getHashTags());
 
@@ -118,15 +102,15 @@ public class SnsPostService {
 
     /**
      * sns 게시글 조회
-     * 게시글 수정은 문구랑 내용만 가능
      * 게시글은 시간순으로 정렬
-     *
      * @param : x
      */
     @Transactional(readOnly = true)
     public List<SnsPostResponseDto> getSnsPostList() {
-        List<SnsPost> snsPostList = snsPostRepository.findAllByOrderByCreatedAtDesc();
-        return getCollect(snsPostList);
+        List<SnsPostResponseDto> snsPostResponseDtoList = snsPostRepository.findAllByOrderByCreatedAtDesc();
+
+        setLikesStatus(snsPostResponseDtoList);
+        return snsPostResponseDtoList;
     }
     /**
      * sns 게시글 삭제
@@ -166,8 +150,10 @@ public class SnsPostService {
      */
 
     public List<SnsPostResponseDto> getSnsPostByCreated(String createdBy) {
-        List<SnsPost> snsPostList = snsPostRepository.findAllByCreatedBy(createdBy);
-        return getCollect(snsPostList);
+        List<SnsPostResponseDto> snsPostResponseDtoList = snsPostRepository.findAllByCreatedBy(createdBy);
+        setLikesStatus(snsPostResponseDtoList);
+
+        return snsPostResponseDtoList;
     }
 
     /**
@@ -176,67 +162,42 @@ public class SnsPostService {
      * 실제락을 거는 시점은 퍼사드 패턴으로 분리하여
      * 락의 범위가 트랜잭션 범위보다 크게
      * 좋아요 중복관리는 redis set 자료구조를 활용
-     * @param : Long snsPostId(게시글 번호), Integer senderNo(좋아요 누른 사람)
+     * @param : Long snsPostId(게시글 번호), Integer memberNo
      * @Transactional 바깥에서 락을 걸어줌
      */
     @Transactional
-    public void updateSnsLikesCount(Long snsPostId, Integer senderNo) {
+    public void updateSnsLikesCount(Long snsPostId, Integer memberNo) {
 
         SnsPost snsPost = snsPostRepository.findById(snsPostId).orElseThrow(ErrorCode::throwSnsPostNotFound);
         String key = "sns_likes:" + snsPostId;
         //좋아요 중복 관리
-        boolean alreadyLiked = snsLikesCountRepository.isMember(key,senderNo);
+        boolean alreadyLiked = snsLikesCountRepository.isMember(key,memberNo);
 
         if (alreadyLiked) {
             // 특정 게시글에 특정 유저가 좋아요 누른적이 있을시
-            snsLikesCountRepository.decrement(senderNo, snsPostId);
+            snsLikesCountRepository.decrement(memberNo, snsPostId);
             snsPost.likesCountDown();
         } else {
-            snsLikesCountRepository.increment(senderNo, snsPostId);
+            snsLikesCountRepository.increment(memberNo, snsPostId);
             snsPost.likesCountUp();
-
-            getNotificationData(snsPost, senderNo);
-
         }
 
         snsPostRepository.save(snsPost);
     }
-
-    private List<SnsPostResponseDto> getCollect(List<SnsPost> snsPostList) {
-        return snsPostList.stream().map(snsPost -> {
-            String key = "sns_likes:" + snsPost.getId();
-            SnsPostResponseDto snsPostResponseDto = SnsPostResponseDto.builder()
-                    .id(snsPost.getId())
-                    .snsPostTitle(snsPost.getSnsPostTitle())
-                    .snsPostContent(snsPost.getSnsPostContent())
-                    .createdBy(snsPost.getCreatedBy())
-                    .snsLikesCount(snsPost.getSnsLikesCount())
-                    .snsViewsCount(snsPost.getSnsViewsCount())
-                    .createdAt(snsPost.getCreatedAt())
-                    .hashTags(snsHashTagMapService.findHashTagListBySnsPost(snsPost))
-                    .snsLikesStatus(snsLikesCountRepository.isMember(key, snsPost.getMemberNo()) ? true : false)
-                    .commentCount(snsCommentService.findCommentListByPostId(snsPost.getId()).stream().count())
-                    .build();
-            snsPostResponseDto.imageUrls(snsPost);
-            return snsPostResponseDto;
-        }).collect(Collectors.toList());
+    @Transactional
+    public void viewCountUp(Long snsPostId) {
+        SnsPost snsPost = snsPostRepository.findById(snsPostId).orElseThrow(ErrorCode::throwSnsPostNotFound);
+        //변경감지
+        snsPost.viewsCountUp();
     }
+    private List<SnsPostResponseDto> setLikesStatus(List<SnsPostResponseDto> snsPostResponseDtoList) {
+        for (SnsPostResponseDto snsPostResponseDto : snsPostResponseDtoList) {
+            String key = "sns_likes:" + snsPostResponseDto.getId();
+            snsPostResponseDto.setSnsLikesStatus(snsLikesCountRepository.isMember(key, snsPostResponseDto.getMemberNo()) ? true : false);
 
-    /**
-     * plant-chat-service로 kafka를 통한
-     * 메세지 스트리밍
-     * @Param SnsPost snsPost, Integer senderNo
-     */
-    private void getNotificationData(SnsPost snsPost, Integer senderNo) {
-        NotificationEventDto notificationEventDto=NotificationEventDto.builder()
-                .senderNo(senderNo)
-                .receiverNo(snsPost.getMemberNo())
-                .type(NotifiTypeEnum.SNS_HEART)
-                .resource(snsPost.getId().toString())
-                .build();
-        // 알림 이벤트 발행
-        notificationSender.send("notification", notificationEventDto);
+        }
 
+        return snsPostResponseDtoList;
     }
 
 }

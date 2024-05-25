@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Builder
 public class SnsPostResponseDto {
     private Long id;
+    private Integer memberNo;
     private String snsPostTitle;
     private String snsPostContent;
     private String createdBy;
@@ -29,8 +30,9 @@ public class SnsPostResponseDto {
 
     private boolean snsLikesStatus;
 
-    public SnsPostResponseDto(Long id, String snsPostTitle, String snsPostContent, String createdBy, LocalDateTime createdAt, Integer snsLikesCount, Integer snsViewsCount, List<String> hashTags, List<String> imageUrls) {
+    public SnsPostResponseDto(Long id, Integer memberNo, String snsPostTitle, String snsPostContent, String createdBy, LocalDateTime createdAt, Integer snsLikesCount, Integer snsViewsCount, List<String> hashTags, List<String> imageUrls) {
         this.id = id;
+        this.memberNo = memberNo;
         this.snsPostTitle = snsPostTitle;
         this.snsPostContent = snsPostContent;
         this.createdBy = createdBy;
@@ -41,9 +43,4 @@ public class SnsPostResponseDto {
         this.imageUrls = imageUrls;
     }
 
-    public void imageUrls(SnsPost snsPost) {
-        this.imageUrls = snsPost.getImageList().stream()
-                .map(image -> image.getUrl())
-                .collect(Collectors.toList());
-    }
 }

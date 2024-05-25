@@ -117,16 +117,17 @@ class SnsPostServiceTest {
     @DisplayName("sns 게시글  전체 조회 단위 테스트")
     void getSnsPostListTest() {
         //given
-        SnsPost snsPost=SnsPost.builder()
+        SnsPostResponseDto snsPost=SnsPostResponseDto.builder()
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
                 .build();
 
-        SnsPost snsPost2=SnsPost.builder()
+        SnsPostResponseDto snsPost2=SnsPostResponseDto.builder()
                 .snsPostTitle("sns 게시글 테스트2")
                 .snsPostContent("테스트")
                 .build();
-        List<SnsPost> snsPostList = new ArrayList<>();
+
+        List<SnsPostResponseDto> snsPostList = new ArrayList<>();
         snsPostList.add(snsPost);
         snsPostList.add(snsPost2);
 
@@ -139,31 +140,29 @@ class SnsPostServiceTest {
         snsCommentResponseDtoList.add(snsCommentResponseDto);
 
         when(snsPostRepository.findAllByOrderByCreatedAtDesc()).thenReturn(snsPostList);
-        when(snsHashTagMapService.findHashTagListBySnsPost(snsPost)).thenReturn(null);
-        when(snsCommentService.findCommentListByPostId(snsPost.getId())).thenReturn(snsCommentResponseDtoList);
         //when
         List<SnsPostResponseDto> expectedList = snsPostService.getSnsPostList();
 
         assertThat(expectedList.get(0).getSnsPostTitle()).isEqualTo("sns 게시글 테스트");
         assertThat(expectedList.size()).isEqualTo(2);
-        verify(snsCommentService, times(2)).findCommentListByPostId(snsPost.getId());
+
     }
 
     @Test
     @DisplayName("닉네임으로 sns 게시글 조회 단위 테스트")
     void getSnsPostByCreatedTest() throws Exception{
         //given
-        SnsPost snsPost=SnsPost.builder()
+        SnsPostResponseDto snsPost=SnsPostResponseDto.builder()
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
                 .createdBy("민우")
                 .build();
-        SnsPost snsPost1=SnsPost.builder()
+        SnsPostResponseDto snsPost1=SnsPostResponseDto.builder()
                 .snsPostTitle("sns 게시글 테스트")
                 .snsPostContent("테스트")
                 .createdBy("민우")
                 .build();
-        List<SnsPost> requestList = new ArrayList<>();
+        List<SnsPostResponseDto> requestList = new ArrayList<>();
 
         requestList.add(snsPost);
         requestList.add(snsPost1);

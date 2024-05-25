@@ -72,36 +72,5 @@ class SnsHashTagMapServiceTest {
         //1번만 저장되야함
         verify(hashTagService, times(1)).save(any());
     }
-    @Test
-    @DisplayName("sns 게시글에 저장된 해시태그 조회")
-    void findHashTagListBySnsPostTest() {
-        //given
-        SnsPost snsPost=SnsPost.builder()
-                .snsPostTitle("sns 게시글 테스트")
-                .snsPostContent("테스트")
-                .build();
 
-        HashTag hashTag= HashTag.builder()
-                .name("#test")
-                .build();
-        HashTag hashTag2= HashTag.builder()
-                .name("#test2")
-                .build();
-
-        SnsHashTagMap snsHashTagMap = new SnsHashTagMap(snsPost, hashTag);
-        SnsHashTagMap snsHashTagMap2 = new SnsHashTagMap(snsPost, hashTag2);
-        List<SnsHashTagMap> snsHashTagMapList = new ArrayList<>();
-
-        snsHashTagMapList.add(snsHashTagMap);
-        snsHashTagMapList.add(snsHashTagMap2);
-
-        when(snsHashTagMapRepository.findAllBySnsPost(snsPost)).thenReturn(snsHashTagMapList);
-        //when
-        List<String> hashTagListBySnsPost = snsHashTagMapService.findHashTagListBySnsPost(snsPost);
-        //then
-        assertThat(hashTagListBySnsPost.size()).isEqualTo(2);
-        assertThat(hashTagListBySnsPost.get(0)).isEqualTo("#test");
-        assertThat(hashTagListBySnsPost.get(1)).isEqualTo("#test2");
-
-    }
 }

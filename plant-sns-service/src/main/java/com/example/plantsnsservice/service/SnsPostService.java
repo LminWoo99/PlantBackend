@@ -1,6 +1,5 @@
 package com.example.plantsnsservice.service;
 
-import com.example.plantsnsservice.common.exception.CustomException;
 import com.example.plantsnsservice.common.exception.ErrorCode;
 import com.example.plantsnsservice.domain.entity.SnsPost;
 import com.example.plantsnsservice.repository.querydsl.SnsPostRepository;
@@ -17,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +29,7 @@ public class SnsPostService {
     /**
      * sns 게시글 생성
      * 게시글 형식은 게시글 문구, 해시태그, 게시글 내용
+     * 모든 입력값은 필수
      * @param : SnsPostRequestDto snsPostRequestDto
      */
     @Transactional
@@ -43,8 +42,6 @@ public class SnsPostService {
                 .snsLikesCount(snsPostRequestDto.getSnsLikesCount())
                 .snsViewsCount(snsPostRequestDto.getSnsViewsCount())
                 .build();
-        //고민할 부분
-        //snsHashTagMapRepository(save
         Long id = snsPostRepository.save(snsPost).getId();
         //게시글 저장후 해시태그 저장 메서드 호출
         snsHashTagMapService.createHashTag(snsPost, snsPostRequestDto.getHashTags());
@@ -58,32 +55,22 @@ public class SnsPostService {
     /**
      * sns 게시글 단건 조회
      * 조회용이지만 조회수증가를 위해 readonly 제거
-     * 테스트 해본 결과 조인이 너무 많은 땐, 여러개 쿼리가 더 빨랐음
      * @param : Long snsPostId(게시글 번호)
      */
     @Transactional
     public SnsPostResponseDto findById(Long snsPostId) {
-        SnsPost snsPost = snsPostRepository.findById(snsPostId).orElseThrow(ErrorCode::throwSnsPostNotFound);
+        SnsPostResponseDto snsPostResponseDto = snsPostRepository.getSnsPostById(snsPostId);
+
         //글 자세히 볼때 조회수 증가(따로 중복 제거는 하지 않음)
-        snsPost.viewsCountUp();
+        viewCountUp(snsPostId);
 
-        String key = "sns_likes:" + snsPost.getId();
-        SnsPostResponseDto snsPostResponseDto = SnsPostResponseDto.builder()
-                .id(snsPost.getId())
-                .snsPostTitle(snsPost.getSnsPostTitle())
-                .snsPostContent(snsPost.getSnsPostContent())
-                .createdBy(snsPost.getCreatedBy())
-                .createdAt(snsPost.getCreatedAt())
-                .snsLikesCount(snsPost.getSnsLikesCount())
-                .snsViewsCount(snsPost.getSnsViewsCount())
-                .snsLikesStatus(snsLikesCountRepository.isMember(key, snsPost.getMemberNo()) ? true : false)
-                .hashTags(snsHashTagMapService.findHashTagListBySnsPost(snsPost))
-                .build();
-
-        snsPostResponseDto.imageUrls(snsPost);
+        String key = "sns_likes:" + snsPostId;
+        snsPostResponseDto.setSnsLikesStatus(snsLikesCountRepository.isMember(key, snsPostResponseDto.getMemberNo()) ? true : false);
 
         return snsPostResponseDto;
     }
+
+
 
     /**
      * sns 게시글 조건에 따라 검섹(querydsl 동적 쿼리 사용)
@@ -107,7 +94,7 @@ public class SnsPostService {
         //변경 감지
         snsPost.updateSnsPost(snsPostRequestDto);
 
-        //해시 태그 삭제 후 업데이트(조인해서 업데이트하는것보다 성능 상 우위)
+        //해시 태그 삭제 후 업데이트
         snsHashTagMapService.deleteSnsHashTagMap(snsPost.getId());
         snsHashTagMapService.createHashTag(snsPost, snsPostRequestDto.getHashTags());
 
@@ -115,15 +102,15 @@ public class SnsPostService {
 
     /**
      * sns 게시글 조회
-     * 게시글 수정은 문구랑 내용만 가능
      * 게시글은 시간순으로 정렬
-     *
      * @param : x
      */
     @Transactional(readOnly = true)
     public List<SnsPostResponseDto> getSnsPostList() {
-        List<SnsPost> snsPostList = snsPostRepository.findAllByOrderByCreatedAtDesc();
-        return getCollect(snsPostList);
+        List<SnsPostResponseDto> snsPostResponseDtoList = snsPostRepository.findAllByOrderByCreatedAtDesc();
+
+        setLikesStatus(snsPostResponseDtoList);
+        return snsPostResponseDtoList;
     }
     /**
      * sns 게시글 삭제
@@ -163,24 +150,10 @@ public class SnsPostService {
      */
 
     public List<SnsPostResponseDto> getSnsPostByCreated(String createdBy) {
-        List<SnsPost> snsPostList = snsPostRepository.findAllByCreatedBy(createdBy);
-        List<SnsPostResponseDto> snsPosts = snsPostList.stream().map(snsPost -> {
-            SnsPostResponseDto snsPostResponseDto = SnsPostResponseDto.builder()
-                    .id(snsPost.getId())
-                    .snsPostTitle(snsPost.getSnsPostTitle())
-                    .snsPostContent(snsPost.getSnsPostContent())
-                    .createdBy(snsPost.getCreatedBy())
-                    .snsLikesCount(snsPost.getSnsLikesCount())
-                    .snsViewsCount(snsPost.getSnsViewsCount())
-                    .createdAt(snsPost.getCreatedAt())
-                    .hashTags(snsHashTagMapService.findHashTagListBySnsPost(snsPost))
-                    .commentCount(snsCommentService.findCommentListByPostId(snsPost.getId()).stream().count())
-                    .build();
-            snsPostResponseDto.imageUrls(snsPost);
-            return snsPostResponseDto;
-        }).collect(Collectors.toList());
+        List<SnsPostResponseDto> snsPostResponseDtoList = snsPostRepository.findAllByCreatedBy(createdBy);
+        setLikesStatus(snsPostResponseDtoList);
 
-        return snsPosts;
+        return snsPostResponseDtoList;
     }
 
     /**
@@ -211,24 +184,20 @@ public class SnsPostService {
 
         snsPostRepository.save(snsPost);
     }
-
-    private List<SnsPostResponseDto> getCollect(List<SnsPost> snsPostList) {
-        return snsPostList.stream().map(snsPost -> {
-            String key = "sns_likes:" + snsPost.getId();
-            SnsPostResponseDto snsPostResponseDto = SnsPostResponseDto.builder()
-                    .id(snsPost.getId())
-                    .snsPostTitle(snsPost.getSnsPostTitle())
-                    .snsPostContent(snsPost.getSnsPostContent())
-                    .createdBy(snsPost.getCreatedBy())
-                    .snsLikesCount(snsPost.getSnsLikesCount())
-                    .snsViewsCount(snsPost.getSnsViewsCount())
-                    .createdAt(snsPost.getCreatedAt())
-                    .hashTags(snsHashTagMapService.findHashTagListBySnsPost(snsPost))
-                    .snsLikesStatus(snsLikesCountRepository.isMember(key, snsPost.getMemberNo()) ? true : false)
-                    .commentCount(snsCommentService.findCommentListByPostId(snsPost.getId()).stream().count())
-                    .build();
-            snsPostResponseDto.imageUrls(snsPost);
-            return snsPostResponseDto;
-        }).collect(Collectors.toList());
+    @Transactional
+    public void viewCountUp(Long snsPostId) {
+        SnsPost snsPost = snsPostRepository.findById(snsPostId).orElseThrow(ErrorCode::throwSnsPostNotFound);
+        //변경감지
+        snsPost.viewsCountUp();
     }
+    private List<SnsPostResponseDto> setLikesStatus(List<SnsPostResponseDto> snsPostResponseDtoList) {
+        for (SnsPostResponseDto snsPostResponseDto : snsPostResponseDtoList) {
+            String key = "sns_likes:" + snsPostResponseDto.getId();
+            snsPostResponseDto.setSnsLikesStatus(snsLikesCountRepository.isMember(key, snsPostResponseDto.getMemberNo()) ? true : false);
+
+        }
+
+        return snsPostResponseDtoList;
+    }
+
 }

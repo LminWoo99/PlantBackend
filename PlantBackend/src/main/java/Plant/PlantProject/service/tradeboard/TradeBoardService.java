@@ -6,8 +6,9 @@ import Plant.PlantProject.domain.Entity.TradeBoard;
 import Plant.PlantProject.dto.request.TradeBoardRequestDto;
 import Plant.PlantProject.dto.response.TradeBoardResponseDto;
 import Plant.PlantProject.common.exception.ErrorCode;
+import Plant.PlantProject.dto.response.TradeInfoResponseDto;
 import Plant.PlantProject.repository.MemberRepository;
-import Plant.PlantProject.repository.tradeboard.TradeBoardRepository;
+import Plant.PlantProject.repository.tradeboard.querydsl.TradeBoardRepository;
 import Plant.PlantProject.service.keyword.KeywordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static Plant.PlantProject.dto.response.TradeBoardResponseDto.convertTradeBoardToDto;
+import static Plant.PlantProject.dto.response.TradeInfoResponseDto.convertTradeBoardToDto;
 
 @Service
 @Slf4j
@@ -43,15 +45,11 @@ public class TradeBoardService {
     public Long saveTradePost(TradeBoardRequestDto tradeBoardRequestDto, List<MultipartFile> files) throws IOException {
         Member member = memberRepository.findByUsername(tradeBoardRequestDto.getUsername()).orElseThrow(ErrorCode::throwMemberNotFound);
 
-        TradeBoard tradeBoard=tradeBoardRepository.save(
-                TradeBoard.createTradeBoard(member,
-                        tradeBoardRequestDto.getTitle(),
-                        tradeBoardRequestDto.getContent(),
-                        member.getNickname(),
-                        tradeBoardRequestDto.getPrice(),
-                        tradeBoardRequestDto.getKeyWordContent()
-                )
-        );
+        TradeBoard tradeBoard = tradeBoardRequestDto.toEntity(member.getNickname(), member, tradeBoardRequestDto.getTitle(), tradeBoardRequestDto.getContent(),
+                tradeBoardRequestDto.getPrice(), tradeBoardRequestDto.getKeyWordContent());
+
+        tradeBoardRepository.save(tradeBoard);
+
         Long id = tradeBoardRepository.save(tradeBoard).getId();
         if (!files.isEmpty()){
             imageFileUploadService.saveImages(files, tradeBoard);
@@ -59,7 +57,6 @@ public class TradeBoardService {
         if (tradeBoardRequestDto.getKeyWordContent() != null) {
             keywordService.getMembersByKeyword(tradeBoard.getId().intValue(), tradeBoardRequestDto.getKeyWordContent());
         }
-
         return id;
     }
     /**
@@ -82,14 +79,6 @@ public class TradeBoardService {
             // 해당 id에 해당하는 게시글이 없는 경우 처리
             throw ErrorCode.throwTradeBoardNotFound();
         }
-    }
-    /**
-     * 조회수 증가
-     * @param : Long id
-     */
-    private synchronized Integer updateView(Long id) {
-        Integer view = tradeBoardRepository.updateView(id);
-        return view;
     }
     /**
      * 거래 완료 상태 변경 메서드
@@ -121,10 +110,10 @@ public class TradeBoardService {
      * @param : String search, Pageable pageable
      */
     @Transactional(readOnly = true)
-    public Page<TradeBoardResponseDto> pageList(String search, Pageable pageable) {
-        Page<TradeBoard> tradeBoards = tradeBoardRepository.findByTitleContainingOrContentContainingOrKeywordContentContaining(search, search,search, pageable);
+    public Page<TradeBoardResponseDto> pageList(Map<String, String> searchCondition, Pageable pageable) {
+        Page<TradeBoardResponseDto> tradeBoardResponseDtoList = tradeBoardRepository.search(searchCondition, pageable);
 
-        return tradeBoards.map(tradeBoard -> TradeBoardResponseDto.convertTradeBoardToDto(tradeBoard));
+        return tradeBoardResponseDtoList;
     }
     /**
      * 단건 거래 게시글 조회
@@ -132,8 +121,10 @@ public class TradeBoardService {
      */
     @Transactional
     public TradeBoardResponseDto findById(Long id){
-        TradeBoard tradeBoard = tradeBoardRepository.findById(id).orElseThrow(ErrorCode::throwTradeBoardNotFound);
-        updateView(id);
+        TradeBoard tradeBoard = tradeBoardRepository.getTradeBoardById(id);
+        //조회수 증가, 변경 감지
+        tradeBoard.viewsCountUp();
+
         return TradeBoardResponseDto.convertTradeBoardToDto(tradeBoard);
 
     }
@@ -146,6 +137,7 @@ public class TradeBoardService {
     @Transactional
     public void deletePost(Long id) {
         TradeBoard tradeBoard = tradeBoardRepository.findById(id).orElseThrow(ErrorCode::throwMemberNotFound);
+
         TradeBoardRequestDto tradeBoardRequestDto=TradeBoardRequestDto.builder()
                 .id(tradeBoard.getId())
                 .memberNo(tradeBoard.getMember().getId())
@@ -155,12 +147,10 @@ public class TradeBoardService {
         //관련 연관관계 단방향이므로 모두 삭제후 게시글 삭제
         goodsService.deleteGoods(tradeBoard);
 
-
         //게시글 삭제
         tradeBoardRepository.delete(tradeBoard);
 
-
-        /*send this deletePost to the kafka*/
+        // send kafkadeletePost topic
         deleteTradeBoardProducer.send("deletePost", tradeBoardRequestDto.getId());
     }
     /**
@@ -168,9 +158,10 @@ public class TradeBoardService {
      * @param : Long id
      */
     @Transactional(readOnly = true)
-    public List<TradeBoardResponseDto> showTradeInfo(Long id){
+    public List<TradeInfoResponseDto> showTradeInfo(Long id){
         List<TradeBoard> tradeBoards = tradeBoardRepository.findTradeBoardByMemberId(id);
-        List<TradeBoardResponseDto> tradeBoardResponseDtos = tradeBoards.stream()
+
+        List<TradeInfoResponseDto> tradeBoardResponseDtos = tradeBoards.stream()
                 .map(tradeBoard -> convertTradeBoardToDto(tradeBoard)) // TradeDto로 변환
                 .collect(Collectors.toList());
         return tradeBoardResponseDtos;
@@ -180,10 +171,12 @@ public class TradeBoardService {
      * @param : Long id
      */
     @Transactional(readOnly = true)
-    public List<TradeBoardResponseDto> showBuyInfo(Long id){
+    public List<TradeInfoResponseDto> showBuyInfo(Long id){
         Member member=memberRepository.findById(id).orElseThrow(ErrorCode::throwMemberNotFound);
+
         List<TradeBoard> tradeBoards = tradeBoardRepository.findTradeBoardByBuyer(member.getNickname());
-        List<TradeBoardResponseDto> tradeBoardResponseDtos = tradeBoards.stream()
+
+        List<TradeInfoResponseDto> tradeBoardResponseDtos = tradeBoards.stream()
                 .map(tradeBoard -> convertTradeBoardToDto(tradeBoard))
                 .collect(Collectors.toList());
         return tradeBoardResponseDtos;

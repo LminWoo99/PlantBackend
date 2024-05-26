@@ -4,7 +4,7 @@ import Plant.PlantProject.domain.Entity.Image;
 import Plant.PlantProject.domain.Entity.TradeBoard;
 import Plant.PlantProject.common.exception.ErrorCode;
 import Plant.PlantProject.repository.tradeboard.ImageRepository;
-import Plant.PlantProject.repository.tradeboard.TradeBoardRepository;
+import Plant.PlantProject.repository.tradeboard.querydsl.TradeBoardRepository;
 import Plant.PlantProject.common.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

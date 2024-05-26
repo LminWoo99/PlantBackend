@@ -11,7 +11,7 @@ import Plant.PlantProject.dto.response.NotificationEventDto;
 import Plant.PlantProject.dto.response.TradeBoardResponseDto;
 import Plant.PlantProject.repository.tradeboard.GoodsRepository;
 import Plant.PlantProject.repository.MemberRepository;
-import Plant.PlantProject.repository.tradeboard.TradeBoardRepository;
+import Plant.PlantProject.repository.tradeboard.querydsl.TradeBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

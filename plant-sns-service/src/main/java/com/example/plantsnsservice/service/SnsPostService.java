@@ -51,7 +51,6 @@ public class SnsPostService {
         }
         return id;
     }
-
     /**
      * sns 게시글 단건 조회
      * 조회용이지만 조회수증가를 위해 readonly 제거
@@ -69,9 +68,6 @@ public class SnsPostService {
 
         return snsPostResponseDto;
     }
-
-
-
     /**
      * sns 게시글 조건에 따라 검섹(querydsl 동적 쿼리 사용)
      * 사용자는 Optional(해시태그(완전일치), 글 본문 내용(포함), 글 제목(포힘), 닉네임(완전 일치))으로 검색 가능
@@ -81,7 +77,6 @@ public class SnsPostService {
         return snsPostRepository.search(searchCondition);
 
     }
-
     /**
      * sns 게시글 수정
      * 게시글 수정은  내용, 해시태그 가능(게시글 내용은 직접 update 쿼리 대신 변경 감지로)
@@ -118,11 +113,13 @@ public class SnsPostService {
      */
     @Transactional
     public void deleteSnsPost(Long snsPostId) {
-        //단방향관계를 유지하기 위 댓글 먼제 삭제
+        //foreign 제약 조건 댓글 먼저 삭제
         snsCommentService.deleteSnsCommentBySnsPost(snsPostId);
 
         snsHashTagMapService.deleteSnsHashTagMap(snsPostId);
+
         snsPostRepository.deleteById(snsPostId);
+
     }
     /**
      * 이주의 인기 게시글 조회 메서드
@@ -194,9 +191,7 @@ public class SnsPostService {
         for (SnsPostResponseDto snsPostResponseDto : snsPostResponseDtoList) {
             String key = "sns_likes:" + snsPostResponseDto.getId();
             snsPostResponseDto.setSnsLikesStatus(snsLikesCountRepository.isMember(key, snsPostResponseDto.getMemberNo()) ? true : false);
-
         }
-
         return snsPostResponseDtoList;
     }
 

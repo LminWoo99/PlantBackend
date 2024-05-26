@@ -43,9 +43,6 @@ public class SnsComment {
 
     private LocalDateTime createdAt;
 
-    @Enumerated(value = EnumType.STRING)
-    private DeleteStatus isDeleted;
-
     @Builder
     public SnsComment(SnsPost snsPost, String content, String createdBy, SnsComment parent) {
         this.snsPost = snsPost;

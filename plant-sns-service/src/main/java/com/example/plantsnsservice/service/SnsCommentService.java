@@ -76,11 +76,20 @@ public class SnsCommentService {
     }
     /**
      * 게시글 삭제시 게시글에 있는 댓글  전체삭제 메서드
-     * @param : Long Long snsPostId
+     * @param : Long snsPostId
      */
     @Transactional
     public void deleteSnsCommentBySnsPost(Long snsPostId) {
-        snsCommentRepository.deleteBySnsPostId(snsPostId);
+        //댓글 <==> 대댓글 대댓글의 중첩구조 변환
+        List<SnsCommentResponseDto> snsCommentResponseDtoList = findCommentListByPostId(snsPostId);
+        //부모 댓글 id 리스트 화
+        List<Long> commentIdList = snsCommentResponseDtoList.stream().map(snsCommentResponseDto -> {
+            return snsCommentResponseDto.getId();
+        }).collect(Collectors.toList());
+
+        for (Long commentId : commentIdList) {
+            snsCommentRepository.deleteById(commentId);
+        }
 
     }
 

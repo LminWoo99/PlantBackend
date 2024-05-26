@@ -10,6 +10,5 @@ public interface CustomSnsCommentRepository {
 
     public List<SnsComment> findSnsCommentByPostId(Long postId);
 
-    public void deleteBySnsPostId(Long postId);
 
 }

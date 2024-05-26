@@ -40,12 +40,7 @@ public class SnsPostController {
         SnsPostResponseDto snsPostResponseDto = snsPostService.findById(snsPostId);
         return ResponseEntity.ok().body(snsPostResponseDto);
     }
-//    @GetMapping("/snsPost2/{snsPostId}")
-//    @Operation(summary = "SNS 게시글 단건 조회", description = "하나의 게시글 조회할 수 있는 API")
-//    public ResponseEntity<SnsPostResponseDto> getSnsPost2(@PathVariable Long snsPostId) {
-//        SnsPostResponseDto snsPostResponseDto = snsPostService.findById2(snsPostId);
-//        return ResponseEntity.ok().body(snsPostResponseDto);
-//    }
+
 
     @GetMapping("snsPosts/search")
     @Operation(summary = "SNS 게시글 동적 검색", description = "해시태그, 글 본문, 글 제목, 닉네임을 이용한 검색 가능한 API")
@@ -60,14 +55,6 @@ public class SnsPostController {
         List<SnsPostResponseDto> snsPostByCreated = snsPostService.getSnsPostByCreated(createdBy);
         return ResponseEntity.ok().body(snsPostByCreated);
     }
-
-    //    @GetMapping("/snsPosts/{hashTagName}")
-//    @Operation(summary = "SNS 게시글 해시 태그 기준으로 조회", description = "해시 태그 기준으로 게시글 조회할 수 있는 API")
-//    public ResponseEntity<List<SnsPostResponseDto>> getSnsPostsByHashTag(@PathVariable String hashTagName) {
-//        List<SnsPostResponseDto> snsPostResponseDtoList = snsHashTagMapService.findHashTagListBySnsPost(hashTagName);
-//        return ResponseEntity.ok().body(snsPostResponseDtoList);
-//
-//    }
     @PatchMapping("/snsPost")
     @Operation(summary = "SNS 게시글 수정", description = "SNS 게시글 수정할 수 있는 API")
     public ResponseEntity<HttpStatus> updateSnsPost(@RequestBody SnsPostRequestDto snsPostRequestDto) {

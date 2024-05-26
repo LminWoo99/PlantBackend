@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 
 @Entity
@@ -30,8 +31,8 @@ public class Keyword {
     public Keyword(String keywordContent, Integer memberNo) {
         this.keywordContent = keywordContent;
         this.memberNo = memberNo;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.updatedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
 
     }

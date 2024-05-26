@@ -1,6 +1,8 @@
 package Plant.PlantProject.dto.request;
 
+import Plant.PlantProject.domain.Entity.Member;
 import Plant.PlantProject.domain.Entity.Status;
+import Plant.PlantProject.domain.Entity.TradeBoard;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -40,6 +42,16 @@ public class TradeBoardRequestDto {
 
     private String keyWordContent;
 
-
+    public TradeBoard toEntity(String createBy, Member member, String title, String content, Integer price, String keywordContent){
+        TradeBoard tradeBoard=TradeBoard.builder()
+                .member(member)
+                .title(title)
+                .content(content)
+                .createBy(createBy)
+                .price(price)
+                .keywordContent(keywordContent)
+                .build();
+        return tradeBoard;
+    }
 
 }

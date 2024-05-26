@@ -75,7 +75,8 @@ class ChatServiceTest{
 
         ChatRequestDto chatRequestDto = new ChatRequestDto(1, 1);
 
-        TradeBoardResponseDto tradeBoardResponseDto = new TradeBoardResponseDto();
+        TradeBoardResponseDto tradeBoardResponseDto = new TradeBoardResponseDto(1L, "test", "etst_content"
+                ,"minu", 1L, 1, "거래가능", LocalDateTime.now(),LocalDateTime.now(), 10000, 1, null, null);
 
         ResponseEntity<TradeBoardResponseDto> mockResponse = ResponseEntity.ok(tradeBoardResponseDto);
         Chat expectChat = new Chat(1, 1, 2, 11, LocalDateTime.now());
@@ -100,7 +101,9 @@ class ChatServiceTest{
 
         ChatRequestDto chatRequestDto = new ChatRequestDto(1, 1);
 
-        TradeBoardResponseDto tradeBoardResponseDto = new TradeBoardResponseDto();
+        TradeBoardResponseDto tradeBoardResponseDto = new TradeBoardResponseDto(1L, "test", "etst_content"
+                ,"minu", 1L, 1, "거래완료", LocalDateTime.now(),LocalDateTime.now(), 10000, 1, null, null);
+
         ResponseEntity<TradeBoardResponseDto> mockResponse = ResponseEntity.ok(tradeBoardResponseDto);
 
         when(circuitBreaker.run(any(), any())).thenReturn(mockResponse);
@@ -168,7 +171,7 @@ class ChatServiceTest{
         List<ChatResponseDto> chattingList = chatList.stream().map(chat -> new ChatResponseDto(chat, 1)).collect(Collectors.toList());
         ChattingHistoryResponseDto chattingHistoryResponseDto = new ChattingHistoryResponseDto("mw310@naver.com", chattingList);
 
-        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(3L , "minu", "ee", "이민우", "pass", "mw310@~"));
+        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(3L , "minu", "ee", "이민우", "mw310@~"));
 
         when(circuitBreaker.run(any(), any())).thenReturn(mockResponseEntity);
 
@@ -195,7 +198,7 @@ class ChatServiceTest{
                 .content("거래 가능할까요?")
                 .build();
 
-        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(3L , "minu", "ee", "이민우", "pass", "mw310@~"));
+        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(3L , "minu", "ee", "이민우", "mw310@~"));
         when(plantServiceClient.findByUsername(any())).thenReturn(mockResponseEntity);
         when(chatRoomService.isAllConnected(1)).thenReturn(true);
 
@@ -221,7 +224,7 @@ class ChatServiceTest{
         CircuitBreaker circuitBreaker = mock(CircuitBreaker.class);
         when(circuitBreakerFactory.create(anyString())).thenReturn(circuitBreaker);
 
-        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(2L , "minu", "ee", "이민우", "pass", "mw310@~"));
+        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(2L , "minu", "ee", "이민우", "mw310@~"));
 
         when(circuitBreaker.run(any(), any())).thenReturn(mockResponseEntity);
         when(chatRoomService.isAllConnected(1)).thenReturn(false);
@@ -229,7 +232,7 @@ class ChatServiceTest{
         //when
         chatService.sendNotificationAndSaveMessage(requestMessage);
         //then
-        verify(notificationService, times(1)).send(mockResponseEntity.getBody().getId().intValue(),mockResponseEntity.getBody().getId().intValue(), NotifiTypeEnum.CHAT,"1/2","거래 가능할까요?");
+        verify(notificationService, times(1)).send(mockResponseEntity.getBody().getId().intValue(),mockResponseEntity.getBody().getId().intValue(), NotifiTypeEnum.CHAT,"1/2/minu","거래 가능할까요?");
 
     }
     @Test
@@ -275,7 +278,7 @@ class ChatServiceTest{
         CircuitBreaker circuitBreaker = mock(CircuitBreaker.class);
         when(circuitBreakerFactory.create(anyString())).thenReturn(circuitBreaker);
 
-        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(2L , "minu", "ee", "이민우", "pass", "xxx@"));
+        ResponseEntity<MemberDto> mockResponseEntity = ResponseEntity.ok(new MemberDto(2L , "minu", "ee", "이민우", "xxx@"));
 
         when(circuitBreaker.run(any(), any())).thenReturn(mockResponseEntity);
         when(chatRoomService.isAllConnected(1)).thenReturn(true);

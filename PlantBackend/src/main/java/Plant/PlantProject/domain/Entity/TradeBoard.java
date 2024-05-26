@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,15 +54,18 @@ public class TradeBoard {
 
     private String buyer;
     private String keywordContent;
+
     @Builder
-    public TradeBoard(Long id, String createBy, Member member, String title, String content, Status status, int view) {
-        this.id = id;
+    public TradeBoard(String createBy, Member member, String title, String content, Integer price, String keywordContent) {
         this.createBy = createBy;
         this.member = member;
         this.title = title;
         this.content = content;
-        this.status = status;
-        this.view= view;
+        this.price = price;
+        this.view = 0;
+        this.goodCount = 0;
+        this.status = Status.판매중;
+        this.keywordContent = keywordContent;
     }
 
     public void updatePost(String title, String content, Integer price) {
@@ -77,20 +81,7 @@ public class TradeBoard {
         this.status = status;
     }
 
-    public static TradeBoard createTradeBoard(Member member, String title, String content,
-                                              String createBy,  int price, String keywordContent){
-        TradeBoard tradeBoard = new TradeBoard();
-        tradeBoard.member=member;
-        tradeBoard.title=title;
-        tradeBoard.content = content;
-        tradeBoard.createBy = createBy;
-        tradeBoard.price = price;
-        tradeBoard.status=Status.판매중;
-        tradeBoard.goodCount = 0;
-        tradeBoard.view = 0;
-        tradeBoard.keywordContent = keywordContent;
-        return tradeBoard;
-    }
+
     /**
      * 양방향 연관관계 메서드
      */
@@ -103,10 +94,13 @@ public class TradeBoard {
     }public void decreaseGoodsCount() {
         this.goodCount--;
     }
+    public void viewsCountUp() {
+        this.view++;
+    }
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.updatedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     @PreUpdate

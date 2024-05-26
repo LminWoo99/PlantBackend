@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class SnsPost {
         this.snsPostContent = snsPostContent;
         this.memberNo = memberNo;
         this.createdBy = createdBy;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         this.snsLikesCount = snsLikesCount;
         this.snsViewsCount = snsViewsCount;
     }
@@ -73,7 +74,6 @@ public class SnsPost {
     }
     public void viewsCountUp() {
         this.snsViewsCount++;
-
     }
     public void likesCountUp() {
         this.snsLikesCount++;

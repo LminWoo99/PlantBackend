@@ -2,6 +2,7 @@ package Plant.PlantProject.controller.tradeboard;
 
 import Plant.PlantProject.dto.request.TradeBoardRequestDto;
 import Plant.PlantProject.dto.response.TradeBoardResponseDto;
+import Plant.PlantProject.dto.response.TradeInfoResponseDto;
 import Plant.PlantProject.service.tradeboard.TradeBoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -40,10 +42,10 @@ public class TradeBoardController {
     }
     @GetMapping("/list")
     @Operation(summary = "식물 중고 거래 게시글 전체 조회", description = "식물 중고 거래 게시글 전체 조회 할 수 있는 API")
-    public ResponseEntity<Page<TradeBoardResponseDto>> boardList(@RequestParam(required = false, defaultValue = "") String search, @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
-                                                         Pageable pageable) {
+    public ResponseEntity<Page<TradeBoardResponseDto>> boardList(@RequestParam(required = false, defaultValue = "") Map<String, String> searchCondition,
+                                                                 @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Page<TradeBoardResponseDto> tradeBoardDtos = tradeBoardService.pageList(search, pageable);
+        Page<TradeBoardResponseDto> tradeBoardDtos = tradeBoardService.pageList(searchCondition, pageable);
         return ResponseEntity.ok(tradeBoardDtos);
     }
     @GetMapping("/list/{id}")
@@ -74,14 +76,16 @@ public class TradeBoardController {
     }
     @GetMapping("/tradeInfo/{id}")
     @Operation(summary = "유저 기능 -거래 정보 조회", description = "유저 기능중 개인이 거래한 내역을 확인 할 수 있는 API")
-    public ResponseEntity<List<TradeBoardResponseDto>> showTradeInfo(@PathVariable Long id){
-        List<TradeBoardResponseDto> tradeBoardResponseDtos = tradeBoardService.showTradeInfo(id);
+    public ResponseEntity<List<TradeInfoResponseDto>> showTradeInfo(@PathVariable Long id){
+        List<TradeInfoResponseDto> tradeBoardResponseDtos = tradeBoardService.showTradeInfo(id);
+
         return ResponseEntity.ok().body(tradeBoardResponseDtos);
     }
     @GetMapping("/buyInfo/{id}")
     @Operation(summary = "유저 기능 -구매 정보 조회", description = "유저 기능중 개인이 구매한 내역을 확인 할 수 있는 API")
-    public ResponseEntity<List<TradeBoardResponseDto>> showBuyInfo(@PathVariable Long id){
-        List<TradeBoardResponseDto> tradeBoardResponseDtos = tradeBoardService.showBuyInfo(id);
+    public ResponseEntity<List<TradeInfoResponseDto>> showBuyInfo(@PathVariable Long id){
+        List<TradeInfoResponseDto> tradeBoardResponseDtos = tradeBoardService.showBuyInfo(id);
+
         return ResponseEntity.ok().body(tradeBoardResponseDtos);
     }
 

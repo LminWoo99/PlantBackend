@@ -7,7 +7,10 @@ import lombok.Getter;
 @Getter
 public enum SearchParam {
     MANAGE("manage"),
-    CATEGORY("category");
+    CATEGORY("category"),
+    TITLE("title"),
+    KEYWORD("keyword");
+
 
 
 

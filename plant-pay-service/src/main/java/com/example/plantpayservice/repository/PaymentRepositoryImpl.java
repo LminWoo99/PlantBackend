@@ -19,8 +19,9 @@ public class PaymentRepositoryImpl implements CustomPaymentRepository{
                 .set(payment.payMoney, payment.payMoney.add(paymentRequestDto.getPayMoney()))
                 .where(payment.memberNo.eq(paymentRequestDto.getMemberNo()))
                 .execute();
-        em.clear();
         em.flush();
+        em.clear();
+
 
     }
     public void tradePayMoney(Integer sellerNo, Integer buyerNo, PaymentRequestDto paymentRequestDto, Integer buyerPayMoney) {
@@ -32,8 +33,8 @@ public class PaymentRepositoryImpl implements CustomPaymentRepository{
                 .set(payment.payMoney, payment.payMoney.subtract(paymentRequestDto.getPayMoney()))
                 .where(payment.memberNo.eq(buyerNo))
                 .execute();
-
-        em.clear();
         em.flush();
+        em.clear();
+
     }
 }

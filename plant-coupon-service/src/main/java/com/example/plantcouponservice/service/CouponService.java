@@ -43,7 +43,6 @@ public class CouponService {
         Long add = appliedUserRepository.add(couponRequestDto.getMemberNo());
         if (add != 1) {
             return StatusResponseDto.addStatus(409);
-
         }
         Long count = couponCountRepository.increment();
         //오늘 날짜 기준으로 100개보다 많으면 return

@@ -28,7 +28,6 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                 .withSockJS(); //SockJS 사용가능 설정
 
     }
-
     /**
      * 메시지 브로커를 구성하는 메서드
      * 채팅방번호로 구독하는 채팅방을 구분

@@ -25,7 +25,6 @@ public class CouponCreatedConsumer {
 
     @KafkaListener(topics = "coupon_created", groupId = "coupon")
     public void listener(CouponRequestDto couponRequestDto) {
-
         try{
             Coupon coupon=Coupon.builder()
                     .memberNo(couponRequestDto.getMemberNo())
@@ -36,7 +35,7 @@ public class CouponCreatedConsumer {
         }
         catch (Exception e){
             logger.error("Failed to create coupon: "+ couponRequestDto.getMemberNo());
-            failedEventRepository.save(new FailedEvent(couponRequestDto.getMemberNo()));
+            failedEventRepository.save(new FailedEvent(couponRequestDto.getMemberNo(), couponRequestDto.getDiscountPrice()));
         }
     }
 }

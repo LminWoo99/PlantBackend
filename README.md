@@ -8,7 +8,7 @@
   <br/>
   
 
- 👉 식구하자 프론트 [바로가기](https://github.com/Hanttogang/Plant_Frontend)
+
 ## 🔭 목차 | Contents
 1️⃣ [개발 기간 및 팀원](#-개발-기간--project-period) <br/>
 2️⃣ [아키텍처](#-아키텍처--architecture) <br/>

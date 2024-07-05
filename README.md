@@ -15,7 +15,7 @@
 - Java
 - SpringBoot, JPA, QueryDSL
 - Spring cloud, gateway, eureka, config, feign client
-- Kafka , rabbitmq, STOMP
+- Kafka,rabbitmq, STOMP
 - Prometheus & Grafana, circuitbreaker
 - DB - Mysql, Redis, Mongo
 - INFRA - docker, Jenkins, AWS EC2, S3, Route 53, CloudFront
@@ -83,7 +83,7 @@
         - 접속 정보를 **Redis를** 통한 관리로 채팅방에 모두 접속했을경우, **알림이** 가지 않도록 구현
 - **SSE**를 이용한 실시간 알람이 발송(분리된 마이크로서비스에서 알림이 필요할 경우 **느슨한 결합**을 유지하기 위해 비동기식 **kafka 이벤트** 활용)
     - 내가 올린 SNS게시글에 댓글,좋아요가 달리거나
-    - 키워드 등록을 통해 유저가 원하는 키워드이 거래 게시글이 올라왔을 경우
+    - 키워드 등록을 통해 유저가 원하는 키워드가 거래 게시글로 올라왔을 경우
     - 내가 올림 거래 게시글에 상대방이 찜할 경우
     - 채팅방에 새로운 채팅이 있을 경우 SSE를 이용한 실시간 알람이 발송
 - 읽기가 잦은 채팅 내역 데이터는 RDB 대신 **MongoDB**를 선택하여 사용했습니다.

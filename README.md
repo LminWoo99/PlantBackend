@@ -33,7 +33,7 @@
 
 ## **Spring Cloud Eureka 서버 및 Gateway 구축**
 
-- 서비스 디스커버리 및 API Gateway에서 인증,인가, 로드밸런싱 역할 수행
+- 서비스 디스커버리 및 API Gateway에서 인증, 라우팅 역할 수행
 
 ## **Spring Cloud Config 서버 구축**
 

@@ -1,5 +1,7 @@
 package com.example.plantcouponservice.service;
 
+import com.example.plantcouponservice.domain.OutboxEvent;
+import com.example.plantcouponservice.repository.OutboxEventRepository;
 import com.example.plantcouponservice.service.producer.CouponCreateProducer;
 import com.example.plantcouponservice.service.producer.PaymentProducer;
 import com.example.plantcouponservice.domain.Coupon;
@@ -12,8 +14,11 @@ import com.example.plantcouponservice.vo.request.CouponStatus;
 import com.example.plantcouponservice.vo.request.PaymentRequestDto;
 import com.example.plantcouponservice.vo.response.CouponResponseDto;
 import com.example.plantcouponservice.vo.response.StatusResponseDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +35,8 @@ public class CouponService {
     private final CouponCreateProducer couponCreateProducer;
     private final AppliedUserRepository appliedUserRepository;
     private final PaymentProducer paymentProducer;
+    private final OutboxEventRepository outboxEventRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * 쿠폰 발급
@@ -75,23 +82,28 @@ public class CouponService {
     /**
      * 쿠폰 사용 메서드
      * 쿠폰 , 결제 마이크로서비스 saga pattern 적용
+     * 쿠폰 사용 + 결제(사용자간의 거래) 워크플로우에 신뢰성을 보장하기 위해 Transactional outbox pattern + CDC 적용
      * coupon status가 미적용이면 바로 결제 이벤트
      * 적용이면 쿠폰 사용후 결제 이벤트
      * @param : PaymentRequestDto paymentRequestDto
      */
    @Transactional
-    public void useCouponAndPayment(PaymentRequestDto paymentRequestDto) {
+    public void useCouponAndPayment(PaymentRequestDto paymentRequestDto) throws JsonProcessingException {
+       //Transactional outbox pattern + CDC 적용
+       OutboxEvent outboxEvent = parsingEvent(paymentRequestDto);
+
        if (paymentRequestDto.getCouponStatus()== CouponStatus.쿠폰미사용){
            log.info("======couponUseConsumer Data :{}======", paymentRequestDto);
-           paymentProducer.create(paymentRequestDto);
+
+           outboxEventRepository.save(outboxEvent);
            return;
        }
         Coupon coupon = couponRepository.findByMemberNoAndCouponNo(paymentRequestDto.getMemberNo(), paymentRequestDto.getCouponNo());
         //사용완료 및 변경감지
         coupon.useCoupon();
-       log.info("======couponUseConsumer Data :{}======", paymentRequestDto);
+        log.info("======couponUseConsumer Data :{}======", paymentRequestDto);
         //쿠폰 적용완료후 결제 요청
-        paymentProducer.create(paymentRequestDto);
+        outboxEventRepository.save(outboxEvent);
    }
     /**
      * 쿠폰 롤백 메서드
@@ -108,4 +120,9 @@ public class CouponService {
         }
     }
 
+    private OutboxEvent parsingEvent(PaymentRequestDto paymentRequestDto) throws JsonProcessingException {
+        String payload = objectMapper.writeValueAsString(paymentRequestDto);
+        OutboxEvent outboxEvent = new OutboxEvent("Coupon", "payment", payload);
+        return outboxEvent;
+    }
 }

@@ -5,6 +5,7 @@ import com.example.plantcouponservice.vo.request.CouponRequestDto;
 import com.example.plantcouponservice.vo.request.PaymentRequestDto;
 import com.example.plantcouponservice.vo.response.CouponResponseDto;
 import com.example.plantcouponservice.vo.response.StatusResponseDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,7 @@ public class CouponController {
     }
     @PostMapping("/coupon/payment")
     @Operation(summary = "쿠폰 사용하여 결제", description = "쿠폰 사용할 수 있는 API")
-    public void useCoupon(@RequestBody PaymentRequestDto paymentRequestDto) {
+    public void useCoupon(@RequestBody PaymentRequestDto paymentRequestDto) throws JsonProcessingException {
         couponService.useCouponAndPayment(paymentRequestDto);
     }
 }

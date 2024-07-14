@@ -39,6 +39,7 @@ public class ImageService {
             Image image = uploadImage(file, snsPost);
             //양방향 연관관계 메서드 사용
             snsPost.addImageList(image);
+
             images.add(image);
         }
         imageRepository.saveAll(images);

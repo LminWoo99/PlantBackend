@@ -2,6 +2,7 @@ package com.example.plantcouponservice.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.kafka.common.annotation.InterfaceStability;
 
@@ -14,6 +15,7 @@ import java.time.ZoneId;
 import java.util.UUID;
 
 @Entity
+@Getter
 @Table(name = "outbox_events")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OutboxEvent {

@@ -117,11 +117,13 @@ public class PaymentService {
      * 판매자 paymoney += 거래할 금액
      * 구매자 Paymoney -= 거래할 금액
      * 분산 트랜잭션 Saga Pattern 적용
+     * 쿠폰 사용 + 결제(사용자간의 거래) 워크플로우에 신뢰성을 보장하기 위해 Transactional outbox pattern + CDC 적용
      * 에러 발생시 쿠폰 마이크로서비스로 보상 트랜잭션 시작, Rollback
      * @param : PaymentRequestDto paymentRequestDto, Integer sellerNo
      */
     @Transactional
-    public void tradePayMoney(PaymentRequestDto paymentRequestDto) {
+    public void tradePayMoney(PaymentRequestDto paymentRequestDto) throws JsonProcessingException {
+        OutboxEvent outboxEvent = parsingEvent(paymentRequestDto);
         try {
             Payment buyerPayment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
             Integer buyerPayMoney = paymentRequestDto.getPayMoney();
@@ -133,12 +135,9 @@ public class PaymentService {
 //            errorPerHalf();
             paymentRepository.tradePayMoney(paymentRequestDto.getSellerNo(), buyerPayment.getMemberNo(), paymentRequestDto, buyerPayMoney);
         } catch (Exception e) {
-            // 결제 실패 시 쿠폰 사용 취소 이벤트 발행
+            // 결제 실패 시 보상 트랜잭션 발행을 위한 outboxEvent
             log.error("===[결제 요청 오류] -> coupon-rollback ,  쿠폰 번호 :{} / {}====",paymentRequestDto.getCouponNo(), e.getMessage());
-            //issue catch 문전에 저장을 하면 무조건 롤백 어떻게해야할까..?
-
-
-
+            outboxEventRepository.save(outboxEvent);
         }
     }
     private OutboxEvent parsingEvent(PaymentRequestDto paymentRequestDto) throws JsonProcessingException {

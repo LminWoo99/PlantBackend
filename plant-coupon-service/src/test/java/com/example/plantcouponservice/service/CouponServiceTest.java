@@ -41,7 +41,7 @@ class CouponServiceTest {
                     countDownLatch.countDown();
 
                 }
-            });bu
+            });
         }
         countDownLatch.await();
         Thread.sleep(10000);

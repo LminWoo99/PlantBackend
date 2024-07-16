@@ -1,14 +1,18 @@
 package com.example.plantpayservice.service;
 
 import com.example.plantpayservice.domain.entity.CouponStatus;
+import com.example.plantpayservice.domain.entity.OutboxEvent;
 import com.example.plantpayservice.domain.entity.Payment;
 import com.example.plantpayservice.exception.CustomException;
 import com.example.plantpayservice.exception.ErrorCode;
+import com.example.plantpayservice.repository.OutboxEventRepository;
 import com.example.plantpayservice.repository.PaymentRepository;
 import com.example.plantpayservice.service.event.CouponRollbackProducer;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
 import com.example.plantpayservice.vo.response.StatusResponseDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,8 @@ import java.util.Random;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final CouponRollbackProducer couponRollbackProducer;
+    private final OutboxEventRepository outboxEventRepository;
+    private final ObjectMapper objectMapper;
     private static final int BETWEEN_ZERO_AND_ONE = 1;
     /**
      * 식구페이 머니 충전 메서드
@@ -94,6 +100,9 @@ public class PaymentService {
         StatusResponseDto statusResponseDto = StatusResponseDto.success();
         return statusResponseDto;
     }
+    /**
+     * 보상 트랜잭션 발생시키기 위한 임의 테스트 메서드
+     */
     private void errorPerHalf() {
         int zeroOrOne = new Random().nextInt(BETWEEN_ZERO_AND_ONE);
 
@@ -108,11 +117,13 @@ public class PaymentService {
      * 판매자 paymoney += 거래할 금액
      * 구매자 Paymoney -= 거래할 금액
      * 분산 트랜잭션 Saga Pattern 적용
+     * 쿠폰 사용 + 결제(사용자간의 거래) 워크플로우에 신뢰성을 보장하기 위해 Transactional outbox pattern + CDC 적용
      * 에러 발생시 쿠폰 마이크로서비스로 보상 트랜잭션 시작, Rollback
      * @param : PaymentRequestDto paymentRequestDto, Integer sellerNo
      */
     @Transactional
-    public void tradePayMoney(PaymentRequestDto paymentRequestDto) {
+    public void tradePayMoney(PaymentRequestDto paymentRequestDto) throws JsonProcessingException {
+        OutboxEvent outboxEvent = parsingEvent(paymentRequestDto);
         try {
             Payment buyerPayment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
             Integer buyerPayMoney = paymentRequestDto.getPayMoney();
@@ -123,13 +134,16 @@ public class PaymentService {
             }
 //            errorPerHalf();
             paymentRepository.tradePayMoney(paymentRequestDto.getSellerNo(), buyerPayment.getMemberNo(), paymentRequestDto, buyerPayMoney);
-        } catch (CustomException e) {
-            // 결제 실패 시 쿠폰 사용 취소 이벤트 발행
+        } catch (Exception e) {
+            // 결제 실패 시 보상 트랜잭션 발행을 위한 outboxEvent
             log.error("===[결제 요청 오류] -> coupon-rollback ,  쿠폰 번호 :{} / {}====",paymentRequestDto.getCouponNo(), e.getMessage());
-            couponRollbackProducer.rollbackCouponStatus(paymentRequestDto);
-
+            outboxEventRepository.save(outboxEvent);
         }
-
+    }
+    private OutboxEvent parsingEvent(PaymentRequestDto paymentRequestDto) throws JsonProcessingException {
+        String payload = objectMapper.writeValueAsString(paymentRequestDto);
+        OutboxEvent outboxEvent = new OutboxEvent("Payment", "coupon-rollback", payload);
+        return outboxEvent;
     }
 
 }

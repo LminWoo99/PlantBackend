@@ -5,6 +5,7 @@ import com.example.plantpayservice.exception.CustomException;
 import com.example.plantpayservice.repository.PaymentRepository;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -89,7 +90,7 @@ class PaymentServiceTest {
 
     @Test
     @DisplayName("페이머니로 거래 테스트")
-    void tradePayMoneyTest() {
+    void tradePayMoneyTest() throws JsonProcessingException {
         //given
         PaymentRequestDto buyerRequestDto = new PaymentRequestDto(12000, 1);
         paymentService.chargePayMoney(buyerRequestDto);

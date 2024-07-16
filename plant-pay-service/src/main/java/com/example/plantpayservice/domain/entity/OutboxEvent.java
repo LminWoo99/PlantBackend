@@ -1,6 +1,7 @@
 package com.example.plantpayservice.domain.entity;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "outbox_events")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class OutboxEvent {
     @Id
     private String id;

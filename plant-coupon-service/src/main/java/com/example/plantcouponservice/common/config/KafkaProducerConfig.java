@@ -32,8 +32,6 @@ public class KafkaProducerConfig {
                 .put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class)
                 //멱등성 프로듀서 명시적 설정
                 .put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true)
-                .put(ProducerConfig.ACKS_CONFIG, "all")
-                .put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "5")
                 .build();
 
     }

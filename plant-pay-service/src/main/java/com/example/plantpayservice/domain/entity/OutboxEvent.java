@@ -19,6 +19,10 @@ import java.util.UUID;
 public class OutboxEvent {
     @Id
     private String id;
+
+    @Column(name = "aggregate_id", nullable = false)
+    private String aggregateId;
+
     @Column(name = "aggregate_type", nullable = false)
     private String aggregateType;
 
@@ -31,8 +35,9 @@ public class OutboxEvent {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public OutboxEvent(String aggregateType, String eventType, String payload) {
+    public OutboxEvent(String aggregateId, String aggregateType, String eventType, String payload) {
         this.id = UUID.randomUUID().toString();
+        this.aggregateId = aggregateId;
         this.aggregateType = aggregateType;
         this.eventType = eventType;
         this.payload = payload;

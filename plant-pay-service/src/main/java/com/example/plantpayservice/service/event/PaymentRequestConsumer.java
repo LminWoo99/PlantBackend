@@ -21,11 +21,9 @@ public class PaymentRequestConsumer {
     public void handlePayment(String eventPayload) throws JsonProcessingException {
         OutboxEvent outboxEvent = objectMapper.readValue(eventPayload, OutboxEvent.class);
 
-        if ("payment".equals(outboxEvent.getEventType())) {
             PaymentRequestDto paymentRequestDto = objectMapper.readValue(outboxEvent.getPayload(), PaymentRequestDto.class);
             log.info("결제 요청 시작 ==> 결제 정보 : {}", paymentRequestDto);
             paymentService.tradePayMoney(paymentRequestDto);
-        }
     }
 }
 

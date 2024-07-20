@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class CouponRollbackConsumer {
     private final CouponService couponService;
     private final ObjectMapper objectMapper;
-    @KafkaListener(topics = "Payment.events", containerFactory = "paymentFailedConsumerFactory")
+    @KafkaListener(topics = "Payment.events", containerFactory = "paymentFailedListenerContainerFactory")
     public void handleCouponRollbackEvent(String eventPayload) throws JsonProcessingException {
 
         OutboxEvent outboxEvent = objectMapper.readValue(eventPayload, OutboxEvent.class);

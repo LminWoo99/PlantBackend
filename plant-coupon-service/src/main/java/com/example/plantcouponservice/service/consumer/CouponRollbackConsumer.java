@@ -21,10 +21,8 @@ public class CouponRollbackConsumer {
 
         OutboxEvent outboxEvent = objectMapper.readValue(eventPayload, OutboxEvent.class);
 
-        if ("coupon-rollback".equals(outboxEvent.getEventType())) {
-            PaymentRequestDto paymentRequestDto = objectMapper.readValue(outboxEvent.getPayload(), PaymentRequestDto.class);
-            log.info("======보상 트랜잭션 동작 , 쿠폰 번호 :{} =====", paymentRequestDto.getCouponNo());
-            couponService.revertCouponStatus(paymentRequestDto);
-        }
+        PaymentRequestDto paymentRequestDto = objectMapper.readValue(outboxEvent.getPayload(), PaymentRequestDto.class);
+        log.info("======보상 트랜잭션 동작 , 쿠폰 번호 :{} =====", paymentRequestDto.getCouponNo());
+        couponService.revertCouponStatus(paymentRequestDto);
     }
 }

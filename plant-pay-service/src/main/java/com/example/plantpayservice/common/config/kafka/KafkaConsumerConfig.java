@@ -20,55 +20,24 @@ import java.util.Map;
 public class KafkaConsumerConfig {
     @Value("${kafka.url}")
     private String kafkaServerUrl;
-
-
-
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PaymentRequestDto> paymentListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, PaymentRequestDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, String> paymentListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(paymentConsumerFactory());
-
         return factory;
-
     }
+
     @Bean
-    public ConsumerFactory<String, PaymentRequestDto> paymentConsumerFactory() {
+    public ConsumerFactory<String, String> paymentConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
-        JsonDeserializer<PaymentRequestDto> deserializer = new JsonDeserializer<>(PaymentRequestDto.class, false);
-        // 패키지 신뢰 오류로 인해 모든 패키지를 신뢰하도록 작성
-        deserializer.addTrustedPackages("*");
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerUrl);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "payment");
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), deserializer);
-
-    }
-    @Bean
-    public ConsumerFactory<String, PaymentRequestDto> paymentFailedConsumerFactory() {
-        Map<String, Object> config = new HashMap<>();
-        JsonDeserializer<PaymentRequestDto> deserializer = new JsonDeserializer<>();
-        // 패키지 신뢰 오류로 인해 모든 패키지를 신뢰하도록 작성
-        deserializer.addTrustedPackages("*");
-
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerUrl);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "paymentFailed");
-        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);
-
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), deserializer);
-
+        return new DefaultKafkaConsumerFactory<>(config);
     }
 
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PaymentRequestDto> paymentFailedListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, PaymentRequestDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(paymentFailedConsumerFactory());
-
-        return factory;
-
-    }
 }
 

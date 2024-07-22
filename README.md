@@ -125,7 +125,26 @@
         - 제목(포함)
         - 내용(포함)
         - 닉네임(완전일치
+## 분산 트랜잭션 관리 및 시스템 신뢰성을 위한 장애 대응
 
+### 1. SAGA 패턴 구현
+
+- 쿠폰 적용 및 결제 프로세스에서 분산 트랜잭션 제어를 위해 SAGA Choreography 패턴 적용
+- 각 마이크로서비스의 로컬 트랜잭션과 보상 트랜잭션을 통한 데이터 일관성 유지
+- Kafka를 활용한 이벤트 기반 비동기 통신으로 서비스 간 느슨한 결합 구현
+
+### 2. Kafka 클러스터 구축
+
+- 3대의 EC2 인스턴스를 활용하여 Kafka 브로커 3개와 Zookeeper 인스턴스 3개로 구성된 클러스터 구축
+- 시스템의 고가용성, 확장성 향상 및 단일 실패 지점 제거
+- 멱등성 프로듀서 설정으로 메시지 중복 전송 방지 및 데이터 무결성 보장
+
+### 3. Debezium CDC(Kafka Connect) + Transactional Outbox Pattern 적용
+
+- 데이터베이스 변경 사항을 실시간으로 감지하고 Kafka로 전송하는 CDC 구현
+- Transactional Outbox Pattern을 통한 데이터베이스 트랜잭션과 메시지 발행의 원자성 보장
+- 서비스 간 데이터 일관성 유지 및 메시지 손실 위험 최소화
+  
 ## **Prometheus & Grafana를 통한 마이크로 서비스 모니터링**
 
 - MSA로 전환하는 만큼 각각의 마이크로 서비스의 상태를 모니터링 하기 위해 Prometheus & Grafana **사용하였습니다**
@@ -147,7 +166,8 @@
 - [**Redisson및 퍼사드 패턴을 활용한 SNS 서비스 좋아요 동시성 문제 해결**](https://velog.io/@mw310/%EC%8B%9D%EA%B5%AC%ED%95%98%EC%9E%90MSA-sns-%EC%84%9C%EB%B9%84%EC%8A%A4%EC%97%90%EC%84%9C-%EC%A2%8B%EC%95%84%EC%9A%94-%EA%B8%B0%EB%8A%A5-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)
 - [**마이크로 서비스간 분산 트랜잭션 제어 문제 해결 By Saga Pattern**](https://velog.io/@mw310/Saga%ED%8C%A8%ED%84%B4%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EC%A0%9C%EC%96%B4%EC%BF%A0%ED%8F%B0-%EC%A0%81%EC%9A%A9%EA%B2%B0%EC%A0%9C-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4)
 - [**로그인 기능 리팩터링-Redis를 이용한Refresh Token 재발급**](https://velog.io/@mw310/%EC%8B%9D%EA%B5%AC%ED%95%98%EC%9E%90msa-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B8%B0%EB%8A%A5-%EB%A6%AC%ED%8C%A9%ED%84%B0%EB%A7%81-Refresh-Token-%EC%9E%AC%EB%B0%9C%EA%B8%89)
-
+- [**Kafka cluster 구축해서 가용성 높이기**](https://velog.io/@mw310/%EC%8B%9D%EA%B5%AC%ED%95%98%EC%9E%90MSA-Saga-%ED%8C%A8%ED%84%B4-%EC%9D%B4%ED%9B%84%EC%9D%98-%EC%B6%94%EA%B0%80-%EC%9E%A5%EC%95%A0-%EB%8C%80%EC%9D%91-kafka-cluster-%EA%B5%AC%EC%B6%95)
+- [**CDC+ Transactional Outbox Pattern 적용**](https://velog.io/@mw310/%EC%8B%9D%EA%B5%AC%ED%95%98%EC%9E%90MSA-Saga-%ED%8C%A8%ED%84%B4-%EC%9D%B4%ED%9B%84%EC%9D%98-%EC%B6%94%EA%B0%80-%EC%9E%A5%EC%95%A0-%EB%8C%80%EC%9D%91-CDCTransactional-Outbox-Pattern-%EC%A0%81%EC%9A%A9-3)
 # 👨‍⚖️ 기술적 의사 결정
 
 | 요구사항 | 선택지 | 설명 |

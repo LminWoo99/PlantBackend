@@ -5,8 +5,6 @@ import com.example.plantchatservice.client.PlantServiceClient;
 import com.example.plantchatservice.domain.Chat;
 import com.example.plantchatservice.domain.NotifiTypeEnum;
 import com.example.plantchatservice.domain.mongo.Chatting;
-import com.example.plantchatservice.dto.aggregation.AggregationDto;
-import com.example.plantchatservice.dto.aggregation.AggregationTarget;
 import com.example.plantchatservice.dto.chat.Message;
 import com.example.plantchatservice.dto.member.MemberDto;
 import com.example.plantchatservice.dto.vo.*;
@@ -45,7 +43,6 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final MongoChatRepository mongoChatRepository;
     private final MessageSender sender;
-    private final AggregationSender aggregationSender;
     private final MongoTemplate mongoTemplate;
     private final ChatRoomService chatRoomService;
     private final PlantServiceClient plantServiceClient;
@@ -91,16 +88,6 @@ public class ChatService {
 
             Chat savedChat = chatRepository.save(chat);
 
-
-            // 채팅방 카운트 증가
-            AggregationDto aggregationDto = AggregationDto
-                    .builder()
-                    .isIncrease("true")
-                    .target(AggregationTarget.CHAT)
-                    .tradeBoardNo(requestDto.getTradeBoardNo())
-                    .build();
-
-            aggregationSender.send(KafkaUtil.KAFKA_AGGREGATION, aggregationDto);
             return savedChat;
         }
         throw new IllegalArgumentException("존재하지 않는 게시글 입니다");

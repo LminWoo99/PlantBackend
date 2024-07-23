@@ -38,7 +38,6 @@ public class KafkaProducerConfig {
 
     @Bean
     public ProducerFactory<String, CouponRequestDto> couponCreatedProducerFactory() {
-
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
 
     }

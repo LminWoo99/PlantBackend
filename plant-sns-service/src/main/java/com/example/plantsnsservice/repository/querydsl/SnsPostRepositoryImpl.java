@@ -85,8 +85,8 @@ public class SnsPostRepositoryImpl implements CustomSnsPostRepository{
                 .join(snsHashTagMap.hashTag, hashTag)
                 .join(snsPost.imageList, image)
                 .where(snsPost.createdBy.eq(createdBy))
+                .orderBy(snsPost.createdAt.desc())
                 .fetch();
-
     }
     //이주의 게시글 ==> 조회수 기준
     //만약 조회수가 같으면 좋아요 수 높은 기준

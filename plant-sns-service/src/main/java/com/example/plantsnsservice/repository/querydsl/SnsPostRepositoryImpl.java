@@ -64,7 +64,7 @@ public class SnsPostRepositoryImpl implements CustomSnsPostRepository{
                 .join(snsHashTagMap.snsPost, snsPost)
                 .join(snsHashTagMap.hashTag, hashTag)
                 .join(snsPost.imageList, image)
-                .orderBy(snsPost.createdAt.desc())
+                .orderBy(snsPost.id.desc())
                 .fetch();
     }
     @Override

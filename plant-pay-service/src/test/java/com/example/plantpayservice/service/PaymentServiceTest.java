@@ -35,7 +35,7 @@ class PaymentServiceTest {
         PaymentRequestDto paymentRequestDto = new PaymentRequestDto(12000, 1);
 
         //when
-        paymentService.chargePayMoney(paymentRequestDto);
+        paymentService.chargePayMoney(paymentRequestDto, "tmp");
         //then
         Payment payment = paymentRepository.findByMemberNo(1);
         assertThat(payment.getPayMoney()).isEqualTo(12000);
@@ -48,7 +48,7 @@ class PaymentServiceTest {
         PaymentRequestDto paymentRequestDto = new PaymentRequestDto(12000, 10);
 
 
-        paymentService.chargePayMoney(paymentRequestDto);
+        paymentService.chargePayMoney(paymentRequestDto, "tmp");
         PaymentRequestDto paymentRequestDto1 = new PaymentRequestDto(1, 10);
         int threadCount = 80;
         //비동기로 실행되는 작업을 단순화해서 사용하게 도와주는 자바의 api
@@ -60,7 +60,7 @@ class PaymentServiceTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    paymentService.refundPayMoney(paymentRequestDto1);
+                    paymentService.refundPayMoney(paymentRequestDto1, "tmp");
                 } finally {
                     latch.countDown();
                 }
@@ -80,7 +80,7 @@ class PaymentServiceTest {
     void getPayMoneyTest() {
         //given
         PaymentRequestDto paymentRequestDto = new PaymentRequestDto(12000, 1);
-        paymentService.chargePayMoney(paymentRequestDto);
+        paymentService.chargePayMoney(paymentRequestDto, "tmp");
 
         //when
         PaymentResponseDto paymentResponseDto = paymentService.getPayMoney(paymentRequestDto.getMemberNo());
@@ -93,15 +93,15 @@ class PaymentServiceTest {
     void tradePayMoneyTest() throws JsonProcessingException {
         //given
         PaymentRequestDto buyerRequestDto = new PaymentRequestDto(12000, 1);
-        paymentService.chargePayMoney(buyerRequestDto);
+        paymentService.chargePayMoney(buyerRequestDto,"tmp");
 
         PaymentRequestDto sellerRequestDto = new PaymentRequestDto(6000, 2);
-        paymentService.chargePayMoney(sellerRequestDto);
+        paymentService.chargePayMoney(sellerRequestDto, "tmp");
 
         PaymentRequestDto amountDto = new PaymentRequestDto(2000, 1);
         amountDto.setSellerNo(2);
         //when
-        paymentService.tradePayMoney(amountDto);
+        paymentService.tradePayMoney(amountDto, "tmp");
         //then
         assertThat(paymentService.getPayMoney(1).getPayMoney()).isEqualTo(10000);
         assertThat(paymentService.getPayMoney(2).getPayMoney()).isEqualTo(8000);
@@ -112,16 +112,16 @@ class PaymentServiceTest {
     void tradePayMoneyExceptionTest() throws Exception{
         //given
         PaymentRequestDto buyerRequestDto = new PaymentRequestDto(1000, 1);
-        paymentService.chargePayMoney(buyerRequestDto);
+        paymentService.chargePayMoney(buyerRequestDto,"tmp");
 
         PaymentRequestDto sellerRequestDto = new PaymentRequestDto(6000, 2);
-        paymentService.chargePayMoney(sellerRequestDto);
+        paymentService.chargePayMoney(sellerRequestDto,"tmp");
 
         PaymentRequestDto amountDto = new PaymentRequestDto(2000, 1);
         amountDto.setSellerNo(2);
         //when
         //then
-        assertThrows(CustomException.class, () -> paymentService.tradePayMoney(amountDto));
+        assertThrows(CustomException.class, () -> paymentService.tradePayMoney(amountDto,"tmp"));
 
     }
 }

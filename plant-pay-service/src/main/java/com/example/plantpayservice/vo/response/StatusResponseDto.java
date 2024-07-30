@@ -4,6 +4,7 @@ import com.example.plantpayservice.domain.entity.Payment;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.kafka.common.metrics.Stat;
 
 @Getter
 @AllArgsConstructor
@@ -26,7 +27,9 @@ public class StatusResponseDto {
     public static StatusResponseDto success(){
         return new StatusResponseDto(200);
     }
-    public static StatusResponseDto success(Object data){
-        return new StatusResponseDto(200, data);
+    public static StatusResponseDto failedIdempotency() {
+        return new StatusResponseDto(409);
     }
+
+
 }

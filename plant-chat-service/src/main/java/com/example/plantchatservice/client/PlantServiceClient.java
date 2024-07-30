@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 마이크로서비스 간의 호출을 위한 feignclient
- *
  */
 @FeignClient(name="plant-service")
 public interface PlantServiceClient {

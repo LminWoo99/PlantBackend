@@ -3,11 +3,10 @@ package com.example.plantpayservice.service;
 import com.example.plantpayservice.domain.entity.CouponStatus;
 import com.example.plantpayservice.domain.entity.OutboxEvent;
 import com.example.plantpayservice.domain.entity.Payment;
-import com.example.plantpayservice.exception.CustomException;
 import com.example.plantpayservice.exception.ErrorCode;
+import com.example.plantpayservice.repository.IdempotencyKeyRepository;
 import com.example.plantpayservice.repository.OutboxEventRepository;
 import com.example.plantpayservice.repository.PaymentRepository;
-import com.example.plantpayservice.service.event.CouponRollbackProducer;
 import com.example.plantpayservice.vo.request.PaymentRequestDto;
 import com.example.plantpayservice.vo.response.PaymentResponseDto;
 import com.example.plantpayservice.vo.response.StatusResponseDto;
@@ -25,17 +24,20 @@ import java.util.Random;
 @Slf4j
 public class PaymentService {
     private final PaymentRepository paymentRepository;
-    private final CouponRollbackProducer couponRollbackProducer;
     private final OutboxEventRepository outboxEventRepository;
+    private final IdempotencyKeyRepository idempotencyKeyRepository;
     private final ObjectMapper objectMapper;
+
     private static final int BETWEEN_ZERO_AND_ONE = 1;
     /**
      * 식구페이 머니 충전 메서드
      * iamport로 결제 완료 되면 페이 머니로 충전
-     * @param : PaymentRequestDto paymentRequestDto
+     * 비즈니스 로직을 진행하고 멱등키 확인
+     * @param : PaymentRequestDto paymentRequestDto, String key
+     * @return StatusResponseDto
      */
     @Transactional
-    public void chargePayMoney(PaymentRequestDto paymentRequestDto) {
+    public StatusResponseDto chargePayMoney(PaymentRequestDto paymentRequestDto, String key) {
         if (!paymentRepository.existsByMemberNo(paymentRequestDto.getMemberNo())) {
             Payment payment=Payment.builder()
                     .payMoney(paymentRequestDto.getPayMoney())
@@ -46,19 +48,20 @@ public class PaymentService {
         }
         else{
             paymentRepository.existsByMemberNoUpdatePayMoney(paymentRequestDto);
-
         }
-
+        // 비즈니스 로직 수행 후 멱등성 키 저장
+        isIdempotent(key);
+        return StatusResponseDto.success();
     }
     /**
      * 식구페이 머니 환불 메서드
      * 원하는 금액 환불후 계좌 송금(실제로 계좌로 이체되진 않음)
      * 환불할 금액이 없을 경우 예외 처리
-     * 사용자가 모르고 환불요청을 두번 이상 연속 했을 경우를 대비해(적절한 ui/ux설계가 없으므로)
      * synchronized를 통해 동시성 제어!
      * @param : UpdatePaymentRequestDto paymentRequestDto
      */
-    public synchronized void refundPayMoney(PaymentRequestDto paymentRequestDto) {
+    @Transactional
+    public StatusResponseDto refundPayMoney(PaymentRequestDto paymentRequestDto, String key) {
         // memberNo로 보유 페이머니 조회
         Payment payment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
         //보유 페이 머니보다 입력한 환불할 금액이 많으면 예외 처리
@@ -66,7 +69,10 @@ public class PaymentService {
             throw ErrorCode.throwInsufficientRefundPayMoney();
         }
         payment.decreasePayMoney(paymentRequestDto.getPayMoney());
-        paymentRepository.saveAndFlush(payment);
+        paymentRepository.save(payment);
+        // 비즈니스 로직 수행 후 멱등성 키 저장
+        isIdempotent(key);
+        return StatusResponseDto.success();
     }
     /**
      * 식구페이 머니 조회 메서드
@@ -122,8 +128,9 @@ public class PaymentService {
      * @param : PaymentRequestDto paymentRequestDto, Integer sellerNo
      */
     @Transactional
-    public void tradePayMoney(PaymentRequestDto paymentRequestDto) throws JsonProcessingException {
+    public void tradePayMoney(PaymentRequestDto paymentRequestDto, String key) throws JsonProcessingException {
         OutboxEvent outboxEvent = parsingEvent(paymentRequestDto);
+        isIdempotent(key);
         try {
             Payment buyerPayment = paymentRepository.findByMemberNo(paymentRequestDto.getMemberNo());
             Integer buyerPayMoney = paymentRequestDto.getPayMoney();
@@ -136,10 +143,18 @@ public class PaymentService {
             paymentRepository.tradePayMoney(paymentRequestDto.getSellerNo(), buyerPayment.getMemberNo(), paymentRequestDto, buyerPayMoney);
         } catch (Exception e) {
             // 결제 실패 시 보상 트랜잭션 발행을 위한 outboxEvent
-            log.error("===[결제 요청 오류] -> coupon-rollback ,  쿠폰 번호 :{} / {}====",paymentRequestDto.getCouponNo(), e.getMessage());
+            log.error("===[결제 요청 오류] -> coupon-rollback ,  쿠폰 번호 :{} / {}====", paymentRequestDto.getCouponNo(), e.getMessage());
             outboxEventRepository.save(outboxEvent);
         }
     }
+
+    private void isIdempotent(String key) {
+        if (!idempotencyKeyRepository.addRequest(key)) {
+            log.error("결제 관련 요청중 중복 감지: {}", key);
+            throw ErrorCode.throwIdempotencyKeyExists();
+        }
+    }
+
     private OutboxEvent parsingEvent(PaymentRequestDto paymentRequestDto) throws JsonProcessingException {
         String payload = objectMapper.writeValueAsString(paymentRequestDto);
         OutboxEvent outboxEvent = new OutboxEvent(paymentRequestDto.getCouponNo().toString(),"Payment", "coupon-rollback", payload);

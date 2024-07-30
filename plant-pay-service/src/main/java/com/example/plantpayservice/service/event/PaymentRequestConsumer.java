@@ -23,7 +23,10 @@ public class PaymentRequestConsumer {
 
             PaymentRequestDto paymentRequestDto = objectMapper.readValue(outboxEvent.getPayload(), PaymentRequestDto.class);
             log.info("결제 요청 시작 ==> 결제 정보 : {}", paymentRequestDto);
-            paymentService.tradePayMoney(paymentRequestDto);
+            String key = String.format("trade-%s-%s",
+                    paymentRequestDto.getMemberNo().toString(),
+                    paymentRequestDto.getPayMoney());
+            paymentService.tradePayMoney(paymentRequestDto, key);
     }
 }
 

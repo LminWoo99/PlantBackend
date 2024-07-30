@@ -23,8 +23,7 @@ public class Payment {
     @Column(name = "member_no")
     private Integer memberNo;
     @Builder
-    public Payment(Long paymentNo, Integer payMoney, Integer memberNo) {
-        this.paymentNo = paymentNo;
+    public Payment(Integer payMoney, Integer memberNo) {
         this.payMoney = payMoney;
         this.memberNo= memberNo;
     }

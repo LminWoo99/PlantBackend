@@ -157,7 +157,9 @@ public class PaymentService {
 
     private OutboxEvent parsingEvent(PaymentRequestDto paymentRequestDto) throws JsonProcessingException {
         String payload = objectMapper.writeValueAsString(paymentRequestDto);
-        OutboxEvent outboxEvent = new OutboxEvent(paymentRequestDto.getCouponNo().toString(),"Payment", "coupon-rollback", payload);
+        String couponNo = paymentRequestDto.getCouponNo() != null ? paymentRequestDto.getCouponNo().toString() : "쿠폰미사용";
+
+        OutboxEvent outboxEvent = new OutboxEvent(couponNo,"Payment", "coupon-rollback", payload);
         return outboxEvent;
     }
 

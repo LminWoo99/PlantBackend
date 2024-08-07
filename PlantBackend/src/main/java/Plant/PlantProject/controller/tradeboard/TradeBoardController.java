@@ -27,7 +27,6 @@ public class TradeBoardController {
     @PostMapping("/trade-board")
     @Operation(summary = "식물 중고 거래 게시글 작성", description = "식물 중고 거래 게시글 작성 할 수 있는 API")
     public ResponseEntity<Long> write(@RequestPart TradeBoardRequestDto tradeBoardDto, @RequestPart("file") List<MultipartFile> files) throws IOException {
-
         Long id=tradeBoardService.saveTradePost(tradeBoardDto, files);
 
         return ResponseEntity.ok().body(id);

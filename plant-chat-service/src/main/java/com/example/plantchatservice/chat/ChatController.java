@@ -34,7 +34,6 @@ public class ChatController {
     @Operation(summary = "채팅방 생성", description = "채팅방 생성 할 수 있는 API")
     public ResponseEntity<StatusResponseDto> createChatRoom(@RequestBody @Valid final ChatRequestDto requestDto, @RequestParam(required = false) Integer memberNo,
                                                             BindingResult bindingResult) {
-
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(StatusResponseDto.addStatus(400));
         }

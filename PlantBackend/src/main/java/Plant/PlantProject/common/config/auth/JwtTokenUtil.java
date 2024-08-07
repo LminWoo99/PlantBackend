@@ -20,17 +20,16 @@ public class JwtTokenUtil {
 
     // 토큰 유효 시간 5시간
     Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
-
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(String memberNo) {
         return JWT.create()
-                .withSubject(username)
+                .withSubject(memberNo)
                 .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                 .sign(algorithm);
     }
 
-    public String generateRefreshToken(String username) {
+    public String generateRefreshToken(String memberNo) {
         return JWT.create()
-                .withSubject(username)
+                .withSubject(memberNo)
                 .withExpiresAt(new Date(System.currentTimeMillis() +  14 * 24 * 60 * 60 * 1000))
                 .sign(algorithm);
     }

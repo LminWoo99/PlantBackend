@@ -59,9 +59,6 @@ public class PlantApi {
 
                 plantRepository.save(byContentNum);
             }
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

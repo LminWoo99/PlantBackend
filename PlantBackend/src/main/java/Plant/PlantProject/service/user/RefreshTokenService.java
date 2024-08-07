@@ -17,8 +17,8 @@ public class RefreshTokenService {
     private final RefreshTokenRepository repository;
     private final JwtTokenUtil jwtUtil;
 
-    public void saveTokenInfo(String username, String accessToken, String refreshToken) {
-        repository.save(new RefreshToken(username, accessToken, refreshToken));
+    public void saveTokenInfo(String memberNo, String accessToken, String refreshToken) {
+        repository.save(new RefreshToken(memberNo, accessToken, refreshToken));
     }
 
     public void removeRefreshToken(String accessToken) {

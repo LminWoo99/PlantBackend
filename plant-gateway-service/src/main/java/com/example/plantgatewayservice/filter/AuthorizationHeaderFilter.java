@@ -36,7 +36,6 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         super(Config.class);
         this.env = env;
     }
-
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
@@ -50,16 +49,39 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             String jwt = authorizationHeader.replace("Bearer ", "");
 
             if (!isJwtValid(jwt)) {
-                return OnError(exchange, "Jwt token is not vaild", HttpStatus.UNAUTHORIZED);
+                return OnError(exchange, "Jwt token is not valid", HttpStatus.UNAUTHORIZED);
             }
-            return chain.filter(exchange);
 
+            // JWT에서 memberNo 추출
+            String memberNo = extractMemberNoFromJwt(jwt);
+
+            // 새 요청 객체 생성 및 memberNo 헤더 추가
+            ServerHttpRequest newRequest = request.mutate()
+                    .header("X-Member-No", memberNo)
+                    .build();
+
+            // 수정된 요청으로 교환 객체 업데이트
+            return chain.filter(exchange.mutate().request(newRequest).build());
         });
+    }
+
+    private String extractMemberNoFromJwt(String jwt) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256("secretKey".getBytes());
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            DecodedJWT decodedJWT = verifier.verify(jwt);
+
+            // JWT 클레임에서 memberNo 추출
+            return decodedJWT.getSubject();
+        } catch (Exception e) {
+            log.error("Failed to extract memberNo from JWT", e);
+            return null;
+        }
     }
 
     private boolean isJwtValid(String jwt) {
         boolean returnValue = true;
-        String username = null;
+        String memberNo = null;
 
         try {
             //복호화
@@ -67,15 +89,11 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             JWTVerifier verifier = JWT.require(algorithm).build();
 
             DecodedJWT decodedJWT = verifier.verify(jwt);
-            username = decodedJWT.getSubject();
-            String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
-//            username = Jwts.parser().setSigningKey(env.getProperty("token.secret"))
-//                    .parseClaimsJws(jwt).getBody()
-//                    .getSubject();
+            memberNo = decodedJWT.getSubject();
         } catch (Exception e) {
             returnValue = false;
         }
-        if (username == null || username.isEmpty()) {
+        if (memberNo == null || memberNo.isEmpty()) {
             returnValue = false;
         }
 

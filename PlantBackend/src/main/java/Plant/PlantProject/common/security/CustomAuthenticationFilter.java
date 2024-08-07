@@ -107,14 +107,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         log.info("success:" + username);
 
-        String accessToken = jwtTokenUtil.generateAccessToken(username);
-
-        String refreshToken = jwtTokenUtil.generateRefreshToken(username);
-
         Map<String, Object> tokens = new HashMap<>();
         Member byUsername = memberRepository.findByUsername(username).orElseThrow(ErrorCode::throwMemberNotFound);
+        Long memberNo = byUsername.getId();
 
-        refreshTokenService.saveTokenInfo(username, accessToken, refreshToken);
+        String accessToken = jwtTokenUtil.generateAccessToken(memberNo.toString());
+        String refreshToken = jwtTokenUtil.generateRefreshToken(memberNo.toString());
+
+        refreshTokenService.saveTokenInfo(memberNo.toString(), accessToken, refreshToken);
 
         String id = String.valueOf(byUsername.getId());
         String nickname = byUsername.getNickname();

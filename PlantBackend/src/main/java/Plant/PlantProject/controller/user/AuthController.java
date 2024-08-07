@@ -22,7 +22,6 @@ public class AuthController {
         // 엑세스 토큰으로 현재 Redis 정보 삭제
         tokenService.removeRefreshToken(accessToken);
     }
-
     @PostMapping("/token/refresh")
     public ResponseEntity<TokenResponseStatus> refresh(@RequestHeader("Authorization") final String accessToken) {
 

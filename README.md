@@ -16,7 +16,7 @@
 - SpringBoot, JPA, QueryDSL
 - Spring cloud, gateway, eureka, config, feign client
 - Kafka,rabbitmq, STOMP
-- Prometheus & Grafana, circuitbreaker
+- Prometheus & Grafana, Resilience4j 
 - DB - Mysql, Redis, Mongo
 - INFRA - docker, Jenkins, AWS EC2, S3, Route 53, CloudFront
 - Collaboration - GitHub
